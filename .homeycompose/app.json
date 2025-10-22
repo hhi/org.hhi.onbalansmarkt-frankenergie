@@ -1,0 +1,29 @@
+{
+  "id": "org.hhi.onbalansmarkt-frankenergie",
+  "version": "0.0.1",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "SmartBattery liveresults Onbalansmarkt"
+  },
+  "description": {
+    "en": "Delivers battery trading liveresults to the onbalansmarkt.com site."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "H Hi",
+    "email": "iphone.HHi@me.com"
+  },
+  "brandColor": "#69B34C"
+}

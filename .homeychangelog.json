@@ -1,0 +1,15 @@
+{
+  "0.0.1": {
+    "en": "test",
+    "nl": "test",
+    "de": "test",
+    "fr": "test"
+  },
+
+  "0.0.0": {
+    "en": "setup proj",
+    "nl": "setup proj",
+    "de": "setup proj",
+    "fr": "setup proj"
+  }
+}

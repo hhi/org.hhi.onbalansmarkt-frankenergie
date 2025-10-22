@@ -1,0 +1,119 @@
+LiveDataPushRequestCollapse allobject
+Push live data to the Onbalansmarkt platform
+
+{
+  "timestamp": "2025-01-20T16:00:00Z",
+  "batteryResult": "8.80",
+  "batteryResultTotal": "1004.75",
+  "batteryResultEpex": "-1.40",
+  "batteryResultImbalance": "9.60",
+  "batteryResultCustom": "0.60",
+  "batteryResultAccounting": "0.60",
+  "batteryCharge": "76",
+  "batteryPower": "-9000",
+  "chargedToday": "11",
+  "dischargedToday": "8",
+  "loadBalancingActive": "on",
+  "solarResult": "string",
+  "chargerResult": "string",
+  "totalBatteryCycles": "143",
+  "mode": "imbalance"
+}
+
+
+POST /api/live.  (application/json)
+POST
+/api/live
+API endpoint to push the battery status to Onbalansmarkt.com.
+
+
+LiveDataPushRequestCollapse allobject
+Push live data to the Onbalansmarkt platform
+
+timestampCollapse allstring
+Timestamp of measurement in ISO8601 format, i.e. 2021-01-01T12:00:00Z
+
+Examples
+#0"2025-01-20T16:00:00Z"
+batteryResult
+Net daily result achieved by the battery in euros.
+
+Examples
+#0"8.80"
+batteryResultTotal
+Net all time result achieved by the battery in euros.
+
+Examples
+#0"1004.75"
+batteryResultEpex
+Optional gross battery result on the EPEX market, typically the charging costs.
+
+Examples
+#0"-1.40"
+batteryResultImbalance
+Optional gross battery result on the imbalance market, without taking losses and costs into account.
+
+Examples
+#0"9.60"
+batteryResultCustom
+Optional provider-specific battery trading result, such as a loyalty or trade provider specific incentive.
+
+Examples
+#0"0.60"
+batteryResultAccounting
+Optional accounting transaction ('totaal te verrekenen'), indicating the net transaction the provider will make at the end of the month.
+
+Examples
+#0"0.60"
+batteryCharge
+Current charge of the battery in %, 0-100, optional but recommended.
+
+Examples
+#0"76"
+batteryPower
+Current power of the battery in Watt, optional.
+
+Examples
+#0"-9000"
+
+chargedToday
+kWh charged ('consumed') by the battery as a positive number, optional but recommended.
+Examples
+
+dischargedToday
+kWh discharged ('produced') by the battery as a positive number, optional but recommended.
+
+Examples
+#0"8"
+
+
+loadBalancingActive
+Indicates whether load balancing is active, limiting the current battery output, set to 'on' or 'off', optional.
+Enum
+#0"on"
+#1"off"
+
+solarResult
+Daily result achieved by the solar panels in euros, optional.
+
+chargerResult
+Daily result achieved by the charger in euros, optional.
+
+
+totalBatteryCycles
+Total number of battery cycles that the battery has gone through in its lifetime, optional.
+Examples
+#0"143"
+
+
+mode
+Optional battery operating mode, can be provided to override the mode configured on the profile page. The available options vary by provider but include: imbalance, manual, day_ahead (, self_consumption, self_consumption_plus, imbalance_aggressive
+Enum
+#0"imbalance"
+#1"imbalance_aggressive"
+#2"manual"
+#3"day_ahead"
+#4"self_consumption"
+#5"self_consumption_plus"
+
+

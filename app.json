@@ -1,0 +1,52 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "org.hhi.onbalansmarkt-frankenergie",
+  "version": "0.0.1",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "SmartBattery liveresults Onbalansmarkt"
+  },
+  "description": {
+    "en": "Delivers battery trading liveresults to the onbalansmarkt.com site."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "H Hi",
+    "email": "iphone.HHi@me.com"
+  },
+  "brandColor": "#69B34C",
+  "drivers": [
+    {
+      "name": {
+        "en": "Frank-Energie"
+      },
+      "class": "service",
+      "capabilities": [
+        "battery_charging_state",
+        "meter_power"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/frank-energie/assets/images/small.png",
+        "large": "/drivers/frank-energie/assets/images/large.png",
+        "xlarge": "/drivers/frank-energie/assets/images/xlarge.png"
+      },
+      "id": "frank-energie"
+    }
+  ]
+}
