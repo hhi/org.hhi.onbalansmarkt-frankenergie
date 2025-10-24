@@ -1,0 +1,52 @@
+{
+  "id": "measurement_sent",
+  "title": {
+    "en": "Measurement sent",
+    "nl": "Meting verzonden"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "batteryResult",
+      "title": {
+        "en": "Battery Result",
+        "nl": "Batterij Resultaat"
+      },
+      "type": "number",
+      "example": 45.67
+    },
+    {
+      "name": "batteryCharge",
+      "title": {
+        "en": "Battery Charge %",
+        "nl": "Batterij Laad %"
+      },
+      "type": "number",
+      "example": 75
+    },
+    {
+      "name": "tradingMode",
+      "title": {
+        "en": "Trading Mode",
+        "nl": "Handelsmodus"
+      },
+      "type": "string",
+      "example": "imbalance_aggressive"
+    },
+    {
+      "name": "timestamp",
+      "title": {
+        "en": "Send Time",
+        "nl": "Verzendtijd"
+      },
+      "type": "string",
+      "example": "2025-10-23T14:30:00Z"
+    }
+  ]
+}

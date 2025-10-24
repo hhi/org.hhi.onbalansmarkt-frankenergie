@@ -1,0 +1,22 @@
+{
+  "name": {
+    "en": "Smart PV System",
+    "nl": "Slimme PV Systeem"
+  },
+  "class": "service",
+  "capabilities": [
+    "meter_power",
+    "frank_energie_pv_status",
+    "frank_energie_pv_bonus",
+    "frank_energie_overall_rank",
+    "frank_energie_provider_rank"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png"
+  }
+}

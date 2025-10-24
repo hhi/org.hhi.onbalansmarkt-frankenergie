@@ -1,0 +1,10 @@
+{
+  "id": "frank_energie_site_costs",
+  "title": {"en": "Site Costs", "nl": "Locatie Kosten"},
+  "description": {"en": "Total site energy costs", "nl": "Totaal locatie energiekosten"},
+  "type": "number",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "units": "€"
+}

@@ -1,0 +1,23 @@
+{
+  "name": {
+    "en": "Site Energy Meter",
+    "nl": "Site Energiemeter"
+  },
+  "class": "sensor",
+  "capabilities": [
+    "measure_power",
+    "meter_power",
+    "frank_energie_site_usage",
+    "frank_energie_site_costs",
+    "frank_energie_overall_rank",
+    "frank_energie_provider_rank"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png"
+  }
+}

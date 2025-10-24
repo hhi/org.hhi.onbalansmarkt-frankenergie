@@ -1,0 +1,56 @@
+{
+  "id": "send_rich_notification",
+  "title": {
+    "en": "Send rich metrics notification",
+    "nl": "Stuur uitgebreide metriekennotificatie"
+  },
+  "titleFormatted": {
+    "en": "Send [[type]] notification",
+    "nl": "Stuur [[type]] notificatie"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "type",
+      "type": "dropdown",
+      "title": {
+        "en": "Notification Type",
+        "nl": "Notificatietype"
+      },
+      "values": [
+        {
+          "id": "daily_summary",
+          "label": {
+            "en": "Daily Summary (Result, Rank, Mode)",
+            "nl": "Dagelijkse Samenvatting (Resultaat, Ranglijst, Modus)"
+          }
+        },
+        {
+          "id": "ranking_update",
+          "label": {
+            "en": "Ranking Update Only",
+            "nl": "Alleen Ranglijstupdate"
+          }
+        },
+        {
+          "id": "result_only",
+          "label": {
+            "en": "Result Only",
+            "nl": "Alleen Resultaat"
+          }
+        },
+        {
+          "id": "monthly_milestone",
+          "label": {
+            "en": "Monthly Milestone",
+            "nl": "Maandelijkse Mijlpaal"
+          }
+        }
+      ]
+    }
+  ]
+}

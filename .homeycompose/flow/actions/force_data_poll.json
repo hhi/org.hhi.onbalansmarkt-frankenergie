@@ -1,0 +1,14 @@
+{
+  "id": "force_data_poll",
+  "title": {
+    "en": "Force data poll",
+    "nl": "Forceer dataopvraag"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ]
+}

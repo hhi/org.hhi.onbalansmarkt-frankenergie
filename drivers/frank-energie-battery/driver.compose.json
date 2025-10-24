@@ -1,0 +1,24 @@
+{
+  "name": {
+    "en": "Smart Battery",
+    "nl": "Slimme Batterij"
+  },
+  "class": "service",
+  "capabilities": [
+    "battery_charging_state",
+    "meter_power",
+    "frank_energie_battery_charge",
+    "frank_energie_battery_mode",
+    "frank_energie_overall_rank",
+    "frank_energie_provider_rank",
+    "frank_energie_trading_result"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png"
+  }
+}

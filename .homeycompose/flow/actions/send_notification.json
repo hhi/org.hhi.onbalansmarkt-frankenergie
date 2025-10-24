@@ -1,0 +1,42 @@
+{
+  "id": "send_notification",
+  "title": {
+    "en": "Send trading notification",
+    "nl": "Stuur handelsnotificatie"
+  },
+  "titleFormatted": {
+    "en": "Send notification: [[title]] - [[message]] (metrics: [[includeMetrics]])",
+    "nl": "Stuur notificatie: [[title]] - [[message]] (metrieken: [[includeMetrics]])"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "title",
+      "type": "text",
+      "placeholder": {
+        "en": "e.g., Trading Results Update",
+        "nl": "bijv., Handelsresultaten Update"
+      }
+    },
+    {
+      "name": "message",
+      "type": "text",
+      "placeholder": {
+        "en": "Notification message...",
+        "nl": "Notificatiebericht..."
+      }
+    },
+    {
+      "name": "includeMetrics",
+      "type": "checkbox",
+      "title": {
+        "en": "Include trading metrics",
+        "nl": "Handelsmetrieken opnemen"
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "log_to_timeline",
+  "title": {
+    "en": "Log to timeline",
+    "nl": "Log naar tijdlijn"
+  },
+  "titleFormatted": {
+    "en": "Log to timeline: [[event]] (include result: [[includeResult]])",
+    "nl": "Log naar tijdlijn: [[event]] (resultaat opnemen: [[includeResult]])"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "event",
+      "type": "text",
+      "placeholder": {
+        "en": "e.g., Daily profit milestone reached",
+        "nl": "bijv., Dagelijkse winstmijlpaal bereikt"
+      }
+    },
+    {
+      "name": "includeResult",
+      "type": "checkbox",
+      "title": {
+        "en": "Include trading result amount",
+        "nl": "Handelsresultatuur opnemen"
+      }
+    }
+  ]
+}

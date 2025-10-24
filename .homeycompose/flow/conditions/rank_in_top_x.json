@@ -1,0 +1,52 @@
+{
+  "id": "rank_in_top_x",
+  "title": {
+    "en": "Rank is in Top X",
+    "nl": "Ranglijst is in Top X"
+  },
+  "titleFormatted": {
+    "en": "[[rankType]] rank is in top [[threshold]]",
+    "nl": "[[rankType]] ranglijst is in top [[threshold]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "rankType",
+      "type": "dropdown",
+      "title": {
+        "en": "Rank Type",
+        "nl": "Ranglijst Type"
+      },
+      "values": [
+        {
+          "id": "overall",
+          "label": {
+            "en": "Overall Ranking",
+            "nl": "Totale Ranglijst"
+          }
+        },
+        {
+          "id": "provider",
+          "label": {
+            "en": "Provider Ranking",
+            "nl": "Provider Ranglijst"
+          }
+        }
+      ]
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Position (e.g., 100)",
+        "nl": "Positie (bijv. 100)"
+      },
+      "min": 1,
+      "step": 10
+    }
+  ]
+}

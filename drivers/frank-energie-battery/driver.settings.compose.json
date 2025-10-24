@@ -1,0 +1,96 @@
+[
+  {
+    "type": "group",
+    "label": {
+      "en": "Frank Energie Credentials",
+      "nl": "Frank Energie Inloggegevens"
+    },
+    "children": [
+      {
+        "id": "frank_energie_email",
+        "type": "text",
+        "label": {
+          "en": "Email",
+          "nl": "E-mail"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account email address",
+          "nl": "Uw Frank Energie account e-mailadres"
+        }
+      },
+      {
+        "id": "frank_energie_password",
+        "type": "password",
+        "label": {
+          "en": "Password",
+          "nl": "Wachtwoord"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account password",
+          "nl": "Uw Frank Energie account wachtwoord"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Onbalansmarkt Integration",
+      "nl": "Onbalansmarkt Integratie"
+    },
+    "children": [
+      {
+        "id": "onbalansmarkt_api_key",
+        "type": "password",
+        "label": {
+          "en": "API Key",
+          "nl": "API-sleutel"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Onbalansmarkt.com API key (optional). Get one at https://onbalansmarkt.com",
+          "nl": "Uw Onbalansmarkt.com API-sleutel (optioneel). Verkrijg er een op https://onbalansmarkt.com"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Data Polling Settings",
+      "nl": "Gegevensopvraag Instellingen"
+    },
+    "children": [
+      {
+        "id": "poll_interval",
+        "type": "number",
+        "label": {
+          "en": "Polling Interval (minutes)",
+          "nl": "Opvraaginterval (minuten)"
+        },
+        "value": 5,
+        "min": 1,
+        "max": 60,
+        "hint": {
+          "en": "How often to fetch data from Frank Energie (1-60 minutes)",
+          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-60 minuten)"
+        }
+      },
+      {
+        "id": "send_measurements",
+        "type": "checkbox",
+        "label": {
+          "en": "Send measurements to Onbalansmarkt",
+          "nl": "Metingen versturen naar Onbalansmarkt"
+        },
+        "value": true,
+        "hint": {
+          "en": "Automatically send trading results to Onbalansmarkt.com (requires API key)",
+          "nl": "Automatisch handelsresultaten versturen naar Onbalansmarkt.com (vereist API-sleutel)"
+        }
+      }
+    ]
+  }
+]

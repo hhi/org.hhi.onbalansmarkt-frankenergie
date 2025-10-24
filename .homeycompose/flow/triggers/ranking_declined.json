@@ -1,0 +1,43 @@
+{
+  "id": "ranking_declined",
+  "title": {
+    "en": "Ranking declined",
+    "nl": "Ranglijstpositie verslechterd"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "currentRank",
+      "title": {
+        "en": "Current Rank",
+        "nl": "Huidige Ranglijst"
+      },
+      "type": "number",
+      "example": 56
+    },
+    {
+      "name": "previousRank",
+      "title": {
+        "en": "Previous Rank",
+        "nl": "Vorige Ranglijst"
+      },
+      "type": "number",
+      "example": 42
+    },
+    {
+      "name": "decline",
+      "title": {
+        "en": "Decline",
+        "nl": "Verslechtering"
+      },
+      "type": "number",
+      "example": 14
+    }
+  ]
+}

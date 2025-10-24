@@ -16,17 +16,121 @@ This is a **Homey App** for the Frank Energie smart battery system. It delivers 
 
 ### High-Level Structure
 
-The app follows Homey's standard architecture with three main layers:
+The app follows Homey's standard architecture with four main layers:
 
 1. **App Layer** (`app.ts`): Main application entry point that initializes the app
 2. **Driver Layer** (`drivers/frank-energie/driver.ts`): Manages device discovery and pairing
 3. **Device Layer** (`drivers/frank-energie/device.ts`): Handles individual device logic, capabilities, and settings
+4. **Library Layer** (`lib/`): Reusable TypeScript services for API communication and data processing
+
+### Library Services
+
+The app uses specialized services in the `lib/` directory:
+
+#### FrankEnergieClient (`lib/frank-energie-client.ts`)
+
+GraphQL API client for Frank Energie:
+
+- **Authentication**: Login with email/password
+- **Battery Management**: Get all smart batteries on account
+- **Session Data**: Retrieve trading results and statistics
+- **Battery Details**: Get battery settings and trading strategy
+
+```typescript
+import { FrankEnergieClient } from '../lib';
+
+const client = new FrankEnergieClient({
+  logger: (msg, ...args) => this.log(msg, ...args),
+});
+
+await client.login(email, password);
+const batteries = await client.getSmartBatteries();
+```
+
+#### OnbalansmarktClient (`lib/onbalansmarkt-client.ts`)
+
+REST API client for Onbalansmarkt.com:
+
+- **Send Measurements**: Post battery trading results to Onbalansmarkt
+- **Get Profile**: Retrieve user profile with ranking information
+- **Supports All Fields**: batteryResult, batteryResultTotal, EPEX, imbalance, Frank Slim discount
+- **Trading Mode**: Automatically includes detected trading mode
+- **Rankings**: Overall rank and provider-specific rank
+
+```typescript
+import { OnbalansmarktClient } from '../lib';
+
+const client = new OnbalansmarktClient({
+  apiKey: 'your-api-key',
+  logger: (msg, ...args) => this.log(msg, ...args),
+});
+
+// Send measurements
+await client.sendMeasurement({
+  timestamp: new Date(),
+  batteryResult: 0.61,
+  batteryResultTotal: 293.94,
+  batteryCharge: 76,
+  mode: 'imbalance',
+});
+
+// Get profile with rankings
+const profile = await client.getProfile();
+console.log(`Overall Rank: ${profile.resultToday?.overallRank}`);
+console.log(`Provider Rank: ${profile.resultToday?.providerRank}`);
+```
+
+#### BatteryAggregator (`lib/battery-aggregator.ts`)
+
+Aggregates trading results across multiple batteries:
+
+- **Multi-Battery Support**: Accumulates results from all batteries on account
+- **Comprehensive Results**: Period totals, EPEX, trading, Frank Slim, imbalance
+- **Energy Scaling**: Helper to scale import/export values by battery count
+
+```typescript
+import { BatteryAggregator } from '../lib';
+
+const aggregator = new BatteryAggregator({
+  frankEnergieClient: client,
+  logger: (msg, ...args) => this.log(msg, ...args),
+});
+
+const results = await aggregator.getAggregatedResults(startDate, endDate);
+// results.periodTradingResult, results.totalTradingResult, etc.
+```
+
+#### TradingModeDetector (`lib/trading-mode-detector.ts`)
+
+Determines Onbalansmarkt trading mode from Frank Energie battery settings:
+
+- **Automatic Detection**: Maps Frank Energie batteryMode and imbalanceTradingStrategy
+- **Supported Modes**: imbalance, imbalance_aggressive, self_consumption_plus, manual
+- **Localization**: EN/NL descriptions for user display
+
+```typescript
+import { TradingModeDetector } from '../lib';
+
+const battery = await client.getSmartBattery(deviceId);
+const modeInfo = TradingModeDetector.detectTradingMode(battery.settings);
+// modeInfo.mode: 'imbalance' | 'imbalance_aggressive' | ...
+```
+
+### Architecture Benefits
+
+- **Separation of Concerns**: API clients separate from device logic
+- **Reusability**: Services can be used by device, flows, or future features
+- **Testability**: Each service can be unit tested independently
+- **Type Safety**: Full TypeScript interfaces for all API responses
+- **Logging Integration**: All services support Homey's logging system
 
 ### Key Concepts
 
-- **Capabilities**: The app exposes two capabilities for the Frank Energie driver:
+- **Capabilities**: The app exposes four capabilities for the Frank Energie driver:
   - `battery_charging_state`: Battery charging state
   - `meter_power`: Power meter readings
+  - `frank_energie_overall_rank`: Overall ranking position on Onbalansmarkt.com
+  - `frank_energie_provider_rank`: Provider-specific ranking position
 
 - **Configuration via Compose**: The app uses Homey's "compose" format for configuration:
   - `.homeycompose/app.json`: Main app configuration (gets compiled to `app.json`)
@@ -301,6 +405,30 @@ This is a simple Homey app with minimal dependencies. There are no test files in
 1. Local Homey development environment
 2. The Homey CLI (if available in your setup)
 3. Manual testing on a Homey device
+
+### Viewing System Logs
+
+**Important**: The "System Logs" option is **not available by default** in the Homey Developer Portal.
+
+**Alternative for viewing logs**:
+
+```bash
+homey app run
+```
+
+When running the app in development mode with `homey app run`, the terminal provides real-time log output from your app. This includes:
+
+- `this.log()` messages
+- `this.error()` messages
+- Stack traces and error information
+- App initialization and lifecycle events
+
+**Best Practices for Logging**:
+
+- Use descriptive log messages during development
+- Include context in error logs (device ID, operation, parameters)
+- Remove excessive debug logging before publishing
+- Use `this.error()` for error conditions, `this.log()` for informational messages
 
 ## Deployment Notes
 

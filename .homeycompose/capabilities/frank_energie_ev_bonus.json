@@ -1,0 +1,10 @@
+{
+  "id": "frank_energie_ev_bonus",
+  "title": {"en": "EV Charging Bonus", "nl": "EV Laad Bonus"},
+  "description": {"en": "Bonus earned from smart EV charging", "nl": "Bonus verdiend door slimme EV laden"},
+  "type": "number",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "units": "€"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "frank_energie_overall_rank",
+  "title": {"en": "Overall Ranking", "nl": "Totale Ranglijst"},
+  "description": {"en": "Your position in the overall Onbalansmarkt ranking", "nl": "Je positie in de totale Onbalansmarkt ranglijst"},
+  "type": "number",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "min": 1
+}

@@ -1,0 +1,49 @@
+{
+  "id": "toggle_measurement_sending",
+  "title": {
+    "en": "Toggle measurement sending",
+    "nl": "Schakel metingverzending in/uit"
+  },
+  "titleFormatted": {
+    "en": "Toggle measurement sending: [[state]]",
+    "nl": "Schakel metingverzending: [[state]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "title": {
+        "en": "State",
+        "nl": "Status"
+      },
+      "values": [
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "nl": "Aan"
+          }
+        },
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "nl": "Uit"
+          }
+        },
+        {
+          "id": "toggle",
+          "label": {
+            "en": "Toggle",
+            "nl": "Wisselaar"
+          }
+        }
+      ]
+    }
+  ]
+}

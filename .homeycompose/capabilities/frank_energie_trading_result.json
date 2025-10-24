@@ -1,0 +1,10 @@
+{
+  "id": "frank_energie_trading_result",
+  "title": {"en": "Trading Result", "nl": "Handelsresultaat"},
+  "description": {"en": "Daily battery trading result in euros", "nl": "Dagelijks batterijhandelsresultaat in euro"},
+  "type": "number",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "units": "€"
+}

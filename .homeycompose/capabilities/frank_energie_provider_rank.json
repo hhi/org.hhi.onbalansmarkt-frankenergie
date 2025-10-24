@@ -1,0 +1,10 @@
+{
+  "id": "frank_energie_provider_rank",
+  "title": {"en": "Provider Ranking", "nl": "Provider Ranglijst"},
+  "description": {"en": "Your ranking among same provider users", "nl": "Je ranglijst onder dezelfde provider gebruikers"},
+  "type": "number",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "min": 1
+}
