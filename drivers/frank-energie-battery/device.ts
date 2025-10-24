@@ -90,12 +90,23 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Override resetMilestones to ensure battery-specific milestone sets are cleared
+   */
+  protected resetMilestones(): void {
+    super.resetMilestones();
+    this.log('Battery device milestones reset');
+  }
+
+  /**
    * Poll battery data and update device capabilities
    */
   async pollData(): Promise<void> {
     if (!this.frankEnergieClient || !this.batteryAggregator) {
       throw new Error('Clients not initialized');
     }
+
+    // Check if milestones should be reset (monthly)
+    await this.checkAndResetMilestones();
 
     try {
       // Get aggregated results from all batteries

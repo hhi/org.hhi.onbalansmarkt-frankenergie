@@ -51,12 +51,24 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Override resetMilestones to clear PV-specific milestone sets
+   */
+  protected resetMilestones(): void {
+    super.resetMilestones();
+    this.bonusMilestones.clear();
+    this.log('PV device milestones reset');
+  }
+
+  /**
    * Poll PV system data
    */
   async pollData(): Promise<void> {
     if (!this.frankEnergieClient || !this.selectedPvSystemId) {
       throw new Error('Clients not initialized');
     }
+
+    // Check if milestones should be reset (monthly)
+    await this.checkAndResetMilestones();
 
     try {
       // Get PV system summary

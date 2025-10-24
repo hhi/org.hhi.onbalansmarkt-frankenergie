@@ -151,6 +151,31 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
   }
 
   /**
+   * Reset milestone tracking sets
+   * Override in child classes to also reset device-specific milestone sets
+   */
+  protected resetMilestones(): void {
+    this.milestones.clear();
+    this.log('Milestone tracking reset');
+  }
+
+  /**
+   * Check if milestones should be reset (monthly)
+   * Resets all milestone sets if more than 30 days have passed since last reset
+   */
+  protected async checkAndResetMilestones(): Promise<void> {
+    const lastReset = (await this.getStoreValue('lastMilestoneReset')) as number || 0;
+    const now = Date.now();
+    const thirtyDays = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+
+    if (now - lastReset > thirtyDays) {
+      this.log('Monthly milestone reset triggered');
+      this.resetMilestones();
+      await this.setStoreValue('lastMilestoneReset', now);
+    }
+  }
+
+  /**
    * Update ranking information from Onbalansmarkt
    */
   protected async updateRankings(): Promise<void> {

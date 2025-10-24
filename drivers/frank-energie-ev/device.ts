@@ -46,12 +46,24 @@ export = class EvChargerDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Override resetMilestones to clear EV-specific milestone sets
+   */
+  protected resetMilestones(): void {
+    super.resetMilestones();
+    this.costMilestones.clear();
+    this.log('EV device milestones reset');
+  }
+
+  /**
    * Poll EV charging session data
    */
   async pollData(): Promise<void> {
     if (!this.frankEnergieClient) {
       throw new Error('Clients not initialized');
     }
+
+    // Check if milestones should be reset (monthly)
+    await this.checkAndResetMilestones();
 
     try {
       // Get EV charging sessions

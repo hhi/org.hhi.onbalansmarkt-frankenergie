@@ -47,12 +47,24 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Override resetMilestones to clear meter-specific milestone sets
+   */
+  protected resetMilestones(): void {
+    super.resetMilestones();
+    this.costMilestones.clear();
+    this.log('Meter device milestones reset');
+  }
+
+  /**
    * Poll meter and pricing data
    */
   async pollData(): Promise<void> {
     if (!this.frankEnergieClient || !this.siteReference) {
       throw new Error('Clients not initialized');
     }
+
+    // Check if milestones should be reset (monthly)
+    await this.checkAndResetMilestones();
 
     try {
       // Get today's market prices
