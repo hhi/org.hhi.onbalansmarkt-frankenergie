@@ -82,11 +82,11 @@ export class OnbalansmarktClient {
   async sendMeasurement(measurement: OnbalansmarktMeasurement): Promise<string> {
     // Validate required fields - check for null/undefined, allow 0 values
     if (
-      !measurement.timestamp ||
-      measurement.batteryResult === null ||
-      measurement.batteryResult === undefined ||
-      measurement.batteryResultTotal === null ||
-      measurement.batteryResultTotal === undefined
+      !measurement.timestamp
+      || measurement.batteryResult === null
+      || measurement.batteryResult === undefined
+      || measurement.batteryResultTotal === null
+      || measurement.batteryResultTotal === undefined
     ) {
       throw new Error('timestamp, batteryResult and batteryResultTotal are required fields');
     }

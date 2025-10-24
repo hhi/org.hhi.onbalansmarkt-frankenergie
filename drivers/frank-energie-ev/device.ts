@@ -80,11 +80,11 @@ export = class EvChargerDevice extends FrankEnergieDeviceBase {
       await this.setStoreValue('lastEvStatus', this.isCharging ? 'charging' : 'idle');
       await this.setStoreValue('lastEvBonus', enodeSessions.totalSavings);
 
-      this.setAvailable();
+      await this.setAvailable();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Poll EV data failed:', errorMsg);
-      this.setUnavailable(`Data fetch failed: ${errorMsg}`);
+      await this.setUnavailable(`Data fetch failed: ${errorMsg}`);
       throw error;
     }
   }
@@ -137,12 +137,13 @@ export = class EvChargerDevice extends FrankEnergieDeviceBase {
       );
     }
 
+    // eslint-disable-next-line node/no-unsupported-features/es-builtins
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `EV Capabilities updated - Status: ${this.isCharging ? 'Charging' : 'Idle'}, ` +
-      `Savings: €${sessions.totalSavings.toFixed(2)}, ` +
-      `Sessions: ${sessions.rows.length}`,
+      `EV Capabilities updated - Status: ${this.isCharging ? 'Charging' : 'Idle'}, `
+      + `Savings: €${sessions.totalSavings.toFixed(2)}, `
+      + `Sessions: ${sessions.rows.length}`,
     );
   }
 

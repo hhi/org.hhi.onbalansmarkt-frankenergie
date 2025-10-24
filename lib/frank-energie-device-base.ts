@@ -2,7 +2,6 @@ import Homey from 'homey';
 import {
   FrankEnergieClient,
   OnbalansmarktClient,
-  type AggregatedResults,
 } from './index';
 
 /**
@@ -41,7 +40,7 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Failed to initialize device:', errorMsg);
-      this.setUnavailable(`Initialization failed: ${errorMsg}`);
+      await this.setUnavailable(`Initialization failed: ${errorMsg}`);
     }
   }
 
@@ -107,7 +106,7 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
     // Default to 5 minutes if invalid
     const defaultInterval = 5;
 
-    if (typeof interval !== 'number' || isNaN(interval)) {
+    if (typeof interval !== 'number' || Number.isNaN(interval)) {
       this.log(`Invalid poll interval type, using default: ${defaultInterval} minutes`);
       return defaultInterval;
     }
@@ -147,7 +146,7 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
       pollIntervalMs,
     );
 
-    this.setAvailable();
+    await this.setAvailable();
   }
 
   /**
@@ -205,11 +204,12 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
           );
         }
 
+        // eslint-disable-next-line node/no-unsupported-features/es-builtins
         await Promise.allSettled(updatePromises);
 
         this.log(
-          `Rankings updated - Overall: #${profile.resultToday.overallRank}, ` +
-          `Provider: #${profile.resultToday.providerRank}`,
+          `Rankings updated - Overall: #${profile.resultToday.overallRank}, `
+          + `Provider: #${profile.resultToday.providerRank}`,
         );
       }
     } catch (error) {
@@ -221,14 +221,17 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
   /**
    * Common trigger handlers
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async onRankingImproved(args: any) {
     return args.device === this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async onRankingDeclined(args: any) {
     return args.device === this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async onMeasurementSent(args: any) {
     return args.device === this;
   }
@@ -236,6 +239,7 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
   /**
    * Common condition handlers
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async condRankInTopX(args: any) {
     if (args.device !== this) return false;
     const rank = args.rankType === 'overall'
@@ -244,6 +248,7 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
     return (rank as number) <= args.threshold;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async condProviderRankBetter(args: any) {
     if (args.device !== this) return false;
     const overallRank = await this.getCapabilityValue('frank_energie_overall_rank') as number;
@@ -324,9 +329,9 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     // If credentials changed, reinitialize clients
     if (
-      changedKeys.includes('frank_energie_email') ||
-      changedKeys.includes('frank_energie_password') ||
-      changedKeys.includes('onbalansmarkt_api_key')
+      changedKeys.includes('frank_energie_email')
+      || changedKeys.includes('frank_energie_password')
+      || changedKeys.includes('onbalansmarkt_api_key')
     ) {
       try {
         this.log('Reinitializing clients due to credential changes');

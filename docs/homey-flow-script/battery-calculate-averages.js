@@ -10,17 +10,17 @@ async function setVariableValue(name, value) {
   await global.set(name, value);
 }
 
-// batterij systeem en device capabilities (default is s) 
+// batterij systeem en device capabilities (default is s)
 const battery_system = await getVariableValue('battery_system', 'sessy');
-const battery_import = await getVariableValue('battery_import', 'meter_power.import');  
+const battery_import = await getVariableValue('battery_import', 'meter_power.import');
 const battery_export = await getVariableValue('battery_export', 'meter_power.export');
 const battery_level = await getVariableValue('battery_level', 'measure_battery');
 const battery_class = await getVariableValue('battery_class', 'battery');
 
 // Zoek naar apparaten met de driverId die "sessy" bevat en de klasse "battery"
 const devices = await Homey.devices.getDevices()
-  .then(devices => Object.values(devices)
-    .filter(device => device.driverId.toLowerCase().includes(battery_system) && device.class === battery_class));
+  .then((devices) => Object.values(devices)
+    .filter((device) => device.driverId.toLowerCase().includes(battery_system) && device.class === battery_class));
 
 if (devices.length === 0) {
   throw new Error(`Geen apparaten gevonden met driverId gelijk ${battery_system} bevat en class "battery"`);
@@ -48,12 +48,11 @@ for (const device of devices) {
   }
 }
 
-if (validDevices > 0) { 
+if (validDevices > 0) {
   // Bereken de gemiddelde waarden
   const averageImportPower = totalImportPower / validDevices;
   const averageExportPower = totalExportPower / validDevices;
   const averageBatteryLevel = totalBatteryLevel / validDevices;
-
 
   // Log de gemiddelde waarden
   console.log(`Gemiddelde meter_power.import: ${averageImportPower}`);
@@ -63,7 +62,7 @@ if (validDevices > 0) {
   // Sla de gemiddelde waarden op in globale variabelen
   await setVariableValue('averageImportPower', averageImportPower);
   await setVariableValue('averageExportPower', averageExportPower);
-  await setVariableValue('averageBatteryLevel', Math.round(averageBatteryLevel) );
+  await setVariableValue('averageBatteryLevel', Math.round(averageBatteryLevel));
 
   // Haal de opgeslagen waarden op en log ze
   const storedAverageImportPower = await getVariableValue('averageImportPower', 0);

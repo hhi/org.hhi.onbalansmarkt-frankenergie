@@ -141,11 +141,11 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       await this.setStoreValue('lastTradingMode', tradingModeInfo.mode);
       await this.setStoreValue('lastFrankSlim', results.periodFrankSlim);
 
-      this.setAvailable();
+      await this.setAvailable();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Poll data failed:', errorMsg);
-      this.setUnavailable(`Data fetch failed: ${errorMsg}`);
+      await this.setUnavailable(`Data fetch failed: ${errorMsg}`);
       throw error;
     }
   }
@@ -189,12 +189,13 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       );
     }
 
+    // eslint-disable-next-line node/no-unsupported-features/es-builtins
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `Capabilities updated - Trading: €${results.periodTradingResult.toFixed(2)}, ` +
-      `Total: €${results.totalTradingResult.toFixed(2)}, ` +
-      `Batteries: ${results.batteryCount}`,
+      `Capabilities updated - Trading: €${results.periodTradingResult.toFixed(2)}, `
+      + `Total: €${results.totalTradingResult.toFixed(2)}, `
+      + `Batteries: ${results.batteryCount}`,
     );
   }
 
@@ -313,7 +314,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   // ===== Battery Trigger Handlers =====
-
+  // Flow card handlers use 'any' type as required by Homey SDK
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   private async onDailyResultsAvailable(args: any) {
     return args.device === this;
   }
@@ -464,6 +466,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       timestamp: Date.now(),
     });
   }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // ===== Trigger Emission Methods =====
 

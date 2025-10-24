@@ -844,7 +844,7 @@ export class FrankEnergieClient {
     };
 
     const response = await this.query<{ userSmartCharging: UserSmartChargingStatus }>(queryData);
-    this.logger(`FrankEnergieClient: Retrieved smart charging status`);
+    this.logger('FrankEnergieClient: Retrieved smart charging status');
     return response.data.userSmartCharging;
   }
 
@@ -874,7 +874,7 @@ export class FrankEnergieClient {
     };
 
     const response = await this.query<{ userSmartFeedIn: UserSmartFeedInStatus }>(queryData);
-    this.logger(`FrankEnergieClient: Retrieved smart feed-in status`);
+    this.logger('FrankEnergieClient: Retrieved smart feed-in status');
     return response.data.userSmartFeedIn;
   }
 

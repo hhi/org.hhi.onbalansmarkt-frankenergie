@@ -36,7 +36,7 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
     this.pvSystems = await this.frankEnergieClient.getSmartPvSystems();
     this.log(`Found ${this.pvSystems.length} PV systems`);
 
-    if (!this.pvSystems.find(pv => pv.id === this.selectedPvSystemId)) {
+    if (!this.pvSystems.find((pv) => pv.id === this.selectedPvSystemId)) {
       throw new Error(`Configured PV system ${this.selectedPvSystemId} not found`);
     }
   }
@@ -90,11 +90,11 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
       await this.setStoreValue('lastPvStatus', pvSummary.operationalStatus);
       await this.setStoreValue('lastPvBonus', pvSummary.totalBonus);
 
-      this.setAvailable();
+      await this.setAvailable();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Poll PV data failed:', errorMsg);
-      this.setUnavailable(`Data fetch failed: ${errorMsg}`);
+      await this.setUnavailable(`Data fetch failed: ${errorMsg}`);
       throw error;
     }
   }
@@ -102,6 +102,7 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
   /**
    * Update device capabilities with PV data
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async updateCapabilities(pvSummary: any): Promise<void> {
     const updatePromises: Promise<void>[] = [];
 
@@ -135,17 +136,19 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
       );
     }
 
+    // eslint-disable-next-line node/no-unsupported-features/es-builtins
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `PV Capabilities updated - Status: ${pvSummary.operationalStatus}, ` +
-      `Bonus: €${pvSummary.totalBonus.toFixed(2)}`,
+      `PV Capabilities updated - Status: ${pvSummary.operationalStatus}, `
+      + `Bonus: €${pvSummary.totalBonus.toFixed(2)}`,
     );
   }
 
   /**
    * Process and emit PV-specific flow triggers
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async processPvFlowCardTriggers(pvSummary: any): Promise<void> {
     try {
       // Check operational status change

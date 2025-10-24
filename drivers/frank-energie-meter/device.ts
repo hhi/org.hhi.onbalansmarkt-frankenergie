@@ -90,11 +90,11 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
       await this.setStoreValue('lastMonthCosts', monthSummary.actualCostsUntilLastMeterReadingDate);
       await this.setStoreValue('lastUsage', periodUsageAndCosts.electricity.usageTotal);
 
-      this.setAvailable();
+      await this.setAvailable();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Poll meter data failed:', errorMsg);
-      this.setUnavailable(`Data fetch failed: ${errorMsg}`);
+      await this.setUnavailable(`Data fetch failed: ${errorMsg}`);
       throw error;
     }
   }
@@ -133,12 +133,13 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
         .catch((error) => this.error('Failed to update measure_power:', error)),
     );
 
+    // eslint-disable-next-line node/no-unsupported-features/es-builtins
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `Meter Capabilities updated - Usage: ${usage.electricity.usageTotal.toFixed(2)} kWh, ` +
-      `Costs: €${monthSummary.actualCostsUntilLastMeterReadingDate.toFixed(2)}, ` +
-      `Avg Price: €${prices.averageElectricityPrices.averageMarketPrice.toFixed(4)}/kWh`,
+      `Meter Capabilities updated - Usage: ${usage.electricity.usageTotal.toFixed(2)} kWh, `
+      + `Costs: €${monthSummary.actualCostsUntilLastMeterReadingDate.toFixed(2)}, `
+      + `Avg Price: €${prices.averageElectricityPrices.averageMarketPrice.toFixed(4)}/kWh`,
     );
   }
 
@@ -153,8 +154,8 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
       // Check usage change
       if (this.previousUsage !== usage.electricity.usageTotal) {
         this.log(
-          `Site usage updated: ${usage.electricity.usageTotal.toFixed(2)} kWh ` +
-          `(change: ${(usage.electricity.usageTotal - this.previousUsage).toFixed(2)} kWh)`,
+          `Site usage updated: ${usage.electricity.usageTotal.toFixed(2)} kWh `
+          + `(change: ${(usage.electricity.usageTotal - this.previousUsage).toFixed(2)} kWh)`,
         );
       }
 

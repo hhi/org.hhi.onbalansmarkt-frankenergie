@@ -38,7 +38,7 @@ export = class SmartBatteryDriver extends Homey.Driver {
         pairData.password = data.password;
         pairData.batteries = batteries;
 
-        return { batteries: batteries.map(b => ({ id: b.id, name: b.externalReference || `Battery ${b.id.slice(0, 8)}` })) };
+        return { batteries: batteries.map((b) => ({ id: b.id, name: b.externalReference || `Battery ${b.id.slice(0, 8)}` })) };
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';
         this.error('Login failed:', errorMsg);
@@ -61,7 +61,7 @@ export = class SmartBatteryDriver extends Homey.Driver {
         throw new Error('No battery selected');
       }
 
-      const battery = pairData.batteries?.find(b => b.id === pairData.selectedBatteryId);
+      const battery = pairData.batteries?.find((b) => b.id === pairData.selectedBatteryId);
       if (!battery) {
         throw new Error('Selected battery not found');
       }

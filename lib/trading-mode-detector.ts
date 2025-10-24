@@ -21,7 +21,7 @@ export class TradingModeDetector {
    * @returns Trading mode information
    */
   static detectTradingMode(settings: BatterySettings): TradingModeResult {
-    const batteryMode = settings.batteryMode;
+    const { batteryMode } = settings;
     const tradingStrategy = settings.imbalanceTradingStrategy;
 
     let mode: TradingMode = 'imbalance'; // Default mode
