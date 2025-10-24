@@ -5,6 +5,17 @@ import {
   type AggregatedResults,
   type TradingMode,
   FrankEnergieDeviceBase,
+  type TriggerOnlyDeviceArgs,
+  type ResultPositiveNegativeArgs,
+  type ResultPositiveArgs,
+  type ResultExceedsThresholdArgs,
+  type TradingModeMatchesArgs,
+  type FrankSlimActiveArgs,
+  type SendNotificationArgs,
+  type SendRichNotificationArgs,
+  type ActionOnlyDeviceArgs,
+  type ToggleMeasurementSendingArgs,
+  type LogToTimelineArgs,
 } from '../../lib';
 
 /**
@@ -314,68 +325,67 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   // ===== Battery Trigger Handlers =====
-  // Flow card handlers use 'any' type as required by Homey SDK
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  private async onDailyResultsAvailable(args: any) {
+
+  private async onDailyResultsAvailable(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
-  private async onResultPositiveNegative(args: any) {
+  private async onResultPositiveNegative(args: ResultPositiveNegativeArgs) {
     if (args.device !== this) return false;
     const isPositive = args.isPositive === 'positive';
     const lastResult = await this.getStoreValue('lastBatteryResult') as number || 0;
     return isPositive ? lastResult > 0 : lastResult < 0;
   }
 
-  private async onMilestoneReached(args: any) {
+  private async onMilestoneReached(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
-  private async onTopPerformerAlert(args: any) {
+  private async onTopPerformerAlert(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
-  private async onTradingModeChanged(args: any) {
+  private async onTradingModeChanged(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
-  private async onFrankSlimBonusDetected(args: any) {
+  private async onFrankSlimBonusDetected(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
-  private async onNewBatteryAdded(args: any) {
+  private async onNewBatteryAdded(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
   // ===== Battery Condition Handlers =====
 
-  private async condResultPositive(args: any) {
+  private async condResultPositive(args: ResultPositiveArgs) {
     if (args.device !== this) return false;
     const lastResult = await this.getStoreValue('lastBatteryResult') as number || 0;
-    return lastResult > (args.threshold as number || 0);
+    return lastResult > args.threshold;
   }
 
-  private async condResultExceedsThreshold(args: any) {
+  private async condResultExceedsThreshold(args: ResultExceedsThresholdArgs) {
     if (args.device !== this) return false;
     const totalResult = await this.getStoreValue('lastBatteryResultTotal') as number || 0;
     return totalResult > args.threshold;
   }
 
-  private async condTradingModeMatches(args: any) {
+  private async condTradingModeMatches(args: TradingModeMatchesArgs) {
     if (args.device !== this) return false;
     const currentMode = await this.getStoreValue('lastTradingMode') as string;
     return currentMode === args.mode;
   }
 
-  private async condFrankSlimActive(args: any) {
+  private async condFrankSlimActive(args: FrankSlimActiveArgs) {
     if (args.device !== this) return false;
     const frankSlim = await this.getStoreValue('lastFrankSlim') as number || 0;
-    return frankSlim > (args.threshold as number || 0);
+    return frankSlim > args.threshold;
   }
 
   // ===== Battery Action Handlers =====
 
-  private async actionSendNotification(args: any) {
+  private async actionSendNotification(args: SendNotificationArgs) {
     if (args.device !== this) return;
     const title = args.title || 'Trading Update';
     let message = args.message || 'No message';
@@ -391,7 +401,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     await this.homey.notifications.createNotification({ excerpt: `${title}\n${message}` });
   }
 
-  private async actionSendRichNotification(args: any) {
+  private async actionSendRichNotification(args: SendRichNotificationArgs) {
     if (args.device !== this) return;
 
     const batteryResult = await this.getStoreValue('lastBatteryResult') as number || 0;
@@ -420,13 +430,13 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     await this.homey.notifications.createNotification({ excerpt: message });
   }
 
-  private async actionForceDataPoll(args: any) {
+  private async actionForceDataPoll(args: ActionOnlyDeviceArgs) {
     if (args.device !== this) return;
     this.log('Force data poll triggered via flow');
     await this.pollData();
   }
 
-  private async actionToggleMeasurementSending(args: any) {
+  private async actionToggleMeasurementSending(args: ToggleMeasurementSendingArgs) {
     if (args.device !== this) return;
 
     const currentValue = this.getSetting('send_measurements') as boolean;
@@ -450,7 +460,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     }
   }
 
-  private async actionLogToTimeline(args: any) {
+  private async actionLogToTimeline(args: LogToTimelineArgs) {
     if (args.device !== this) return;
 
     const batteryResult = await this.getStoreValue('lastBatteryResult') as number || 0;
@@ -466,7 +476,6 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       timestamp: Date.now(),
     });
   }
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // ===== Trigger Emission Methods =====
 

@@ -2,6 +2,9 @@ import Homey from 'homey';
 import {
   FrankEnergieClient,
   OnbalansmarktClient,
+  type TriggerOnlyDeviceArgs,
+  type ConditionOnlyDeviceArgs,
+  type RankInTopXArgs,
 } from './index';
 
 /**
@@ -221,26 +224,22 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
   /**
    * Common trigger handlers
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected async onRankingImproved(args: any) {
+  protected async onRankingImproved(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected async onRankingDeclined(args: any) {
+  protected async onRankingDeclined(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected async onMeasurementSent(args: any) {
+  protected async onMeasurementSent(args: TriggerOnlyDeviceArgs) {
     return args.device === this;
   }
 
   /**
    * Common condition handlers
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected async condRankInTopX(args: any) {
+  protected async condRankInTopX(args: RankInTopXArgs) {
     if (args.device !== this) return false;
     const rank = args.rankType === 'overall'
       ? await this.getCapabilityValue('frank_energie_overall_rank')
@@ -248,8 +247,7 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
     return (rank as number) <= args.threshold;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected async condProviderRankBetter(args: any) {
+  protected async condProviderRankBetter(args: ConditionOnlyDeviceArgs) {
     if (args.device !== this) return false;
     const overallRank = await this.getCapabilityValue('frank_energie_overall_rank') as number;
     const providerRank = await this.getCapabilityValue('frank_energie_provider_rank') as number;
