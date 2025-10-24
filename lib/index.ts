@@ -31,6 +31,7 @@ export {
   BatteryAggregator,
   type BatteryAggregatorConfig,
   type AggregatedResults,
+  type BatteryError,
 } from './battery-aggregator';
 
 // Trading Mode Detector

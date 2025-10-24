@@ -7,6 +7,12 @@
 
 import type { FrankEnergieClient, SmartBattery, SmartBatterySessionData } from './frank-energie-client';
 
+export interface BatteryError {
+  batteryId: string;
+  batteryName: string;
+  error: string;
+}
+
 export interface AggregatedResults {
   /** Total result for the period (kortingsfactuur) */
   periodTotalResult: number;
@@ -24,6 +30,8 @@ export interface AggregatedResults {
   batteryCount: number;
   /** Individual battery session data */
   sessions: SmartBatterySessionData[];
+  /** Batteries that failed to fetch data */
+  failedBatteries: BatteryError[];
 }
 
 export interface BatteryAggregatorConfig {
@@ -71,6 +79,7 @@ export class BatteryAggregator {
       periodImbalanceResult: 0,
       batteryCount: batteries.length,
       sessions: [],
+      failedBatteries: [],
     };
 
     // Fetch and accumulate session data for each battery
@@ -103,11 +112,32 @@ export class BatteryAggregator {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         this.logger(`BatteryAggregator: Error fetching sessions for battery ${battery.id}: ${errorMessage}`);
-        // Continue with other batteries
+
+        // Track failed battery
+        results.failedBatteries.push({
+          batteryId: battery.id,
+          batteryName: battery.externalReference || `Battery ${battery.id.slice(0, 8)}`,
+          error: errorMessage,
+        });
       }
     }
 
+    // Check if all batteries failed
+    if (results.failedBatteries.length === batteries.length) {
+      throw new Error(`Failed to fetch data from all ${batteries.length} batteries`);
+    }
+
+    // Log warning if some batteries failed
+    if (results.failedBatteries.length > 0) {
+      this.logger(
+        `BatteryAggregator: Warning - ${results.failedBatteries.length} of ${batteries.length} batteries failed to fetch data`,
+        results.failedBatteries,
+      );
+    }
+
     this.logger('BatteryAggregator: Aggregation complete', {
+      successfulBatteries: results.sessions.length,
+      failedBatteries: results.failedBatteries.length,
       periodTotalResult: results.periodTotalResult.toFixed(2),
       totalTradingResult: results.totalTradingResult.toFixed(2),
       periodEpexResult: results.periodEpexResult.toFixed(2),

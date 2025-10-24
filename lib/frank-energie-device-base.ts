@@ -99,10 +99,34 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
   }
 
   /**
+   * Validate and sanitize poll interval setting
+   * @param interval User-provided interval in minutes
+   * @returns Validated interval clamped to 1-60 minutes range
+   */
+  private validatePollInterval(interval: unknown): number {
+    // Default to 5 minutes if invalid
+    const defaultInterval = 5;
+
+    if (typeof interval !== 'number' || isNaN(interval)) {
+      this.log(`Invalid poll interval type, using default: ${defaultInterval} minutes`);
+      return defaultInterval;
+    }
+
+    // Clamp to valid range (1-60 minutes)
+    const clamped = Math.max(1, Math.min(60, Math.round(interval)));
+
+    if (clamped !== interval) {
+      this.log(`Poll interval ${interval} out of range [1-60], clamped to ${clamped} minutes`);
+    }
+
+    return clamped;
+  }
+
+  /**
    * Setup polling interval
    */
   protected async setupPolling(): Promise<void> {
-    const pollIntervalMinutes = (this.getSetting('poll_interval') as number) || 5;
+    const pollIntervalMinutes = this.validatePollInterval(this.getSetting('poll_interval'));
     const pollIntervalMs = pollIntervalMinutes * 60 * 1000;
 
     this.log(`Setting up polling with ${pollIntervalMinutes} minute interval`);
@@ -266,6 +290,13 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
   }): Promise<string | void> {
     this.log('Device settings changed:', changedKeys);
 
+    // Stop polling during reconfiguration to avoid race conditions
+    if (this.pollInterval) {
+      this.homey.clearInterval(this.pollInterval);
+      this.pollInterval = undefined;
+      this.log('Polling stopped for settings reconfiguration');
+    }
+
     // If credentials changed, reinitialize clients
     if (
       changedKeys.includes('frank_energie_email') ||
@@ -275,7 +306,7 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
       try {
         this.log('Reinitializing clients due to credential changes');
         await this.initializeClients();
-        await this.pollData();
+        this.log('Clients reinitialized successfully');
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';
         this.error('Failed to reinitialize clients:', errorMsg);
@@ -283,16 +314,15 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
       }
     }
 
-    // If poll interval changed, restart polling
-    if (changedKeys.includes('poll_interval')) {
-      this.log('Restarting polling with new interval');
-      if (this.pollInterval) {
-        this.homey.clearInterval(this.pollInterval);
-      }
+    // Restart polling with new configuration
+    try {
       await this.setupPolling();
+      this.log('Settings applied successfully');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error('Failed to restart polling:', errorMsg);
+      throw new Error(`Failed to restart polling: ${errorMsg}`);
     }
-
-    this.log('Settings applied successfully');
   }
 
   async onRenamed(name: string) {
