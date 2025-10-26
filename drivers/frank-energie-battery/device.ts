@@ -204,6 +204,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       );
     }
 
+    // Update lifetime total trading result
+    if (results.totalTradingResult !== null) {
+      updatePromises.push(
+        this.setCapabilityValue('frank_energie_lifetime_total', results.totalTradingResult)
+          .catch((error) => this.error('Failed to update frank_energie_lifetime_total:', error)),
+      );
+    }
+
     // Update Frank Slim bonus
     if (results.periodFrankSlim !== null) {
       updatePromises.push(

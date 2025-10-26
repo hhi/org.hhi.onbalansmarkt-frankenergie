@@ -1,0 +1,20 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Lifetime Total",
+    "nl": "Totaal Lifetime"
+  },
+  "desc": {
+    "en": "Total lifetime trading result (all time)",
+    "nl": "Totaal lifetime handelsresultaat (all-time)"
+  },
+  "units": {
+    "en": "€",
+    "nl": "€"
+  },
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "uiQuickAction": false
+}
