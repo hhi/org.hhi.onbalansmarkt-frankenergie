@@ -17,6 +17,14 @@ export = class SmartBatteryDriver extends Homey.Driver {
    * User provides credentials, device manages all batteries automatically
    */
   async onPair(session: Homey.Driver.PairSession) {
+    // Session store for credentials
+    let pairingData: {
+      email: string;
+      password: string;
+      batteryCount: number;
+      onbalansmarktApiKey: string;
+    } | null = null;
+
     // Verify credentials and check for batteries
     session.setHandler('verify_credentials', async (data: { email: string; password: string }) => {
       try {
@@ -47,19 +55,35 @@ export = class SmartBatteryDriver extends Homey.Driver {
       }
     });
 
+    // Store credentials from login view
+    session.setHandler('store_credentials', async (data: {
+      email: string;
+      password: string;
+      batteryCount: number;
+      onbalansmarktApiKey: string;
+    }) => {
+      pairingData = data;
+      this.log('Credentials stored for list_devices');
+      return true;
+    });
+
     // Create device - represents ALL batteries on the account
-    session.setHandler('list_devices', async (data: { email: string; password: string; batteryCount?: number; onbalansmarktApiKey?: string }) => {
-      const deviceName = data.batteryCount && data.batteryCount > 1
-        ? `Frank Energie Batteries (${data.batteryCount})`
+    session.setHandler('list_devices', async () => {
+      if (!pairingData) {
+        throw new Error('No pairing data available. Please restart pairing.');
+      }
+
+      const deviceName = pairingData.batteryCount > 1
+        ? `Frank Energie Batteries (${pairingData.batteryCount})`
         : 'Frank Energie Battery';
 
       // Store credentials at app level for all devices to use
       // @ts-expect-error - Accessing app instance with specific methods
-      this.homey.app.setCredentials?.(data.email, data.password);
+      this.homey.app.setCredentials?.(pairingData.email, pairingData.password);
       this.log('Stored Frank Energie credentials at app level');
 
       // Onbalansmarkt API key is required for battery device
-      const apiKey = data.onbalansmarktApiKey || '';
+      const apiKey = pairingData.onbalansmarktApiKey || '';
       if (!apiKey.trim()) {
         this.log('Warning: No Onbalansmarkt API key provided during pairing');
       }
@@ -73,11 +97,11 @@ export = class SmartBatteryDriver extends Homey.Driver {
           },
           settings: {
             // Store credentials at device level for backwards compatibility
-            frank_energie_email: data.email,
-            frank_energie_password: data.password,
+            frank_energie_email: pairingData.email,
+            frank_energie_password: pairingData.password,
             onbalansmarkt_api_key: apiKey,
-            poll_interval: 5,
-            send_measurements: true,
+            poll_interval: 15,
+            send_measurements: false,
           },
         },
       ];

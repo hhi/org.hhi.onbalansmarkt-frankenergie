@@ -69,25 +69,29 @@
         });
 
         if (result && result.batteryCount > 0) {
-          // Credentials verified, batteries found - proceed to create device
-          await Homey.emit('list_devices', {
+          // Credentials verified, batteries found - store data and proceed
+          // Store credentials for list_devices handler
+          await Homey.emit('store_credentials', {
             email,
             password,
             batteryCount: result.batteryCount,
             onbalansmarktApiKey: apiKey,
           });
+
+          // Navigate to next view (list_devices template)
+          Homey.nextView();
         } else {
           Homey.showDialog('error', {
-            title: Homey.__('error.battery.notfound.title'),
-            body: Homey.__('error.battery.notfound.body'),
+            title: 'No Batteries Found',
+            body: 'No smart batteries found on this Frank Energie account. Please check your account.',
           });
           submitButton.disabled = false;
           submitButton.textContent = Homey.__('pair.buttons.next') || 'Next';
         }
       } catch (error) {
         Homey.showDialog('error', {
-          title: Homey.__('error.login.failed.title'),
-          body: error.message || Homey.__('error.login.failed.body'),
+          title: 'Login Failed',
+          body: error.message || 'Failed to verify Frank Energie credentials. Please check your email and password.',
         });
         submitButton.disabled = false;
         submitButton.textContent = Homey.__('pair.buttons.next') || 'Next';
