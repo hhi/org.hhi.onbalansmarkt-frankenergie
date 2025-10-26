@@ -1,0 +1,15 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Trading Result",
+    "nl": "Trading Opbrengst"
+  },
+  "units": {
+    "en": "€",
+    "nl": "€"
+  },
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

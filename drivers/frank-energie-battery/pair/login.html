@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frank Energie</title>
+</head>
+<body>
+  <homey-pair>
+    <h1 data-i18n="pair.battery.login.title">Frank Energie</h1>
+    <p data-i18n="pair.battery.login.subtitle">Inloggen met je Frank Energie account</p>
+
+    <form class="homey-form">
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="email" data-i18n="pair.login.email">E-mailadres</label>
+        <input id="email" type="email" required class="homey-form-input" placeholder="jij@example.com" />
+        <small class="homey-form-hint" data-i18n="pair.login.email.hint">Uw Frank Energie account e-mailadres</small>
+      </div>
+
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="password" data-i18n="pair.login.password">Wachtwoord</label>
+        <input id="password" type="password" required class="homey-form-input" placeholder="••••••••" />
+        <small class="homey-form-hint" data-i18n="pair.login.password.hint">Uw Frank Energie account wachtwoord</small>
+      </div>
+
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="apiKey" data-i18n="pair.login.apiKey">Onbalansmarkt API Key</label>
+        <input id="apiKey" type="text" required class="homey-form-input" placeholder="your-api-key" />
+        <small class="homey-form-hint" data-i18n="pair.login.apiKey.hint">Uw Onbalansmarkt.com API sleutel (verplicht voor batterij device)</small>
+      </div>
+
+      <button type="submit" class="button positive" data-i18n="pair.buttons.next">Volgende</button>
+    </form>
+  </homey-pair>
+
+  <script>
+    Homey.setTitle(Homey.__('pair.battery.login.title'));
+
+    const form = document.querySelector('form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const apiKeyInput = document.getElementById('apiKey');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const apiKey = apiKeyInput.value.trim();
+
+      if (!email || !password || !apiKey) {
+        Homey.showDialog('error', {
+          title: Homey.__('error.validation.title'),
+          body: Homey.__('error.validation.fields'),
+        });
+        return;
+      }
+
+      // Disable form during verification
+      submitButton.disabled = true;
+      submitButton.textContent = Homey.__('pair.buttons.verifying') || 'Verifying...';
+
+      try {
+        // Verify credentials and check for batteries
+        const result = await Homey.emit('verify_credentials', {
+          email,
+          password,
+        });
+
+        if (result && result.batteryCount > 0) {
+          // Credentials verified, batteries found - proceed to create device
+          await Homey.emit('list_devices', {
+            email,
+            password,
+            batteryCount: result.batteryCount,
+            onbalansmarktApiKey: apiKey,
+          });
+        } else {
+          Homey.showDialog('error', {
+            title: Homey.__('error.battery.notfound.title'),
+            body: Homey.__('error.battery.notfound.body'),
+          });
+          submitButton.disabled = false;
+          submitButton.textContent = Homey.__('pair.buttons.next') || 'Next';
+        }
+      } catch (error) {
+        Homey.showDialog('error', {
+          title: Homey.__('error.login.failed.title'),
+          body: error.message || Homey.__('error.login.failed.body'),
+        });
+        submitButton.disabled = false;
+        submitButton.textContent = Homey.__('pair.buttons.next') || 'Next';
+      }
+    });
+
+    emailInput.focus();
+  </script>
+</body>
+</html>

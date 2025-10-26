@@ -7,6 +7,13 @@
   "capabilities": [
     "measure_power",
     "meter_power",
+    "frank_energie_current_market_price",
+    "frank_energie_next_hour_market_price",
+    "frank_energie_today_consumption",
+    "frank_energie_today_costs",
+    "frank_energie_min_market_price_today",
+    "frank_energie_max_market_price_today",
+    "frank_energie_avg_market_price_today",
     "frank_energie_site_usage",
     "frank_energie_site_costs",
     "frank_energie_overall_rank",

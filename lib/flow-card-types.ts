@@ -75,3 +75,16 @@ export interface LogToTimelineArgs extends BaseFlowCardArgs {
 
 // Force data poll and update dashboard use only device
 export type ActionOnlyDeviceArgs = BaseFlowCardArgs;
+
+// ===== External Battery Metrics =====
+
+export interface ReceiveBatteryMetricsArgs extends BaseFlowCardArgs {
+  // eslint-disable-next-line camelcase
+  battery_id: string;
+  // eslint-disable-next-line camelcase
+  total_charged_kwh: number;
+  // eslint-disable-next-line camelcase
+  total_discharged_kwh: number;
+  // eslint-disable-next-line camelcase
+  battery_percentage: number;
+}

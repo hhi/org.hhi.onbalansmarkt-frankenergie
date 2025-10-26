@@ -1,0 +1,21 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Daily charged",
+    "nl": "Dagelijks geladen"
+  },
+  "desc": {
+    "en": "Total kWh charged today from external batteries",
+    "nl": "Totaal kWh vandaag geladen van externe batterijen"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh"
+  },
+  "decimals": 2,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icon.svg"
+}

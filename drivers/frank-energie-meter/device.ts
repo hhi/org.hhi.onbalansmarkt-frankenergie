@@ -109,13 +109,72 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
   ): Promise<void> {
     const updatePromises: Promise<void>[] = [];
 
-    // Update usage capability
+    // Calculate market price statistics from today's data
+    const marketPriceValues = prices.electricityPrices.map((p: { marketPrice: number }) => p.marketPrice);
+    const currentHour = new Date().getHours();
+    const currentPrice = prices.electricityPrices.find((p: { from: string; marketPrice: number }) => {
+      const hour = new Date(p.from).getHours();
+      return hour === currentHour;
+    })?.marketPrice || prices.averageElectricityPrices.averageMarketPrice;
+
+    const nextHourPrice = prices.electricityPrices.find((p: { from: string; marketPrice: number }) => {
+      const hour = new Date(p.from).getHours();
+      return hour === (currentHour + 1) % 24;
+    })?.marketPrice || currentPrice;
+
+    const minPrice = Math.min(...marketPriceValues);
+    const maxPrice = Math.max(...marketPriceValues);
+    const avgPrice = prices.averageElectricityPrices.averageMarketPrice;
+
+    // Calculate today's consumption and costs
+    const today = new Date().toISOString().split('T')[0];
+    const todayData = usage.electricity.items.find((c: { from: string }) => c.from.startsWith(today));
+    const todayConsumption = todayData?.usage || 0;
+    const todayCosts = todayData?.costs || 0;
+
+    // Update market price capabilities
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_current_market_price', currentPrice)
+        .catch((error) => this.error('Failed to update current market price:', error)),
+    );
+
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_next_hour_market_price', nextHourPrice)
+        .catch((error) => this.error('Failed to update next hour market price:', error)),
+    );
+
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_min_market_price_today', minPrice)
+        .catch((error) => this.error('Failed to update min market price:', error)),
+    );
+
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_max_market_price_today', maxPrice)
+        .catch((error) => this.error('Failed to update max market price:', error)),
+    );
+
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_avg_market_price_today', avgPrice)
+        .catch((error) => this.error('Failed to update avg market price:', error)),
+    );
+
+    // Update today's consumption and costs
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_today_consumption', todayConsumption)
+        .catch((error) => this.error('Failed to update today consumption:', error)),
+    );
+
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_today_costs', todayCosts)
+        .catch((error) => this.error('Failed to update today costs:', error)),
+    );
+
+    // Update existing capabilities
     updatePromises.push(
       this.setCapabilityValue('frank_energie_site_usage', usage.electricity.usageTotal)
         .catch((error) => this.error('Failed to update site usage:', error)),
     );
 
-    // Update costs capability
     updatePromises.push(
       this.setCapabilityValue('frank_energie_site_costs', monthSummary.actualCostsUntilLastMeterReadingDate)
         .catch((error) => this.error('Failed to update site costs:', error)),
@@ -123,7 +182,7 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
 
     // Update power meter with current average price as indicator
     updatePromises.push(
-      this.setCapabilityValue('meter_power', Math.round(prices.averageElectricityPrices.averageMarketPrice * 100))
+      this.setCapabilityValue('meter_power', Math.round(currentPrice * 100))
         .catch((error) => this.error('Failed to update meter_power:', error)),
     );
 
@@ -137,9 +196,9 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `Meter Capabilities updated - Usage: ${usage.electricity.usageTotal.toFixed(2)} kWh, `
-      + `Costs: €${monthSummary.actualCostsUntilLastMeterReadingDate.toFixed(2)}, `
-      + `Avg Price: €${prices.averageElectricityPrices.averageMarketPrice.toFixed(4)}/kWh`,
+      `Meter Capabilities updated - Current Price: €${currentPrice.toFixed(4)}/kWh, `
+      + `Today: ${todayConsumption.toFixed(2)} kWh / €${todayCosts.toFixed(2)}, `
+      + `Month: ${usage.electricity.usageTotal.toFixed(2)} kWh / €${monthSummary.actualCostsUntilLastMeterReadingDate.toFixed(2)}`,
     );
   }
 

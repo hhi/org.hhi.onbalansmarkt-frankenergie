@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- PV Solar Icon: Sun rays with solar panel grid -->
+  <!-- Design Philosophy: Kinetic Energy - Solar yellow for photovoltaic promise -->
+
+  <!-- Sun rays (14 rays emanating from sun) -->
+  <line x1="250" y1="80" x2="250" y2="125" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="312" y1="95" x2="289" y2="132" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="358" y1="142" x2="329" y2="171" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="375" y1="205" x2="336" y2="216" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="375" y1="272" x2="336" y2="261" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="358" y1="335" x2="329" y2="306" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="312" y1="382" x2="289" y2="345" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="250" y1="397" x2="250" y2="352" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="188" y1="382" x2="211" y2="345" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="142" y1="335" x2="171" y2="306" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="125" y1="272" x2="164" y2="261" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="125" y1="205" x2="164" y2="216" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="142" y1="142" x2="171" y2="171" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+  <line x1="188" y1="95" x2="211" y2="132" stroke="#FFB700" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Sun circle -->
+  <circle cx="250" cy="239" r="83" fill="#FFB700"/>
+
+  <!-- Solar panel (below sun, tilted slightly) -->
+  <g transform="translate(250, 380)">
+    <!-- Panel outline -->
+    <rect x="-83" y="-30" width="166" height="60" fill="none" stroke="#2C3E50" stroke-width="8" rx="4"/>
+
+    <!-- Grid lines (3x2 grid) -->
+    <line x1="-28" y1="-30" x2="-28" y2="30" stroke="#2C3E50" stroke-width="3"/>
+    <line x1="28" y1="-30" x2="28" y2="30" stroke="#2C3E50" stroke-width="3"/>
+    <line x1="-83" y1="0" x2="83" y2="0" stroke="#2C3E50" stroke-width="3"/>
+
+    <!-- Panel cells highlights (suggesting photovoltaic cells) -->
+    <rect x="-75" y="-22" width="44" height="18" fill="#FFB700" opacity="0.2"/>
+    <rect x="-21" y="-22" width="44" height="18" fill="#FFB700" opacity="0.2"/>
+    <rect x="31" y="-22" width="44" height="18" fill="#FFB700" opacity="0.2"/>
+  </g>
+
+  <!-- Energy flow arrows (from sun to panel) -->
+  <path d="M 250 322 L 250 350" stroke="#FFB700" stroke-width="3" opacity="0.6"
+        marker-end="url(#arrowhead)"/>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#FFB700" opacity="0.6"/>
+    </marker>
+  </defs>
+</svg>

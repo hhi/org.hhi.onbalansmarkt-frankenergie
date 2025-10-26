@@ -1,0 +1,15 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Last Upload",
+    "nl": "Laatste Upload"
+  },
+  "desc": {
+    "en": "Last successful upload to Onbalansmarkt.com",
+    "nl": "Laatste succesvolle upload naar Onbalansmarkt.com"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "uiQuickAction": false
+}

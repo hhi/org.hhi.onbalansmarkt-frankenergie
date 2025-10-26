@@ -4,62 +4,79 @@ import { FrankEnergieClient } from '../../lib';
 /**
  * EV Charger Driver
  *
- * Handles pairing of Enode-integrated EV chargers via Frank Energie
+ * Handles pairing of Enode-integrated EV chargers via Frank Energie.
+ * Credentials are configured in device settings, not during pairing.
  */
 export = class EvChargerDriver extends Homey.Driver {
-  private frankEnergieClient?: FrankEnergieClient;
-
   async onInit() {
     this.log('EvChargerDriver initialized');
   }
 
   /**
-   * Handle pairing
+   * Handle pairing - minimal flow
+   * Uses app-level credentials if available, otherwise requires credentials
    */
-  async onPair(session: any) {
-    const pairData: {
-      email?: string;
-      password?: string;
-      chargeLimit?: number;
-    } = {};
+  async onPair(session: Homey.Driver.PairSession) {
+    // Check if app-level credentials are already configured
+    session.setHandler('check_credentials', async () => {
+      // @ts-expect-error - Accessing app instance with specific methods
+      const hasCredentials = this.homey.app.hasCredentials?.() as boolean | undefined;
+      return { hasCredentials: hasCredentials || false };
+    });
 
-    session.setHandler('login', async (data: any) => {
+    // Verify EV charger exists with provided or app-level credentials
+    session.setHandler('verify_charger', async (data: { email?: string; password?: string }) => {
       try {
-        // Initialize client with provided credentials
-        this.frankEnergieClient = new FrankEnergieClient({
+        // Get credentials from app settings or data
+        // @ts-expect-error - Accessing app instance with specific methods
+        const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+
+        const email = data.email || appCreds?.email;
+        const password = data.password || appCreds?.password;
+
+        if (!email || !password) {
+          throw new Error('Frank Energie credentials not configured. Please add a Battery device first or provide credentials.');
+        }
+
+        const client = new FrankEnergieClient({
           logger: (msg, ...args) => this.log(msg, ...args),
         });
 
-        // Attempt login
-        await this.frankEnergieClient.login(data.email, data.password);
-        this.log('Login successful');
+        await client.login(email, password);
+        const sessions = await client.getEnodeSessions();
 
-        // Fetch Enode sessions to verify EV charger connectivity
-        const sessions = await this.frankEnergieClient.getEnodeSessions();
         this.log(`Found ${sessions.rows.length} charging sessions`);
 
-        pairData.email = data.email;
-        pairData.password = data.password;
+        if (sessions.rows.length === 0) {
+          throw new Error('No EV charger found. Ensure your EV is connected via Enode.');
+        }
 
-        return {
-          hasCharger: sessions.rows.length > 0,
-          sessionCount: sessions.rows.length,
-        };
+        // Store credentials at app level if provided
+        if (data.email && data.password) {
+          // @ts-expect-error - Accessing app instance with specific methods
+          this.homey.app.setCredentials?.(data.email, data.password);
+          this.log('Stored Frank Energie credentials at app level');
+        }
+
+        return { sessionCount: sessions.rows.length };
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.error('Login failed:', errorMsg);
-        throw new Error(`Login failed: ${errorMsg}`);
+        this.error('Failed to verify EV charger:', errorMsg);
+        throw new Error(`Failed to verify EV charger: ${errorMsg}`);
       }
     });
 
-    session.setHandler('setChargeLimit', async (data: any) => {
-      // Validate charge limit (typically 0-32 amps for standard chargers)
-      const limit = Math.min(Math.max(data.chargeLimit || 16, 0), 32);
-      pairData.chargeLimit = limit;
-      return true;
-    });
+    // Create device with credentials and default charge limit
+    session.setHandler('list_devices', async (data: { email?: string; password?: string; chargeLimit?: number }) => {
+      const limit = Math.min(Math.max(data.chargeLimit || 16, 6), 32);
 
-    session.setHandler('list_devices', async () => {
+      // Get credentials (may be from app settings or provided during pairing)
+      // @ts-expect-error - Accessing app instance with specific methods
+      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+
+      const email = data.email || appCreds?.email || '';
+      const password = data.password || appCreds?.password || '';
+
       return [
         {
           name: 'EV Charger',
@@ -68,9 +85,10 @@ export = class EvChargerDriver extends Homey.Driver {
             type: 'ev-charger',
           },
           settings: {
-            frank_energie_email: pairData.email,
-            frank_energie_password: pairData.password,
-            charge_limit: pairData.chargeLimit || 16,
+            // Store credentials at device level for backwards compatibility
+            frank_energie_email: email,
+            frank_energie_password: password,
+            charge_limit: limit,
             poll_interval: 5,
           },
         },

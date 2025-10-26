@@ -1,6 +1,7 @@
 import {
   FrankEnergieDeviceBase,
   type SmartPvSystem,
+  type SmartPvSystemSummary,
 } from '../../lib';
 
 /**
@@ -102,9 +103,32 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
   /**
    * Update device capabilities with PV data
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async updateCapabilities(pvSummary: any): Promise<void> {
+  private async updateCapabilities(pvSummary: SmartPvSystemSummary): Promise<void> {
     const updatePromises: Promise<void>[] = [];
+
+    // TODO: Current power and today generation are not available in SmartPvSystemSummary API response
+    // These fields need to be fetched from a different GraphQL query or SolarEdge API endpoint
+    // For now, set default values to prevent capability errors
+    const currentPower = 0; // Placeholder until proper query is found
+    const todayGeneration = 0; // Placeholder until proper query is found
+
+    // Update current power (placeholder)
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_pv_current_power', currentPower)
+        .catch((error) => this.error('Failed to update current power:', error)),
+    );
+
+    // Update power meter with current power (placeholder)
+    updatePromises.push(
+      this.setCapabilityValue('meter_power', Math.round(currentPower * 1000))
+        .catch((error) => this.error('Failed to update meter_power:', error)),
+    );
+
+    // Update today's generation (placeholder)
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_pv_today_generation', todayGeneration)
+        .catch((error) => this.error('Failed to update today generation:', error)),
+    );
 
     // Update PV status
     if (pvSummary.operationalStatus) {
@@ -120,15 +144,9 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
         this.setCapabilityValue('frank_energie_pv_bonus', pvSummary.totalBonus)
           .catch((error) => this.error('Failed to update pv bonus:', error)),
       );
-
-      // Update power meter with bonus as indicator
-      updatePromises.push(
-        this.setCapabilityValue('meter_power', Math.round(pvSummary.totalBonus * 1000))
-          .catch((error) => this.error('Failed to update meter_power:', error)),
-      );
     }
 
-    // Update steering status
+    // Update steering status (if available)
     if (pvSummary.steeringStatus) {
       updatePromises.push(
         this.setCapabilityValue('onoff', pvSummary.steeringStatus === 'active')
@@ -140,16 +158,16 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `PV Capabilities updated - Status: ${pvSummary.operationalStatus}, `
-      + `Bonus: €${pvSummary.totalBonus.toFixed(2)}`,
+      `PV Capabilities updated - Power: ${currentPower.toFixed(2)} kW (placeholder), `
+      + `Today: ${todayGeneration.toFixed(2)} kWh (placeholder), `
+      + `Status: ${pvSummary.operationalStatus}, Bonus: €${pvSummary.totalBonus.toFixed(2)}`,
     );
   }
 
   /**
    * Process and emit PV-specific flow triggers
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async processPvFlowCardTriggers(pvSummary: any): Promise<void> {
+  private async processPvFlowCardTriggers(pvSummary: SmartPvSystemSummary): Promise<void> {
     try {
       // Check operational status change
       if (this.previousOperationalStatus !== null && this.previousOperationalStatus !== pvSummary.operationalStatus) {

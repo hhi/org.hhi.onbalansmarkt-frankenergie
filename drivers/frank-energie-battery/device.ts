@@ -1,9 +1,11 @@
 import {
   BatteryAggregator,
+  BatteryMetricsStore,
   TradingModeDetector,
   type SmartBattery,
   type AggregatedResults,
   type TradingMode,
+  type ExternalBatteryMetrics,
   FrankEnergieDeviceBase,
   type TriggerOnlyDeviceArgs,
   type ResultPositiveNegativeArgs,
@@ -16,6 +18,7 @@ import {
   type ActionOnlyDeviceArgs,
   type ToggleMeasurementSendingArgs,
   type LogToTimelineArgs,
+  type ReceiveBatteryMetricsArgs,
 } from '../../lib';
 
 /**
@@ -27,6 +30,7 @@ import {
 export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   private batteryAggregator?: BatteryAggregator;
   private batteries: SmartBattery[] = [];
+  private externalBatteryMetrics?: BatteryMetricsStore;
 
   // Battery-specific state tracking
   private previousBatteryCount: number = 0;
@@ -53,6 +57,13 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     if (this.batteries.length === 0) {
       throw new Error('No smart batteries found on Frank Energie account');
     }
+
+    // Initialize external battery metrics store
+    this.externalBatteryMetrics = new BatteryMetricsStore({
+      device: this,
+      logger: (msg, ...args) => this.log(msg, ...args),
+    });
+    this.log('External battery metrics store initialized');
   }
 
   /**
@@ -96,6 +107,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       .registerRunListener(this.actionToggleMeasurementSending.bind(this));
     this.homey.flow.getActionCard('log_to_timeline')
       .registerRunListener(this.actionLogToTimeline.bind(this));
+    this.homey.flow.getActionCard('receive_battery_metrics')
+      .registerRunListener(this.actionReceiveBatteryMetrics.bind(this));
 
     this.log('Battery-specific flow cards registered');
   }
@@ -191,6 +204,38 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       );
     }
 
+    // Update Frank Slim bonus
+    if (results.periodFrankSlim !== null) {
+      updatePromises.push(
+        this.setCapabilityValue('frank_energie_frank_slim_bonus', results.periodFrankSlim)
+          .catch((error) => this.error('Failed to update frank_energie_frank_slim_bonus:', error)),
+      );
+    }
+
+    // Update EPEX result
+    if (results.periodEpexResult !== null) {
+      updatePromises.push(
+        this.setCapabilityValue('frank_energie_epex_result', results.periodEpexResult)
+          .catch((error) => this.error('Failed to update frank_energie_epex_result:', error)),
+      );
+    }
+
+    // Update Trading result split (same as period trading result)
+    if (results.periodTradingResult !== null) {
+      updatePromises.push(
+        this.setCapabilityValue('frank_energie_trading_result_split', results.periodTradingResult)
+          .catch((error) => this.error('Failed to update frank_energie_trading_result_split:', error)),
+      );
+    }
+
+    // Update Imbalance result
+    if (results.periodImbalanceResult !== null) {
+      updatePromises.push(
+        this.setCapabilityValue('frank_energie_imbalance_result', results.periodImbalanceResult)
+          .catch((error) => this.error('Failed to update frank_energie_imbalance_result:', error)),
+      );
+    }
+
     // Update battery mode (custom capability)
     const mode = await this.getStoreValue('lastTradingMode') as string;
     if (mode) {
@@ -204,9 +249,10 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `Capabilities updated - Trading: €${results.periodTradingResult.toFixed(2)}, `
-      + `Total: €${results.totalTradingResult.toFixed(2)}, `
-      + `Batteries: ${results.batteryCount}`,
+      `Capabilities updated - Total: €${results.periodTradingResult.toFixed(2)} `
+      + `(EPEX: €${results.periodEpexResult.toFixed(2)}, Trading: €${results.periodTradingResult.toFixed(2)}, `
+      + `Imbalance: €${results.periodImbalanceResult.toFixed(2)}, Frank Slim: €${results.periodFrankSlim.toFixed(2)}), `
+      + `Lifetime: €${results.totalTradingResult.toFixed(2)}, Batteries: ${results.batteryCount}`,
     );
   }
 
@@ -298,9 +344,10 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     try {
       const batteryCharge = await this.getStoreValue('lastBatteryCharge') as number || 0;
+      const uploadTimestamp = new Date();
 
       await this.onbalansmarktClient.sendMeasurement({
-        timestamp: new Date(),
+        timestamp: uploadTimestamp,
         batteryResult: results.periodTradingResult,
         batteryResultTotal: results.totalTradingResult,
         batteryResultEpex: results.periodEpexResult,
@@ -309,12 +356,16 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         mode,
       });
 
+      // Update last upload timestamp capability
+      await this.setCapabilityValue('frank_energie_last_upload', uploadTimestamp.toISOString())
+        .catch((error) => this.error('Failed to update last upload timestamp:', error));
+
       // Emit: Measurement Sent trigger
       await this.emitMeasurementSent(
         results.periodTradingResult,
         batteryCharge,
         mode,
-        new Date().toISOString(),
+        uploadTimestamp.toISOString(),
       );
 
       this.log('Measurement sent to Onbalansmarkt');
@@ -475,6 +526,45 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       message: logMessage,
       timestamp: Date.now(),
     });
+  }
+
+  /**
+   * Action: Receive battery metrics from external sources
+   * Stores metrics and triggers aggregation/flow cards
+   */
+  private async actionReceiveBatteryMetrics(args: ReceiveBatteryMetricsArgs) {
+    if (args.device !== this) return;
+
+    if (!this.externalBatteryMetrics) {
+      this.error('External battery metrics store not initialized');
+      throw new Error('External battery metrics store not initialized');
+    }
+
+    this.log(`Receiving metrics for battery ${args.battery_id}: charged=${args.total_charged_kwh} kWh, discharged=${args.total_discharged_kwh} kWh, percentage=${args.battery_percentage}%`);
+
+    // Store the metric and get aggregated results
+    const aggregated: ExternalBatteryMetrics = await this.externalBatteryMetrics.storeMetric({
+      batteryId: args.battery_id,
+      totalChargedKwh: args.total_charged_kwh,
+      totalDischargedKwh: args.total_discharged_kwh,
+      batteryPercentage: args.battery_percentage,
+    });
+
+    // Update device capabilities
+    await this.setCapabilityValue('external_battery_daily_charged', aggregated.dailyChargedKwh);
+    await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
+    await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
+    await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
+
+    // Trigger flow card with aggregated data
+    await this.homey.flow.getTriggerCard('external_battery_metrics_updated').trigger(this, {
+      daily_charged_kwh: aggregated.dailyChargedKwh,
+      daily_discharged_kwh: aggregated.dailyDischargedKwh,
+      average_percentage: aggregated.averageBatteryPercentage,
+      battery_count: aggregated.batteryCount,
+    });
+
+    this.log(`External battery metrics updated - Daily: charged ${aggregated.dailyChargedKwh.toFixed(2)} kWh, discharged ${aggregated.dailyDischargedKwh.toFixed(2)} kWh, avg ${aggregated.averageBatteryPercentage.toFixed(1)}%, count ${aggregated.batteryCount}`);
   }
 
   // ===== Trigger Emission Methods =====

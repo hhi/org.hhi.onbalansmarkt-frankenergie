@@ -1,82 +1,81 @@
 import Homey from 'homey';
-import { FrankEnergieClient, type SmartBattery } from '../../lib';
+import { FrankEnergieClient } from '../../lib';
 
 /**
  * Smart Battery Driver
  *
- * Handles pairing of Frank Energie SmartBattery devices
+ * Handles pairing of Frank Energie SmartBattery devices.
+ * Creates a single device that manages ALL batteries on the account.
  */
 export = class SmartBatteryDriver extends Homey.Driver {
-  private frankEnergieClient?: FrankEnergieClient;
-
   async onInit() {
     this.log('SmartBatteryDriver initialized');
   }
 
   /**
-   * Handle pairing
+   * Handle pairing - simplified flow
+   * User provides credentials, device manages all batteries automatically
    */
-  async onPair(session: any) {
-    const pairData: { email?: string; password?: string; batteries?: SmartBattery[]; selectedBatteryId?: string; onbalansmarktApiKey?: string } = {};
-
-    session.setHandler('login', async (data: any) => {
+  async onPair(session: Homey.Driver.PairSession) {
+    // Verify credentials and check for batteries
+    session.setHandler('verify_credentials', async (data: { email: string; password: string }) => {
       try {
-        // Initialize client with provided credentials
-        this.frankEnergieClient = new FrankEnergieClient({
+        const client = new FrankEnergieClient({
           logger: (msg, ...args) => this.log(msg, ...args),
         });
 
-        // Attempt login
-        await this.frankEnergieClient.login(data.email, data.password);
-        this.log('Login successful');
+        await client.login(data.email, data.password);
+        const batteries = await client.getSmartBatteries();
 
-        // Fetch batteries
-        const batteries = await this.frankEnergieClient.getSmartBatteries();
-        this.log(`Found ${batteries.length} batteries`);
+        this.log(`Found ${batteries.length} smart batteries`);
 
-        pairData.email = data.email;
-        pairData.password = data.password;
-        pairData.batteries = batteries;
+        if (batteries.length === 0) {
+          throw new Error('No smart batteries found on this Frank Energie account');
+        }
 
-        return { batteries: batteries.map((b) => ({ id: b.id, name: b.externalReference || `Battery ${b.id.slice(0, 8)}` })) };
+        return {
+          batteryCount: batteries.length,
+          batteries: batteries.map((b) => ({
+            id: b.id,
+            name: b.externalReference || `Battery ${b.id.slice(0, 8)}`,
+          })),
+        };
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.error('Login failed:', errorMsg);
-        throw new Error(`Login failed: ${errorMsg}`);
+        this.error('Failed to verify credentials:', errorMsg);
+        throw new Error(`Failed to verify credentials: ${errorMsg}`);
       }
     });
 
-    session.setHandler('selectBattery', async (data: any) => {
-      pairData.selectedBatteryId = data.batteryId;
-      return true;
-    });
+    // Create device - represents ALL batteries on the account
+    session.setHandler('list_devices', async (data: { email: string; password: string; batteryCount?: number; onbalansmarktApiKey?: string }) => {
+      const deviceName = data.batteryCount && data.batteryCount > 1
+        ? `Frank Energie Batteries (${data.batteryCount})`
+        : 'Frank Energie Battery';
 
-    session.setHandler('onbalansmarktApiKey', async (data: any) => {
-      pairData.onbalansmarktApiKey = data.apiKey;
-      return true;
-    });
+      // Store credentials at app level for all devices to use
+      // @ts-expect-error - Accessing app instance with specific methods
+      this.homey.app.setCredentials?.(data.email, data.password);
+      this.log('Stored Frank Energie credentials at app level');
 
-    session.setHandler('list_devices', async () => {
-      if (!pairData.selectedBatteryId) {
-        throw new Error('No battery selected');
-      }
-
-      const battery = pairData.batteries?.find((b) => b.id === pairData.selectedBatteryId);
-      if (!battery) {
-        throw new Error('Selected battery not found');
+      // Onbalansmarkt API key is required for battery device
+      const apiKey = data.onbalansmarktApiKey || '';
+      if (!apiKey.trim()) {
+        this.log('Warning: No Onbalansmarkt API key provided during pairing');
       }
 
       return [
         {
-          name: battery.externalReference || `Smart Battery ${battery.id.slice(0, 8)}`,
+          name: deviceName,
           data: {
-            id: battery.id,
-            batteryId: battery.id,
+            id: 'frank-energie-batteries',
+            type: 'smart-battery-aggregator',
           },
           settings: {
-            frank_energie_email: pairData.email,
-            frank_energie_password: pairData.password,
-            onbalansmarkt_api_key: pairData.onbalansmarktApiKey || '',
+            // Store credentials at device level for backwards compatibility
+            frank_energie_email: data.email,
+            frank_energie_password: data.password,
+            onbalansmarkt_api_key: apiKey,
             poll_interval: 5,
             send_measurements: true,
           },

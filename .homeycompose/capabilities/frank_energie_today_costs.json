@@ -1,0 +1,15 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Costs Today",
+    "nl": "Kosten Vandaag"
+  },
+  "units": {
+    "en": "€",
+    "nl": "€"
+  },
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

@@ -1,0 +1,23 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Average battery percentage",
+    "nl": "Gemiddeld batterij percentage"
+  },
+  "desc": {
+    "en": "Average battery charge percentage across all external batteries",
+    "nl": "Gemiddeld batterij laadpercentage van alle externe batterijen"
+  },
+  "units": {
+    "en": "%",
+    "nl": "%"
+  },
+  "min": 0,
+  "max": 100,
+  "decimals": 1,
+  "chartType": "spline",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icon.svg"
+}

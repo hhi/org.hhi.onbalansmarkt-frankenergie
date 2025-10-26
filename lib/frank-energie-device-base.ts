@@ -49,30 +49,69 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
 
   /**
    * Initialize API clients - common across all devices
+   * Validates credentials and initializes both Frank Energie and Onbalansmarkt clients
+   * Credentials are loaded from app-level settings first, then device settings (backwards compatibility)
    */
   protected async initializeClients(): Promise<void> {
-    const frankEmail = this.getSetting('frank_energie_email') as string;
-    const frankPassword = this.getSetting('frank_energie_password') as string;
+    // Try to get credentials from app-level settings first
+    // @ts-expect-error - Accessing app instance with specific methods
+    const appCredentials = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
 
-    if (!frankEmail || !frankPassword) {
-      throw new Error('Frank Energie credentials not configured');
+    let frankEmail: string;
+    let frankPassword: string;
+
+    if (appCredentials && appCredentials.email && appCredentials.password) {
+      // Use app-level credentials (preferred)
+      frankEmail = appCredentials.email;
+      frankPassword = appCredentials.password;
+      this.log('Using app-level Frank Energie credentials');
+    } else {
+      // Fall back to device-level credentials (backwards compatibility)
+      frankEmail = this.getSetting('frank_energie_email') as string;
+      frankPassword = this.getSetting('frank_energie_password') as string;
+      this.log('Using device-level Frank Energie credentials (legacy)');
     }
 
-    // Initialize Frank Energie client
+    // Validate credentials exist
+    if (!frankEmail?.trim()) {
+      throw new Error('Frank Energie email address not configured. Please configure credentials in app settings or device settings.');
+    }
+
+    if (!frankPassword?.trim()) {
+      throw new Error('Frank Energie password not configured. Please configure credentials in app settings or device settings.');
+    }
+
+    // Initialize and test Frank Energie client
     this.frankEnergieClient = new FrankEnergieClient({
       logger: (msg, ...args) => this.log(msg, ...args),
     });
 
-    await this.frankEnergieClient.login(frankEmail, frankPassword);
-    this.log('Successfully authenticated with Frank Energie');
+    try {
+      await this.frankEnergieClient.login(frankEmail, frankPassword);
+      this.log('Successfully authenticated with Frank Energie');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Frank Energie authentication failed: ${errorMsg}. Check your credentials.`);
+    }
 
     // Initialize Onbalansmarkt client if API key is configured
     const onbalansmarktApiKey = this.getSetting('onbalansmarkt_api_key') as string;
-    if (onbalansmarktApiKey) {
-      this.onbalansmarktClient = new OnbalansmarktClient({
-        apiKey: onbalansmarktApiKey,
-        logger: (msg, ...args) => this.log(msg, ...args),
-      });
+    if (onbalansmarktApiKey?.trim()) {
+      try {
+        this.onbalansmarktClient = new OnbalansmarktClient({
+          apiKey: onbalansmarktApiKey,
+          logger: (msg, ...args) => this.log(msg, ...args),
+        });
+        this.log('Onbalansmarkt client initialized');
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        this.error('Failed to initialize Onbalansmarkt client:', errorMsg);
+        // Non-critical error - device can work without Onbalansmarkt
+        this.onbalansmarktClient = undefined;
+      }
+    } else {
+      this.onbalansmarktClient = undefined;
+      this.log('Onbalansmarkt API key not configured - rankings will not be updated');
     }
 
     // Device-specific initialization
@@ -325,31 +364,27 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
       this.log('Polling stopped for settings reconfiguration');
     }
 
-    // If credentials changed, reinitialize clients
-    if (
-      changedKeys.includes('frank_energie_email')
-      || changedKeys.includes('frank_energie_password')
-      || changedKeys.includes('onbalansmarkt_api_key')
-    ) {
-      try {
+    try {
+      // If credentials changed, reinitialize clients
+      if (
+        changedKeys.includes('frank_energie_email')
+        || changedKeys.includes('frank_energie_password')
+        || changedKeys.includes('onbalansmarkt_api_key')
+      ) {
         this.log('Reinitializing clients due to credential changes');
         await this.initializeClients();
         this.log('Clients reinitialized successfully');
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.error('Failed to reinitialize clients:', errorMsg);
-        throw new Error(`Failed to apply settings: ${errorMsg}`);
       }
-    }
 
-    // Restart polling with new configuration
-    try {
+      // Restart polling with new configuration
       await this.setupPolling();
       this.log('Settings applied successfully');
+      await this.setAvailable();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      this.error('Failed to restart polling:', errorMsg);
-      throw new Error(`Failed to restart polling: ${errorMsg}`);
+      this.error('Failed to apply settings:', errorMsg);
+      await this.setUnavailable(`Settings error: ${errorMsg}`);
+      throw new Error(`Failed to apply settings: ${errorMsg}`);
     }
   }
 

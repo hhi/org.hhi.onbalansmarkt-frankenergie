@@ -4,55 +4,45 @@ import { FrankEnergieClient } from '../../lib';
 /**
  * Site Meter Driver
  *
- * Handles pairing of Frank Energie site meter for tracking overall energy usage and costs
+ * Handles pairing of Frank Energie site meter for tracking overall energy usage and costs.
+ * Credentials are configured in device settings, not during pairing.
  */
 export = class SiteMeterDriver extends Homey.Driver {
-  private frankEnergieClient?: FrankEnergieClient;
-
   async onInit() {
     this.log('SiteMeterDriver initialized');
   }
 
   /**
-   * Handle pairing
+   * Handle pairing - minimal flow
+   * User provides credentials, device will validate on first init
    */
-  async onPair(session: any) {
-    const pairData: {
-      email?: string;
-      password?: string;
-      siteReference?: string;
-    } = {};
-
-    session.setHandler('login', async (data: any) => {
+  async onPair(session: Homey.Driver.PairSession) {
+    // Verify credentials and meter access
+    session.setHandler('verify_meter', async (data: { email: string; password: string }) => {
       try {
-        // Initialize client with provided credentials
-        this.frankEnergieClient = new FrankEnergieClient({
+        const client = new FrankEnergieClient({
           logger: (msg, ...args) => this.log(msg, ...args),
         });
 
-        // Attempt login
-        await this.frankEnergieClient.login(data.email, data.password);
-        this.log('Login successful');
+        await client.login(data.email, data.password);
+        this.log('Credentials verified');
 
-        pairData.email = data.email;
-        pairData.password = data.password;
+        // Store credentials at app level
+        // @ts-expect-error - Accessing app instance with specific methods
+        this.homey.app.setCredentials?.(data.email, data.password);
 
-        return {
-          success: true,
-        };
+        return { success: true };
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.error('Login failed:', errorMsg);
-        throw new Error(`Login failed: ${errorMsg}`);
+        this.error('Failed to verify credentials:', errorMsg);
+        throw new Error(`Failed to verify credentials: ${errorMsg}`);
       }
     });
 
-    session.setHandler('confirmSite', async (data: any) => {
-      pairData.siteReference = data.siteReference || 'default-site';
-      return true;
-    });
+    // Create device with credentials and optional site reference
+    session.setHandler('list_devices', async (data: { email: string; password: string; siteReference?: string }) => {
+      const reference = data.siteReference?.trim() || 'default-site';
 
-    session.setHandler('list_devices', async () => {
       return [
         {
           name: 'Site Energy Meter',
@@ -61,9 +51,9 @@ export = class SiteMeterDriver extends Homey.Driver {
             type: 'meter',
           },
           settings: {
-            frank_energie_email: pairData.email,
-            frank_energie_password: pairData.password,
-            site_reference: pairData.siteReference || '',
+            frank_energie_email: data.email,
+            frank_energie_password: data.password,
+            site_reference: reference,
             poll_interval: 5,
           },
         },

@@ -1,0 +1,15 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Lowest Market Price Today",
+    "nl": "Laagste Marktprijs Vandaag"
+  },
+  "units": {
+    "en": "€/kWh",
+    "nl": "€/kWh"
+  },
+  "decimals": 4,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

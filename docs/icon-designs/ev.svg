@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- EV Charger Icon: Lightning bolt in charging circle -->
+  <!-- Design Philosophy: Kinetic Energy - Charging crimson for power transfer -->
+
+  <!-- Charging circle -->
+  <circle cx="250" cy="250" r="166" fill="none" stroke="#2C3E50" stroke-width="12"/>
+
+  <!-- Lightning bolt (charging symbol) -->
+  <path d="M 280 150 L 215 250 L 255 250 L 220 350 L 285 240 L 245 240 Z"
+        fill="#CC3333" stroke="none"/>
+
+  <!-- Charging indicators (dots around circle) -->
+  <circle cx="161" cy="161" r="8" fill="#2C3E50"/>
+  <circle cx="339" cy="161" r="8" fill="#2C3E50"/>
+  <circle cx="161" cy="339" r="8" fill="#2C3E50"/>
+  <circle cx="339" cy="339" r="8" fill="#2C3E50"/>
+
+  <!-- Energy pulse rings -->
+  <circle cx="250" cy="250" r="140" fill="none" stroke="#CC3333" stroke-width="2" opacity="0.3"/>
+  <circle cx="250" cy="250" r="120" fill="none" stroke="#CC3333" stroke-width="2" opacity="0.5"/>
+</svg>

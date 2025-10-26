@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- Meter Icon: Gauge dial with measurement indicators -->
+  <!-- Design Philosophy: Kinetic Energy - Vibrant green for active measurement -->
+
+  <!-- Main circle (meter face) -->
+  <circle cx="250" cy="250" r="166" fill="none" stroke="#2C3E50" stroke-width="12"/>
+
+  <!-- Inner measurement ring -->
+  <circle cx="250" cy="250" r="140" fill="none" stroke="#E8E8E8" stroke-width="2"/>
+
+  <!-- Measurement ticks (gauge marks) -->
+  <!-- Bottom left quadrant -->
+  <line x1="108" y1="308" x2="120" y2="320" stroke="#2C3E50" stroke-width="6"/>
+  <line x1="88" y1="250" x2="104" y2="250" stroke="#2C3E50" stroke-width="6"/>
+  <line x1="108" y1="192" x2="120" y2="180" stroke="#2C3E50" stroke-width="6"/>
+
+  <!-- Bottom and top marks -->
+  <line x1="145" y1="355" x2="155" y2="367" stroke="#2C3E50" stroke-width="4"/>
+  <line x1="192" y1="385" x2="196" y2="398" stroke="#2C3E50" stroke-width="4"/>
+  <line x1="250" y1="396" x2="250" y2="410" stroke="#2C3E50" stroke-width="6"/>
+  <line x1="308" y1="385" x2="304" y2="398" stroke="#2C3E50" stroke-width="4"/>
+  <line x1="355" y1="355" x2="345" y2="367" stroke="#2C3E50" stroke-width="4"/>
+
+  <!-- Top right quadrant -->
+  <line x1="392" y1="308" x2="380" y2="320" stroke="#2C3E50" stroke-width="6"/>
+  <line x1="412" y1="250" x2="396" y2="250" stroke="#2C3E50" stroke-width="6"/>
+  <line x1="392" y1="192" x2="380" y2="180" stroke="#2C3E50" stroke-width="6"/>
+
+  <!-- Needle pointing to 2 o'clock (showing active measurement) -->
+  <line x1="250" y1="250" x2="330" y2="190" stroke="#00AA44" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Center dot -->
+  <circle cx="250" cy="250" r="16" fill="#2C3E50"/>
+
+  <!-- Measurement arc indicator -->
+  <path d="M 150 320 A 140 140 0 0 1 330 190"
+        fill="none" stroke="#00AA44" stroke-width="3" opacity="0.3" stroke-dasharray="10,5"/>
+</svg>

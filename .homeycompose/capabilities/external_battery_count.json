@@ -1,0 +1,22 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Battery count",
+    "nl": "Aantal batterijen"
+  },
+  "desc": {
+    "en": "Number of external batteries providing metrics",
+    "nl": "Aantal externe batterijen die metrieken leveren"
+  },
+  "units": {
+    "en": "",
+    "nl": ""
+  },
+  "decimals": 0,
+  "min": 0,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icon.svg"
+}

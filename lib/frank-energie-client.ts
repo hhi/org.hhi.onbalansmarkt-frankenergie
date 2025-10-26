@@ -396,8 +396,7 @@ export class FrankEnergieClient {
         body: JSON.stringify(queryData),
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const data: any = await response.json();
+      const data = await response.json() as { data?: T; errors?: Array<{ message: string }> };
 
       if (data.errors) {
         for (const error of data.errors) {

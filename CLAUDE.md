@@ -476,6 +476,175 @@ When running the app in development mode with `homey app run`, the terminal prov
 - [Device Pairing](https://apps.developer.homey.app/the-basics/devices/pairing) - Custom pairing flows
 - [Device Settings](https://apps.developer.homey.app/the-basics/devices/settings) - Device configuration management
 
-### Localization
+## Pair Views & Localization
 
-Strings exposed to the user should be localized. Use localization as required following the [Homey localization guide](https://apps.developer.homey.app/the-basics/app#locales).
+### HTML Structure for Pair Views
+
+Pair view HTML files must follow Homey's standard markup and CSS classes for consistent styling and proper functionality:
+
+#### **Required Homey Elements and Classes:**
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Title</title>
+</head>
+<body>
+  <!-- Main pair view container - ALWAYS required -->
+  <homey-pair>
+    <!-- Header section with title -->
+    <h1 data-i18n="pair.login.title">Frank Energie</h1>
+    <p data-i18n="pair.login.subtitle">Inloggen met je account</p>
+
+    <!-- Form with proper Homey styling -->
+    <form class="homey-form">
+      <!-- Form group wrapper for each input -->
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="email" data-i18n="pair.login.email">E-mailadres</label>
+        <input id="email" type="email" required class="homey-form-input" />
+        <small class="homey-form-hint" data-i18n="pair.login.email.hint">Uw account e-mailadres</small>
+      </div>
+
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="password" data-i18n="pair.login.password">Wachtwoord</label>
+        <input id="password" type="password" required class="homey-form-input" />
+        <small class="homey-form-hint" data-i18n="pair.login.password.hint">Uw account wachtwoord</small>
+      </div>
+
+      <!-- Buttons -->
+      <button type="submit" class="button positive" data-i18n="pair.buttons.next">Volgende</button>
+    </form>
+
+    <!-- Alternative: Back/Next button layout -->
+    <div class="homey-form-buttons">
+      <button type="button" id="backBtn" class="button negative" data-i18n="pair.buttons.back">Vorige</button>
+      <button type="button" id="nextBtn" class="button positive" data-i18n="pair.buttons.next">Volgende</button>
+    </div>
+  </homey-pair>
+
+  <script>
+    Homey.setTitle(Homey.__(i18n key));
+    // ... handler code
+  </script>
+</body>
+</html>
+```
+
+#### **Core Homey CSS Classes:**
+
+| Class | Purpose | Notes |
+|-------|---------|-------|
+| `homey-pair` | Main pair view container | Always wrap content in this |
+| `homey-form` | Form wrapper | Use on `<form>` element |
+| `homey-form-group` | Group for label + input | Provides consistent spacing |
+| `homey-form-label` | Form label styling | Use on `<label>` elements |
+| `homey-form-input` | Input field styling | Use on `<input>` elements |
+| `homey-form-hint` | Help text styling | Use on `<small>` elements |
+| `homey-form-buttons` | Button group container | Groups buttons horizontally |
+| `button` | Button base class | Use on all buttons |
+| `positive` | Positive action button | For primary actions (Next, Submit) |
+| `negative` | Negative action button | For cancellations/back |
+
+#### **Localization with data-i18n:**
+
+**CRITICAL**: All user-facing text MUST use `data-i18n` attributes:
+
+```html
+<!-- ✅ CORRECT -->
+<h1 data-i18n="pair.login.title">Frank Energie</h1>
+<p data-i18n="pair.login.subtitle">Inloggen met je Frank Energie account</p>
+<label for="email" data-i18n="pair.login.email">E-mailadres</label>
+<button type="submit" class="positive" data-i18n="pair.buttons.next">Volgende</button>
+
+<!-- ❌ WRONG - Hard-coded text without i18n -->
+<h1>Frank Energie</h1>
+<button type="submit" class="positive">Volgende</button>
+```
+
+**Required Localization Keys Structure:**
+
+Create matching entries in `.homeycompose/app.json` under each locale:
+
+```json
+{
+  "en": {
+    "pair": {
+      "login": {
+        "title": "Frank Energie",
+        "subtitle": "Sign in with your Frank Energie account",
+        "email": "Email Address",
+        "email.hint": "Your Frank Energie account email",
+        "password": "Password",
+        "password.hint": "Your Frank Energie account password"
+      },
+      "buttons": {
+        "next": "Next",
+        "back": "Previous",
+        "finish": "Complete"
+      }
+    }
+  },
+  "nl": {
+    "pair": {
+      "login": {
+        "title": "Frank Energie",
+        "subtitle": "Inloggen met je Frank Energie account",
+        "email": "E-mailadres",
+        "email.hint": "Uw Frank Energie account e-mailadres",
+        "password": "Wachtwoord",
+        "password.hint": "Uw Frank Energie account wachtwoord"
+      },
+      "buttons": {
+        "next": "Volgende",
+        "back": "Vorige",
+        "finish": "Voltooien"
+      }
+    }
+  }
+}
+```
+
+#### **JavaScript Best Practices for Pair Views:**
+
+```javascript
+// ✅ Use Homey API methods
+Homey.setTitle(Homey.__('pair.login.title')); // Set localized title
+Homey.nextView();                              // Go to next view
+Homey.prevView();                              // Go to previous view
+Homey.emit('handler_name', data);              // Call handler in driver
+Homey.showDialog('error', {
+  title: Homey.__('error.title'),
+  body: Homey.__('error.message'),
+});
+
+// ❌ AVOID: Direct DOM manipulation for navigation
+history.back();   // ❌ Don't use - breaks Homey's pairing flow
+location.href;    // ❌ Don't use - breaks Homey's pairing flow
+```
+
+### Localization Guidelines
+
+All strings exposed to the user must be localized:
+
+1. **Add `data-i18n` attributes** to all HTML elements with user-facing text
+2. **Define keys in `.homeycompose/app.json`** for each supported locale (en, nl, etc.)
+3. **Use nested structure** for organization (e.g., `pair.login.title`, `pair.buttons.next`)
+4. **Reference in JavaScript** using `Homey.__('key')`
+5. **Follow naming convention**: `section.subsection.element`
+
+**Common Locale Keys:**
+
+```
+pair.*              - Pairing flow views
+pair.login.*        - Login screen
+pair.select.*       - Selection screens
+pair.buttons.*      - Common buttons
+settings.*          - Device settings
+error.*             - Error messages
+success.*           - Success messages
+```
+
+For full localization guide, see [Homey Localization Documentation](https://apps.developer.homey.app/the-basics/app#locales).

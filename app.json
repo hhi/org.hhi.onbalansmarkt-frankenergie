@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -95,6 +95,55 @@
             },
             "type": "string",
             "example": "2025-10-23"
+          }
+        ]
+      },
+      {
+        "id": "external_battery_metrics_updated",
+        "title": {
+          "en": "External battery metrics updated",
+          "nl": "Externe batterij metrieken bijgewerkt"
+        },
+        "hint": {
+          "en": "Triggered when external battery metrics are aggregated from multiple physical batteries.",
+          "nl": "Wordt getriggerd wanneer externe batterij metrieken worden geaggregeerd van meerdere fysieke batterijen."
+        },
+        "tokens": [
+          {
+            "name": "daily_charged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily charged (kWh)",
+              "nl": "Dagelijks geladen (kWh)"
+            },
+            "example": 12.5
+          },
+          {
+            "name": "daily_discharged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily discharged (kWh)",
+              "nl": "Dagelijks geleverd (kWh)"
+            },
+            "example": 8.3
+          },
+          {
+            "name": "average_percentage",
+            "type": "number",
+            "title": {
+              "en": "Average battery %",
+              "nl": "Gemiddeld batterij %"
+            },
+            "example": 75
+          },
+          {
+            "name": "battery_count",
+            "type": "number",
+            "title": {
+              "en": "Number of batteries",
+              "nl": "Aantal batterijen"
+            },
+            "example": 3
           }
         ]
       },
@@ -807,6 +856,77 @@
         ]
       },
       {
+        "id": "receive_battery_metrics",
+        "title": {
+          "en": "Receive battery metrics",
+          "nl": "Ontvang batterij metrieken"
+        },
+        "titleFormatted": {
+          "en": "Receive metrics for battery [[battery_id]]: charged [[total_charged_kwh]] kWh, discharged [[total_discharged_kwh]] kWh, at [[battery_percentage]]%",
+          "nl": "Ontvang metrieken voor batterij [[battery_id]]: geladen [[total_charged_kwh]] kWh, geleverd [[total_discharged_kwh]] kWh, op [[battery_percentage]]%"
+        },
+        "hint": {
+          "en": "Receives total (cumulative) kWh values from external battery sources like Sessy. The app automatically calculates daily deltas.",
+          "nl": "Ontvangt totale (cumulatieve) kWh waarden van externe batterijbronnen zoals Sessy. De app berekent automatisch dagelijkse delta's."
+        },
+        "args": [
+          {
+            "name": "battery_id",
+            "type": "text",
+            "title": {
+              "en": "Battery ID",
+              "nl": "Batterij ID"
+            },
+            "placeholder": {
+              "en": "e.g., sessy-1",
+              "nl": "bijv., sessy-1"
+            },
+            "required": true
+          },
+          {
+            "name": "total_charged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Total charged (kWh)",
+              "nl": "Totaal geladen (kWh)"
+            },
+            "placeholder": {
+              "en": "Cumulative charged kWh",
+              "nl": "Cumulatief geladen kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "total_discharged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Total discharged (kWh)",
+              "nl": "Totaal geleverd (kWh)"
+            },
+            "placeholder": {
+              "en": "Cumulative discharged kWh",
+              "nl": "Cumulatief geleverd kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "battery_percentage",
+            "type": "range",
+            "title": {
+              "en": "Battery percentage",
+              "nl": "Batterij percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "required": true
+          }
+        ]
+      },
+      {
         "id": "send_notification",
         "title": {
           "en": "Send trading notification",
@@ -1018,7 +1138,16 @@
         "frank_energie_battery_mode",
         "frank_energie_overall_rank",
         "frank_energie_provider_rank",
-        "frank_energie_trading_result"
+        "frank_energie_trading_result",
+        "frank_energie_frank_slim_bonus",
+        "frank_energie_epex_result",
+        "frank_energie_trading_result_split",
+        "frank_energie_imbalance_result",
+        "frank_energie_last_upload",
+        "external_battery_daily_charged",
+        "external_battery_daily_discharged",
+        "external_battery_percentage",
+        "external_battery_count"
       ],
       "platforms": [
         "local"
@@ -1096,17 +1225,45 @@
           "children": [
             {
               "id": "poll_interval",
-              "type": "number",
+              "type": "dropdown",
               "label": {
-                "en": "Polling Interval (minutes)",
-                "nl": "Opvraaginterval (minuten)"
+                "en": "Polling Interval",
+                "nl": "Opvraaginterval"
               },
-              "value": 5,
-              "min": 1,
-              "max": 60,
+              "value": "15",
+              "values": [
+                {
+                  "id": "15",
+                  "label": {
+                    "en": "15 minutes",
+                    "nl": "15 minuten"
+                  }
+                },
+                {
+                  "id": "30",
+                  "label": {
+                    "en": "30 minutes",
+                    "nl": "30 minuten"
+                  }
+                },
+                {
+                  "id": "45",
+                  "label": {
+                    "en": "45 minutes",
+                    "nl": "45 minuten"
+                  }
+                },
+                {
+                  "id": "60",
+                  "label": {
+                    "en": "60 minutes",
+                    "nl": "60 minuten"
+                  }
+                }
+              ],
               "hint": {
-                "en": "How often to fetch data from Frank Energie (1-60 minutes)",
-                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-60 minuten)"
+                "en": "How often to fetch data from Frank Energie",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
               }
             },
             {
@@ -1216,17 +1373,45 @@
           "children": [
             {
               "id": "poll_interval",
-              "type": "number",
+              "type": "dropdown",
               "label": {
-                "en": "Polling Interval (minutes)",
-                "nl": "Opvraaginterval (minuten)"
+                "en": "Polling Interval",
+                "nl": "Opvraaginterval"
               },
-              "value": 5,
-              "min": 1,
-              "max": 60,
+              "value": "15",
+              "values": [
+                {
+                  "id": "15",
+                  "label": {
+                    "en": "15 minutes",
+                    "nl": "15 minuten"
+                  }
+                },
+                {
+                  "id": "30",
+                  "label": {
+                    "en": "30 minutes",
+                    "nl": "30 minuten"
+                  }
+                },
+                {
+                  "id": "45",
+                  "label": {
+                    "en": "45 minutes",
+                    "nl": "45 minuten"
+                  }
+                },
+                {
+                  "id": "60",
+                  "label": {
+                    "en": "60 minutes",
+                    "nl": "60 minuten"
+                  }
+                }
+              ],
               "hint": {
-                "en": "How often to fetch data from Frank Energie (1-60 minutes)",
-                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-60 minuten)"
+                "en": "How often to fetch data from Frank Energie",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
               }
             },
             {
@@ -1255,6 +1440,13 @@
       "capabilities": [
         "measure_power",
         "meter_power",
+        "frank_energie_current_market_price",
+        "frank_energie_next_hour_market_price",
+        "frank_energie_today_consumption",
+        "frank_energie_today_costs",
+        "frank_energie_min_market_price_today",
+        "frank_energie_max_market_price_today",
+        "frank_energie_avg_market_price_today",
         "frank_energie_site_usage",
         "frank_energie_site_costs",
         "frank_energie_overall_rank",
@@ -1336,17 +1528,45 @@
           "children": [
             {
               "id": "poll_interval",
-              "type": "number",
+              "type": "dropdown",
               "label": {
-                "en": "Polling Interval (minutes)",
-                "nl": "Opvraaginterval (minuten)"
+                "en": "Polling Interval",
+                "nl": "Opvraaginterval"
               },
-              "value": 5,
-              "min": 1,
-              "max": 60,
+              "value": "15",
+              "values": [
+                {
+                  "id": "15",
+                  "label": {
+                    "en": "15 minutes",
+                    "nl": "15 minuten"
+                  }
+                },
+                {
+                  "id": "30",
+                  "label": {
+                    "en": "30 minutes",
+                    "nl": "30 minuten"
+                  }
+                },
+                {
+                  "id": "45",
+                  "label": {
+                    "en": "45 minutes",
+                    "nl": "45 minuten"
+                  }
+                },
+                {
+                  "id": "60",
+                  "label": {
+                    "en": "60 minutes",
+                    "nl": "60 minuten"
+                  }
+                }
+              ],
               "hint": {
-                "en": "How often to fetch data from Frank Energie (1-60 minutes)",
-                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-60 minuten)"
+                "en": "How often to fetch data from Frank Energie",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
               }
             },
             {
@@ -1374,6 +1594,8 @@
       "class": "service",
       "capabilities": [
         "meter_power",
+        "frank_energie_pv_current_power",
+        "frank_energie_pv_today_generation",
         "frank_energie_pv_status",
         "frank_energie_pv_bonus",
         "frank_energie_overall_rank",
@@ -1455,17 +1677,45 @@
           "children": [
             {
               "id": "poll_interval",
-              "type": "number",
+              "type": "dropdown",
               "label": {
-                "en": "Polling Interval (minutes)",
-                "nl": "Opvraaginterval (minuten)"
+                "en": "Polling Interval",
+                "nl": "Opvraaginterval"
               },
-              "value": 5,
-              "min": 1,
-              "max": 60,
+              "value": "15",
+              "values": [
+                {
+                  "id": "15",
+                  "label": {
+                    "en": "15 minutes",
+                    "nl": "15 minuten"
+                  }
+                },
+                {
+                  "id": "30",
+                  "label": {
+                    "en": "30 minutes",
+                    "nl": "30 minuten"
+                  }
+                },
+                {
+                  "id": "45",
+                  "label": {
+                    "en": "45 minutes",
+                    "nl": "45 minuten"
+                  }
+                },
+                {
+                  "id": "60",
+                  "label": {
+                    "en": "60 minutes",
+                    "nl": "60 minuten"
+                  }
+                }
+              ],
               "hint": {
-                "en": "How often to fetch data from Frank Energie (1-60 minutes)",
-                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-60 minuten)"
+                "en": "How often to fetch data from Frank Energie",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
               }
             },
             {
@@ -1487,6 +1737,108 @@
     }
   ],
   "capabilities": {
+    "external_battery_count": {
+      "type": "number",
+      "title": {
+        "en": "Battery count",
+        "nl": "Aantal batterijen"
+      },
+      "desc": {
+        "en": "Number of external batteries providing metrics",
+        "nl": "Aantal externe batterijen die metrieken leveren"
+      },
+      "units": {
+        "en": "",
+        "nl": ""
+      },
+      "decimals": 0,
+      "min": 0,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icon.svg"
+    },
+    "external_battery_daily_charged": {
+      "type": "number",
+      "title": {
+        "en": "Daily charged",
+        "nl": "Dagelijks geladen"
+      },
+      "desc": {
+        "en": "Total kWh charged today from external batteries",
+        "nl": "Totaal kWh vandaag geladen van externe batterijen"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icon.svg"
+    },
+    "external_battery_daily_discharged": {
+      "type": "number",
+      "title": {
+        "en": "Daily discharged",
+        "nl": "Dagelijks geleverd"
+      },
+      "desc": {
+        "en": "Total kWh discharged today from external batteries",
+        "nl": "Totaal kWh vandaag geleverd van externe batterijen"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icon.svg"
+    },
+    "external_battery_percentage": {
+      "type": "number",
+      "title": {
+        "en": "Average battery percentage",
+        "nl": "Gemiddeld batterij percentage"
+      },
+      "desc": {
+        "en": "Average battery charge percentage across all external batteries",
+        "nl": "Gemiddeld batterij laadpercentage van alle externe batterijen"
+      },
+      "units": {
+        "en": "%",
+        "nl": "%"
+      },
+      "min": 0,
+      "max": 100,
+      "decimals": 1,
+      "chartType": "spline",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icon.svg"
+    },
+    "frank_energie_avg_market_price_today": {
+      "type": "number",
+      "title": {
+        "en": "Average Market Price Today",
+        "nl": "Gemiddelde Marktprijs Vandaag"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "frank_energie_battery_charge": {
       "id": "frank_energie_battery_charge",
       "title": {
@@ -1564,6 +1916,36 @@
         }
       ]
     },
+    "frank_energie_current_market_price": {
+      "type": "number",
+      "title": {
+        "en": "Current Market Price",
+        "nl": "Huidige Marktprijs"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "frank_energie_epex_result": {
+      "type": "number",
+      "title": {
+        "en": "EPEX Result",
+        "nl": "EPEX Opbrengst"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "frank_energie_ev_bonus": {
       "id": "frank_energie_ev_bonus",
       "title": {
@@ -1618,6 +2000,96 @@
         }
       ]
     },
+    "frank_energie_frank_slim_bonus": {
+      "type": "number",
+      "title": {
+        "en": "Frank Slim Bonus",
+        "nl": "Frank Slim Korting"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "frank_energie_imbalance_result": {
+      "type": "number",
+      "title": {
+        "en": "Imbalance Result",
+        "nl": "Onbalans Opbrengst"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "frank_energie_last_upload": {
+      "type": "string",
+      "title": {
+        "en": "Last Upload",
+        "nl": "Laatste Upload"
+      },
+      "desc": {
+        "en": "Last successful upload to Onbalansmarkt.com",
+        "nl": "Laatste succesvolle upload naar Onbalansmarkt.com"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": false
+    },
+    "frank_energie_max_market_price_today": {
+      "type": "number",
+      "title": {
+        "en": "Highest Market Price Today",
+        "nl": "Hoogste Marktprijs Vandaag"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "frank_energie_min_market_price_today": {
+      "type": "number",
+      "title": {
+        "en": "Lowest Market Price Today",
+        "nl": "Laagste Marktprijs Vandaag"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "frank_energie_next_hour_market_price": {
+      "type": "number",
+      "title": {
+        "en": "Next Hour Market Price",
+        "nl": "Marktprijs Volgend Uur"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "frank_energie_overall_rank": {
       "id": "frank_energie_overall_rank",
       "title": {
@@ -1666,6 +2138,21 @@
       "setable": false,
       "units": "€"
     },
+    "frank_energie_pv_current_power": {
+      "type": "number",
+      "title": {
+        "en": "Current Power",
+        "nl": "Huidig Vermogen"
+      },
+      "units": {
+        "en": "kW",
+        "nl": "kW"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "frank_energie_pv_status": {
       "id": "frank_energie_pv_status",
       "title": {
@@ -1704,6 +2191,21 @@
         }
       ]
     },
+    "frank_energie_pv_today_generation": {
+      "type": "number",
+      "title": {
+        "en": "Generation Today",
+        "nl": "Opwek Vandaag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "frank_energie_site_costs": {
       "id": "frank_energie_site_costs",
       "title": {
@@ -1736,6 +2238,36 @@
       "setable": false,
       "units": "kWh"
     },
+    "frank_energie_today_consumption": {
+      "type": "number",
+      "title": {
+        "en": "Consumption Today",
+        "nl": "Verbruik Vandaag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "frank_energie_today_costs": {
+      "type": "number",
+      "title": {
+        "en": "Costs Today",
+        "nl": "Kosten Vandaag"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "frank_energie_trading_result": {
       "id": "frank_energie_trading_result",
       "title": {
@@ -1751,6 +2283,21 @@
       "getable": true,
       "setable": false,
       "units": "€"
+    },
+    "frank_energie_trading_result_split": {
+      "type": "number",
+      "title": {
+        "en": "Trading Result",
+        "nl": "Trading Opbrengst"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     }
   }
 }

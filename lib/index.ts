@@ -40,6 +40,14 @@ export {
   type TradingModeResult,
 } from './trading-mode-detector';
 
+// Battery Metrics Store
+export {
+  BatteryMetricsStore,
+  type BatteryMetricsStoreConfig,
+  type BatteryMetric,
+  type ExternalBatteryMetrics,
+} from './battery-metrics-store';
+
 // Device Base Class
 export {
   FrankEnergieDeviceBase,
@@ -61,6 +69,7 @@ export type {
   ToggleMeasurementSendingArgs,
   LogToTimelineArgs,
   ActionOnlyDeviceArgs,
+  ReceiveBatteryMetricsArgs,
 } from './flow-card-types';
 
 // Additional Frank Energie Client Types (PV, EV, Meter)

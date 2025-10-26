@@ -11,7 +11,16 @@
     "frank_energie_battery_mode",
     "frank_energie_overall_rank",
     "frank_energie_provider_rank",
-    "frank_energie_trading_result"
+    "frank_energie_trading_result",
+    "frank_energie_frank_slim_bonus",
+    "frank_energie_epex_result",
+    "frank_energie_trading_result_split",
+    "frank_energie_imbalance_result",
+    "frank_energie_last_upload",
+    "external_battery_daily_charged",
+    "external_battery_daily_discharged",
+    "external_battery_percentage",
+    "external_battery_count"
   ],
   "platforms": [
     "local"

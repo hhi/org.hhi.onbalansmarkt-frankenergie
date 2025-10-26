@@ -65,17 +65,45 @@
     "children": [
       {
         "id": "poll_interval",
-        "type": "number",
+        "type": "dropdown",
         "label": {
-          "en": "Polling Interval (minutes)",
-          "nl": "Opvraaginterval (minuten)"
+          "en": "Polling Interval",
+          "nl": "Opvraaginterval"
         },
-        "value": 5,
-        "min": 1,
-        "max": 60,
+        "value": "15",
+        "values": [
+          {
+            "id": "15",
+            "label": {
+              "en": "15 minutes",
+              "nl": "15 minuten"
+            }
+          },
+          {
+            "id": "30",
+            "label": {
+              "en": "30 minutes",
+              "nl": "30 minuten"
+            }
+          },
+          {
+            "id": "45",
+            "label": {
+              "en": "45 minutes",
+              "nl": "45 minuten"
+            }
+          },
+          {
+            "id": "60",
+            "label": {
+              "en": "60 minutes",
+              "nl": "60 minuten"
+            }
+          }
+        ],
         "hint": {
-          "en": "How often to fetch data from Frank Energie (1-60 minutes)",
-          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-60 minuten)"
+          "en": "How often to fetch data from Frank Energie",
+          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
         }
       },
       {
