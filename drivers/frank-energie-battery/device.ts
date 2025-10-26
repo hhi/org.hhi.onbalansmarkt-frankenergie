@@ -58,12 +58,50 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('No smart batteries found on Frank Energie account');
     }
 
+    // Setup individual battery capabilities
+    await this.setupIndividualBatteryCapabilities();
+
     // Initialize external battery metrics store
     this.externalBatteryMetrics = new BatteryMetricsStore({
       device: this,
       logger: (msg, ...args) => this.log(msg, ...args),
     });
     this.log('External battery metrics store initialized');
+  }
+
+  /**
+   * Setup dynamic capabilities for individual batteries
+   */
+  private async setupIndividualBatteryCapabilities(): Promise<void> {
+    for (let i = 0; i < this.batteries.length; i++) {
+      const battery = this.batteries[i];
+      const capabilityId = `battery_${i + 1}_total`;
+
+      // Add capability if it doesn't exist
+      if (!this.hasCapability(capabilityId)) {
+        await this.addCapability(capabilityId);
+        this.log(`Added capability: ${capabilityId}`);
+      }
+
+      // Set capability title to brand + externalReference
+      const displayName = battery.externalReference
+        ? `${battery.brand} - ${battery.externalReference}`
+        : `${battery.brand} (${battery.id.slice(0, 8)})`;
+
+      await this.setCapabilityOptions(capabilityId, {
+        title: {
+          en: displayName,
+          nl: displayName,
+        },
+        units: {
+          en: '€',
+          nl: '€',
+        },
+        decimals: 2,
+      });
+
+      this.log(`Configured capability ${capabilityId}: ${displayName}`);
+    }
   }
 
   /**
@@ -144,6 +182,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
       // Update device capabilities
       await this.updateCapabilities(results);
+
+      // Update individual battery capabilities
+      await this.updateIndividualBatteryCapabilities();
 
       // Emit flow card triggers
       await this.processBatteryFlowCardTriggers(results, tradingModeInfo.mode);
@@ -262,6 +303,39 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       + `Imbalance: €${results.periodImbalanceResult.toFixed(2)}, Frank Slim: €${results.periodFrankSlim.toFixed(2)}), `
       + `Lifetime: €${results.totalTradingResult.toFixed(2)}, Batteries: ${results.batteryCount}`,
     );
+  }
+
+  /**
+   * Update individual battery capabilities with their totalResult values
+   */
+  private async updateIndividualBatteryCapabilities(): Promise<void> {
+    if (!this.frankEnergieClient) {
+      return;
+    }
+
+    const updatePromises: Promise<void>[] = [];
+
+    for (let i = 0; i < this.batteries.length; i++) {
+      const battery = this.batteries[i];
+      const capabilityId = `battery_${i + 1}_total`;
+
+      // Fetch battery summary with totalResult
+      const batteryPromise = this.frankEnergieClient.getSmartBatterySummary(battery.id)
+        .then(async (summary) => {
+          if (summary.totalResult !== undefined) {
+            await this.setCapabilityValue(capabilityId, summary.totalResult);
+            this.log(`Updated ${capabilityId}: €${summary.totalResult.toFixed(2)}`);
+          }
+        })
+        .catch((error) => {
+          this.error(`Failed to update ${capabilityId}:`, error);
+        });
+
+      updatePromises.push(batteryPromise);
+    }
+
+    // eslint-disable-next-line node/no-unsupported-features/es-builtins
+    await Promise.allSettled(updatePromises);
   }
 
   /**
