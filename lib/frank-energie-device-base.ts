@@ -143,23 +143,34 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
 
   /**
    * Validate and sanitize poll interval setting
-   * @param interval User-provided interval in minutes
+   * @param interval User-provided interval in minutes (can be string or number)
    * @returns Validated interval clamped to 1-60 minutes range
    */
   private validatePollInterval(interval: unknown): number {
-    // Default to 5 minutes if invalid
-    const defaultInterval = 5;
+    // Default to 15 minutes if invalid (matches default in settings)
+    const defaultInterval = 15;
 
-    if (typeof interval !== 'number' || Number.isNaN(interval)) {
-      this.log(`Invalid poll interval type, using default: ${defaultInterval} minutes`);
+    let numericInterval: number;
+
+    // Handle string values from dropdown settings
+    if (typeof interval === 'string') {
+      numericInterval = parseInt(interval, 10);
+      if (Number.isNaN(numericInterval)) {
+        this.log(`Invalid poll interval string "${interval}", using default: ${defaultInterval} minutes`);
+        return defaultInterval;
+      }
+    } else if (typeof interval === 'number') {
+      numericInterval = interval;
+    } else {
+      this.log(`Invalid poll interval type (${typeof interval}), using default: ${defaultInterval} minutes`);
       return defaultInterval;
     }
 
     // Clamp to valid range (1-60 minutes)
-    const clamped = Math.max(1, Math.min(60, Math.round(interval)));
+    const clamped = Math.max(1, Math.min(60, Math.round(numericInterval)));
 
-    if (clamped !== interval) {
-      this.log(`Poll interval ${interval} out of range [1-60], clamped to ${clamped} minutes`);
+    if (clamped !== numericInterval) {
+      this.log(`Poll interval ${numericInterval} out of range [1-60], clamped to ${clamped} minutes`);
     }
 
     return clamped;
@@ -169,13 +180,23 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
    * Setup polling interval
    */
   protected async setupPolling(): Promise<void> {
-    const pollIntervalMinutes = this.validatePollInterval(this.getSetting('poll_interval'));
+    const pollIntervalSetting = this.getSetting('poll_interval');
+    this.log(`Raw poll_interval setting: ${JSON.stringify(pollIntervalSetting)} (type: ${typeof pollIntervalSetting})`);
+
+    const pollIntervalMinutes = this.validatePollInterval(pollIntervalSetting);
     const pollIntervalMs = pollIntervalMinutes * 60 * 1000;
 
-    this.log(`Setting up polling with ${pollIntervalMinutes} minute interval`);
+    this.log(`Setting up polling with ${pollIntervalMinutes} minute interval (${pollIntervalMs}ms)`);
 
-    // Initial poll
-    await this.pollData();
+    // Initial poll - don't let errors block the setup
+    try {
+      await this.pollData();
+      this.log('Initial poll completed successfully');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error('Initial poll failed (will retry on interval):', errorMsg);
+      // Continue with setup even if initial poll fails
+    }
 
     // Set next poll time and start countdown
     this.nextPollTime = Date.now() + pollIntervalMs;
@@ -192,11 +213,15 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'Unknown error';
           this.error('Polling failed:', errorMsg);
+          // Still update next poll time so countdown continues
+          this.nextPollTime = Date.now() + pollIntervalMs;
+          this.updatePollCountdown();
         }
       },
       pollIntervalMs,
     );
 
+    this.log(`Polling interval started: will poll every ${pollIntervalMinutes} minutes`);
     await this.setAvailable();
   }
 
