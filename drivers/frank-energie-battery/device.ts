@@ -20,6 +20,7 @@ import {
   type ToggleMeasurementSendingArgs,
   type LogToTimelineArgs,
   type ReceiveBatteryMetricsArgs,
+  type ReceiveBatteryDailyMetricsArgs,
 } from '../../lib';
 
 /**
@@ -180,6 +181,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       .registerRunListener(this.actionLogToTimeline.bind(this));
     this.homey.flow.getActionCard('receive_battery_metrics')
       .registerRunListener(this.actionReceiveBatteryMetrics.bind(this));
+    this.homey.flow.getActionCard('receive_battery_daily_metrics')
+      .registerRunListener(this.actionReceiveBatteryDailyMetrics.bind(this));
 
     this.log('Battery-specific flow cards registered');
   }
@@ -718,6 +721,46 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     });
 
     this.log(`External battery metrics updated - Daily: charged ${aggregated.dailyChargedKwh.toFixed(2)} kWh, discharged ${aggregated.dailyDischargedKwh.toFixed(2)} kWh, avg ${aggregated.averageBatteryPercentage.toFixed(1)}%, count ${aggregated.batteryCount}`);
+  }
+
+  /**
+   * Action: Receive daily battery metrics from external sources
+   * For batteries that provide daily values directly (no lifetime totals)
+   * Stores metrics and triggers aggregation/flow cards
+   */
+  private async actionReceiveBatteryDailyMetrics(args: ReceiveBatteryDailyMetricsArgs) {
+    if (args.device !== this) return;
+
+    if (!this.externalBatteryMetrics) {
+      this.error('External battery metrics store not initialized');
+      throw new Error('External battery metrics store not initialized');
+    }
+
+    this.log(`Receiving daily metrics for battery ${args.battery_id}: daily charged=${args.daily_charged_kwh} kWh, daily discharged=${args.daily_discharged_kwh} kWh, percentage=${args.battery_percentage}%`);
+
+    // Store the daily metric and get aggregated results
+    const aggregated: ExternalBatteryMetrics = await this.externalBatteryMetrics.storeDailyMetric({
+      batteryId: args.battery_id,
+      dailyChargedKwh: args.daily_charged_kwh,
+      dailyDischargedKwh: args.daily_discharged_kwh,
+      batteryPercentage: args.battery_percentage,
+    });
+
+    // Update device capabilities
+    await this.setCapabilityValue('external_battery_daily_charged', aggregated.dailyChargedKwh);
+    await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
+    await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
+    await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
+
+    // Trigger flow card with aggregated data
+    await this.homey.flow.getTriggerCard('external_battery_metrics_updated').trigger(this, {
+      daily_charged_kwh: aggregated.dailyChargedKwh,
+      daily_discharged_kwh: aggregated.dailyDischargedKwh,
+      average_percentage: aggregated.averageBatteryPercentage,
+      battery_count: aggregated.batteryCount,
+    });
+
+    this.log(`External battery daily metrics updated - Daily: charged ${aggregated.dailyChargedKwh.toFixed(2)} kWh, discharged ${aggregated.dailyDischargedKwh.toFixed(2)} kWh, avg ${aggregated.averageBatteryPercentage.toFixed(1)}%, count ${aggregated.batteryCount}`);
   }
 
   // ===== Trigger Emission Methods =====

@@ -982,6 +982,82 @@
         ]
       },
       {
+        "id": "receive_battery_daily_metrics",
+        "title": {
+          "en": "Receive daily battery metrics",
+          "nl": "Ontvang dagelijkse batterij metrieken"
+        },
+        "titleFormatted": {
+          "en": "Receive daily metrics for battery [[battery_id]]: charged [[daily_charged_kwh]] kWh, discharged [[daily_discharged_kwh]] kWh, at [[battery_percentage]]%",
+          "nl": "Ontvang dagelijkse metrieken voor batterij [[battery_id]]: geladen [[daily_charged_kwh]] kWh, geleverd [[daily_discharged_kwh]] kWh, op [[battery_percentage]]%"
+        },
+        "hint": {
+          "en": "Receives daily (today only) kWh values from batteries that reset daily. Use this for batteries without lifetime counters (e.g., SolarEdge, Huawei). The app aggregates values directly without delta calculation.",
+          "nl": "Ontvangt dagelijkse (alleen vandaag) kWh waarden van batterijen die dagelijks resetten. Gebruik dit voor batterijen zonder lifetime tellers (bijv. SolarEdge, Huawei). De app aggregeert waarden direct zonder delta berekening."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "battery_id",
+            "type": "text",
+            "title": {
+              "en": "Battery ID",
+              "nl": "Batterij ID"
+            },
+            "placeholder": {
+              "en": "e.g., solaredge-1",
+              "nl": "bijv., solaredge-1"
+            },
+            "required": true
+          },
+          {
+            "name": "daily_charged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily charged (kWh)",
+              "nl": "Dagelijks geladen (kWh)"
+            },
+            "placeholder": {
+              "en": "Today's charged kWh",
+              "nl": "Vandaag geladen kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "daily_discharged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily discharged (kWh)",
+              "nl": "Dagelijks geleverd (kWh)"
+            },
+            "placeholder": {
+              "en": "Today's discharged kWh",
+              "nl": "Vandaag geleverd kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "battery_percentage",
+            "type": "range",
+            "title": {
+              "en": "Battery percentage",
+              "nl": "Batterij percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "required": true
+          }
+        ]
+      },
+      {
         "id": "receive_battery_metrics",
         "title": {
           "en": "Receive battery metrics",

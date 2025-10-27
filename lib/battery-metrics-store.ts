@@ -14,6 +14,13 @@ export interface BatteryMetric {
   batteryPercentage: number;
 }
 
+export interface BatteryDailyMetric {
+  batteryId: string;
+  dailyChargedKwh: number;
+  dailyDischargedKwh: number;
+  batteryPercentage: number;
+}
+
 export interface ExternalBatteryMetrics {
   dailyChargedKwh: number;
   dailyDischargedKwh: number;
@@ -37,6 +44,12 @@ interface StoredMetrics {
   startOfDay: {
     discharged: Record<string, number>;
     charged: Record<string, number>;
+  };
+  dailyOnly: {
+    // Batteries that provide daily values directly (no delta calculation needed)
+    dailyCharged: Record<string, number>;
+    dailyDischarged: Record<string, number>;
+    percentage: Record<string, number>;
   };
   lastResetDate: string; // YYYY-MM-DD format
 }
@@ -81,10 +94,24 @@ export class BatteryMetricsStore {
           discharged: {},
           charged: {},
         },
+        dailyOnly: {
+          dailyCharged: {},
+          dailyDischarged: {},
+          percentage: {},
+        },
         lastResetDate: this.getCurrentDate(),
       };
       await this.device.setStoreValue(this.storeKey, initial);
       return initial;
+    }
+
+    // Ensure dailyOnly exists (for backward compatibility)
+    if (!stored.dailyOnly) {
+      stored.dailyOnly = {
+        dailyCharged: {},
+        dailyDischarged: {},
+        percentage: {},
+      };
     }
 
     return stored;
@@ -106,9 +133,15 @@ export class BatteryMetricsStore {
     if (metrics.lastResetDate !== currentDate) {
       this.logger(`BatteryMetricsStore: New day detected (${metrics.lastResetDate} → ${currentDate}), resetting daily counters`);
 
-      // Move current totals to startOfDay
+      // Move current totals to startOfDay (for cumulative batteries)
       metrics.startOfDay.discharged = Object.assign({}, metrics.current.discharged);
       metrics.startOfDay.charged = Object.assign({}, metrics.current.charged);
+
+      // Reset daily-only values to zero (for daily-reset batteries)
+      metrics.dailyOnly.dailyCharged = {};
+      metrics.dailyOnly.dailyDischarged = {};
+      // Keep percentage (doesn't reset)
+
       metrics.lastResetDate = currentDate;
 
       await this.saveMetrics(metrics);
@@ -155,6 +188,33 @@ export class BatteryMetricsStore {
   }
 
   /**
+   * Store a battery daily metric update (for batteries that report daily values directly)
+   * @param metric Battery daily metric with today's values (no delta calculation needed)
+   * @returns Aggregated metrics across all batteries
+   */
+  async storeDailyMetric(metric: BatteryDailyMetric): Promise<ExternalBatteryMetrics> {
+    let metrics = await this.getStoredMetrics();
+
+    // Check if we need to reset for new day
+    metrics = await this.checkAndResetIfNeeded(metrics);
+
+    // Store daily values directly (no startOfDay tracking needed)
+    metrics.dailyOnly.dailyCharged[metric.batteryId] = metric.dailyChargedKwh;
+    metrics.dailyOnly.dailyDischarged[metric.batteryId] = metric.dailyDischargedKwh;
+    metrics.dailyOnly.percentage[metric.batteryId] = metric.batteryPercentage;
+
+    // Save updated metrics
+    await this.saveMetrics(metrics);
+
+    this.logger(
+      `BatteryMetricsStore: Updated daily battery ${metric.batteryId} - Daily Discharged: ${metric.dailyDischargedKwh} kWh, Daily Charged: ${metric.dailyChargedKwh} kWh, Percentage: ${metric.batteryPercentage}%`,
+    );
+
+    // Calculate and return aggregated metrics
+    return this.calculateAggregatedMetrics(metrics);
+  }
+
+  /**
    * Get current aggregated metrics without storing new data
    */
   async getAggregatedMetrics(): Promise<ExternalBatteryMetrics> {
@@ -167,7 +227,6 @@ export class BatteryMetricsStore {
    * Calculate aggregated metrics from stored data
    */
   private calculateAggregatedMetrics(metrics: StoredMetrics): ExternalBatteryMetrics {
-    const batteryIds = Object.keys(metrics.current.discharged);
     const batteries: ExternalBatteryMetrics['batteries'] = [];
 
     let totalDailyCharged = 0;
@@ -175,7 +234,9 @@ export class BatteryMetricsStore {
     let totalPercentage = 0;
     let batteryCount = 0;
 
-    for (const batteryId of batteryIds) {
+    // Process cumulative batteries (with delta calculation)
+    const cumulativeBatteryIds = Object.keys(metrics.current.discharged);
+    for (const batteryId of cumulativeBatteryIds) {
       const currentDischarged = metrics.current.discharged[batteryId] || 0;
       const currentCharged = metrics.current.charged[batteryId] || 0;
       const startDischarged = metrics.startOfDay.discharged[batteryId] || currentDischarged;
@@ -185,6 +246,26 @@ export class BatteryMetricsStore {
       // Calculate daily delta
       const dailyDischarged = Math.max(0, currentDischarged - startDischarged);
       const dailyCharged = Math.max(0, currentCharged - startCharged);
+
+      batteries.push({
+        id: batteryId,
+        dailyChargedKwh: dailyCharged,
+        dailyDischargedKwh: dailyDischarged,
+        percentage,
+      });
+
+      totalDailyDischarged += dailyDischarged;
+      totalDailyCharged += dailyCharged;
+      totalPercentage += percentage;
+      batteryCount++;
+    }
+
+    // Process daily-only batteries (direct values, no delta calculation)
+    const dailyOnlyBatteryIds = Object.keys(metrics.dailyOnly.dailyCharged);
+    for (const batteryId of dailyOnlyBatteryIds) {
+      const dailyCharged = metrics.dailyOnly.dailyCharged[batteryId] || 0;
+      const dailyDischarged = metrics.dailyOnly.dailyDischarged[batteryId] || 0;
+      const percentage = metrics.dailyOnly.percentage[batteryId] || 0;
 
       batteries.push({
         id: batteryId,

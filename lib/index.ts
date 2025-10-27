@@ -46,6 +46,7 @@ export {
   BatteryMetricsStore,
   type BatteryMetricsStoreConfig,
   type BatteryMetric,
+  type BatteryDailyMetric,
   type ExternalBatteryMetrics,
 } from './battery-metrics-store';
 
@@ -71,6 +72,7 @@ export type {
   LogToTimelineArgs,
   ActionOnlyDeviceArgs,
   ReceiveBatteryMetricsArgs,
+  ReceiveBatteryDailyMetricsArgs,
 } from './flow-card-types';
 
 // Additional Frank Energie Client Types (PV, EV, Meter)

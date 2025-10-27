@@ -88,3 +88,14 @@ export interface ReceiveBatteryMetricsArgs extends BaseFlowCardArgs {
   // eslint-disable-next-line camelcase
   battery_percentage: number;
 }
+
+export interface ReceiveBatteryDailyMetricsArgs extends BaseFlowCardArgs {
+  // eslint-disable-next-line camelcase
+  battery_id: string;
+  // eslint-disable-next-line camelcase
+  daily_charged_kwh: number;
+  // eslint-disable-next-line camelcase
+  daily_discharged_kwh: number;
+  // eslint-disable-next-line camelcase
+  battery_percentage: number;
+}
