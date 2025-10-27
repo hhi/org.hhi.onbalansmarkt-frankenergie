@@ -441,12 +441,42 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
 
   async onSettings({
     changedKeys,
+    newSettings,
   }: {
     oldSettings: { [key: string]: boolean | string | number | undefined | null };
     newSettings: { [key: string]: boolean | string | number | undefined | null };
     changedKeys: string[];
   }): Promise<string | void> {
     this.log('Device settings changed:', changedKeys);
+
+    // Handle manual actions (dropdown menu)
+    if (changedKeys.includes('manual_action')) {
+      const action = newSettings.manual_action as string;
+
+      if (action === 'refresh_now') {
+        this.log('Manual action: Refresh data now');
+        try {
+          await this.pollData();
+          this.log('Manual data refresh completed successfully');
+          // Reset dropdown to "none"
+          await this.setSettings({ manual_action: 'none' });
+          return; // Don't restart polling or reinitialize clients
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          this.error('Manual data refresh failed:', errorMsg);
+          // Reset dropdown to "none" even on failure
+          await this.setSettings({ manual_action: 'none' });
+          throw new Error(`Manual refresh failed: ${errorMsg}`);
+        }
+      }
+
+      // If action is "none" or unknown, just reset and return
+      if (action !== 'none') {
+        this.log(`Unknown manual action: ${action}`);
+      }
+      await this.setSettings({ manual_action: 'none' });
+      return;
+    }
 
     // Stop polling during reconfiguration to avoid race conditions
     if (this.pollInterval) {

@@ -1500,6 +1500,44 @@
               }
             }
           ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Manual Actions",
+            "nl": "Handmatige Acties"
+          },
+          "children": [
+            {
+              "id": "manual_action",
+              "type": "dropdown",
+              "label": {
+                "en": "Action",
+                "nl": "Actie"
+              },
+              "value": "none",
+              "values": [
+                {
+                  "id": "none",
+                  "label": {
+                    "en": "— Select an action —",
+                    "nl": "— Kies een actie —"
+                  }
+                },
+                {
+                  "id": "refresh_now",
+                  "label": {
+                    "en": "Refresh data now",
+                    "nl": "Gegevens nu verversen"
+                  }
+                }
+              ],
+              "hint": {
+                "en": "Select an action and save to execute it immediately",
+                "nl": "Selecteer een actie en sla op om deze direct uit te voeren"
+              }
+            }
+          ]
         }
       ]
     },
