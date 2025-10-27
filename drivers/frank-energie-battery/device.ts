@@ -3,6 +3,7 @@ import {
   BatteryMetricsStore,
   TradingModeDetector,
   type SmartBattery,
+  type SmartBatterySummary,
   type AggregatedResults,
   type TradingMode,
   type ExternalBatteryMetrics,
@@ -71,10 +72,42 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
   /**
    * Setup dynamic capabilities for individual batteries
+   * Batteries are ranked by totalResult (Top 10: highest first)
    */
   private async setupIndividualBatteryCapabilities(): Promise<void> {
-    for (let i = 0; i < this.batteries.length; i++) {
-      const battery = this.batteries[i];
+    if (!this.frankEnergieClient) {
+      this.error('FrankEnergieClient not available for battery setup');
+      return;
+    }
+
+    // Fetch summaries for all batteries to get totalResult
+    const batteryDataPromises = this.batteries.map(async (battery) => {
+      try {
+        const summary = await this.frankEnergieClient!.getSmartBatterySummary(battery.id);
+        return { battery, summary };
+      } catch (error) {
+        this.error(`Failed to fetch summary for battery ${battery.id}:`, error);
+        // Return with zero totalResult if fetch fails
+        return {
+          battery,
+          summary: {
+            totalResult: 0,
+            lastKnownStateOfCharge: 0,
+            lastKnownStatus: 'unknown',
+            lastUpdate: new Date().toISOString(),
+          },
+        };
+      }
+    });
+
+    const batteryData = await Promise.all(batteryDataPromises);
+
+    // Sort by totalResult (highest first) - Top 10 ranking
+    batteryData.sort((a, b) => b.summary.totalResult - a.summary.totalResult);
+
+    // Setup capabilities for sorted batteries (Top 10)
+    for (let i = 0; i < batteryData.length; i++) {
+      const { battery } = batteryData[i];
       const capabilityId = `battery_${i + 1}_total`;
 
       // Add capability if it doesn't exist
@@ -100,7 +133,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         decimals: 2,
       });
 
-      this.log(`Configured capability ${capabilityId}: ${displayName}`);
+      this.log(`Configured capability ${capabilityId}: ${displayName} (Rank: ${i + 1})`);
     }
   }
 
@@ -307,31 +340,55 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
   /**
    * Update individual battery capabilities with their totalResult values
+   * Batteries are ranked by totalResult (Top 10: highest first)
    */
   private async updateIndividualBatteryCapabilities(): Promise<void> {
     if (!this.frankEnergieClient) {
       return;
     }
 
+    // Fetch summaries for all batteries to get totalResult
+    const batteryDataPromises = this.batteries.map(async (battery) => {
+      try {
+        const summary = await this.frankEnergieClient!.getSmartBatterySummary(battery.id);
+        return { battery, summary };
+      } catch (error) {
+        this.error(`Failed to fetch summary for battery ${battery.id}:`, error);
+        return null;
+      }
+    });
+
+    const batteryDataResults = await Promise.all(batteryDataPromises);
+    const batteryData = batteryDataResults.filter(
+      (data): data is { battery: SmartBattery; summary: SmartBatterySummary } => data !== null,
+    );
+
+    // Sort by totalResult (highest first) - Top 10 ranking
+    batteryData.sort((a, b) => b.summary.totalResult - a.summary.totalResult);
+
+    // Update capabilities in sorted order (Top 10)
     const updatePromises: Promise<void>[] = [];
 
-    for (let i = 0; i < this.batteries.length; i++) {
-      const battery = this.batteries[i];
+    for (let i = 0; i < batteryData.length; i++) {
+      const { battery, summary } = batteryData[i];
       const capabilityId = `battery_${i + 1}_total`;
 
-      // Fetch battery summary with totalResult
-      const batteryPromise = this.frankEnergieClient.getSmartBatterySummary(battery.id)
-        .then(async (summary) => {
-          if (summary.totalResult !== undefined) {
-            await this.setCapabilityValue(capabilityId, summary.totalResult);
-            this.log(`Updated ${capabilityId}: €${summary.totalResult.toFixed(2)}`);
-          }
-        })
-        .catch((error) => {
-          this.error(`Failed to update ${capabilityId}:`, error);
-        });
+      if (summary.totalResult !== undefined) {
+        const updatePromise = this.setCapabilityValue(capabilityId, summary.totalResult)
+          .then(() => {
+            const displayName = battery.externalReference
+              ? `${battery.brand} - ${battery.externalReference}`
+              : `${battery.brand} (${battery.id.slice(0, 8)})`;
+            this.log(
+              `Updated ${capabilityId} (Rank ${i + 1}): ${displayName} - €${summary.totalResult.toFixed(2)}`,
+            );
+          })
+          .catch((error) => {
+            this.error(`Failed to update ${capabilityId}:`, error);
+          });
 
-      updatePromises.push(batteryPromise);
+        updatePromises.push(updatePromise);
+      }
     }
 
     // eslint-disable-next-line node/no-unsupported-features/es-builtins

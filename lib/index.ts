@@ -10,6 +10,7 @@ export {
   type FrankEnergieAuth,
   type FrankEnergieClientConfig,
   type SmartBattery,
+  type SmartBatterySummary,
   type BatterySettings,
   type BatterySession,
   type SmartBatterySessionData,
