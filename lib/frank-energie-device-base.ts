@@ -2,6 +2,8 @@ import Homey from 'homey';
 import {
   FrankEnergieClient,
   OnbalansmarktClient,
+  type FrankEnergieApp,
+  type AppCredentials,
   type TriggerOnlyDeviceArgs,
   type ConditionOnlyDeviceArgs,
   type RankInTopXArgs,
@@ -56,13 +58,13 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
    */
   protected async initializeClients(): Promise<void> {
     // Try to get credentials from app-level settings first
-    // @ts-expect-error - Accessing app instance with specific methods
-    const appCredentials = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+    const app = this.homey.app as FrankEnergieApp;
+    const appCredentials: AppCredentials | null = app.getCredentials?.() || null;
 
     let frankEmail: string;
     let frankPassword: string;
 
-    if (appCredentials && appCredentials.email && appCredentials.password) {
+    if (appCredentials) {
       // Use app-level credentials (preferred)
       frankEmail = appCredentials.email;
       frankPassword = appCredentials.password;

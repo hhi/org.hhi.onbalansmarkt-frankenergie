@@ -4,6 +4,13 @@
  * Barrel export file for easy imports
  */
 
+// App Type Definitions
+export {
+  type FrankEnergieApp,
+  type AppCredentials,
+  isFrankEnergieApp,
+} from './app-types';
+
 // Frank Energie API Client
 export {
   FrankEnergieClient,
