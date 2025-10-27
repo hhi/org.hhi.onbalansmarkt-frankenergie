@@ -594,7 +594,7 @@ private async actionToggleMeasurementSending(args: any) {
 
 **File:** `.homeycompose/flow/actions/log_to_timeline.json`
 
-**Purpose:** Creates historical event log entry
+**Purpose:** Creates a visible notification in Homey's timeline and stores the event locally for reference
 
 **Parameters:**
 
@@ -616,7 +616,17 @@ private async actionLogToTimeline(args: any) {
     logMessage += ` (€${batteryResult.toFixed(2)})`;
   }
 
-  this.log(`Logging to timeline: ${logMessage}`);
+  // Send notification to Homey timeline (visible in app)
+  try {
+    await this.homey.notifications.createNotification({
+      excerpt: `${this.getName()}: ${logMessage}`,
+    });
+    this.log(`Timeline notification sent: ${logMessage}`);
+  } catch (error) {
+    this.error('Failed to create timeline notification:', error);
+  }
+
+  // Store locally for reference
   await this.setStoreValue('lastTimelineEntry', {
     message: logMessage,
     timestamp: Date.now(),

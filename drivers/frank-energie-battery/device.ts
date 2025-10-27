@@ -650,6 +650,10 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     }
   }
 
+  /**
+   * Action: Log event to Homey timeline
+   * Creates a visible timeline notification and stores entry locally
+   */
   private async actionLogToTimeline(args: LogToTimelineArgs) {
     if (args.device !== this) return;
 
@@ -660,7 +664,17 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       logMessage += ` (€${batteryResult.toFixed(2)})`;
     }
 
-    this.log(`Logging to timeline: ${logMessage}`);
+    // Send notification to Homey timeline (visible in app)
+    try {
+      await this.homey.notifications.createNotification({
+        excerpt: `${this.getName()}: ${logMessage}`,
+      });
+      this.log(`Timeline notification sent: ${logMessage}`);
+    } catch (error) {
+      this.error('Failed to create timeline notification:', error);
+    }
+
+    // Store locally for reference
     await this.setStoreValue('lastTimelineEntry', {
       message: logMessage,
       timestamp: Date.now(),
