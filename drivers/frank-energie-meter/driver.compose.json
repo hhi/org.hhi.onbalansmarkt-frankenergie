@@ -29,7 +29,8 @@
   },
   "pair": [
     {
-      "id": "login"
+      "id": "login",
+      "template": "login"
     },
     {
       "id": "list_devices",

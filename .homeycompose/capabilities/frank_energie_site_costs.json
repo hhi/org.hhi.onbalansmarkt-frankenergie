@@ -6,5 +6,6 @@
   "insights": false,
   "getable": true,
   "setable": false,
-  "units": "€"
+  "units": "€",
+  "decimals": 2
 }

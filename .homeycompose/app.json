@@ -1,6 +1,6 @@
 {
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -28,6 +28,12 @@
   "locales": {
     "en": {
       "pair": {
+        "common": {
+          "login": {
+            "title": "Frank Energie",
+            "subtitle": "Sign in with your Frank Energie account"
+          }
+        },
         "battery": {
           "login": {
             "title": "Frank Energie Battery",
@@ -66,10 +72,26 @@
           "verifying": "Verifying...",
           "finish": "Finish"
         }
+      },
+      "error": {
+        "validation": {
+          "title": "Missing Fields",
+          "fields": "Email and password are required."
+        },
+        "login": {
+          "title": "Login Failed",
+          "body": "Failed to verify Frank Energie credentials. Please check your email and password."
+        }
       }
     },
     "nl": {
       "pair": {
+        "common": {
+          "login": {
+            "title": "Frank Energie",
+            "subtitle": "Inloggen met je Frank Energie account"
+          }
+        },
         "battery": {
           "login": {
             "title": "Frank Energie Batterij",
@@ -107,6 +129,16 @@
           "back": "Vorige",
           "verifying": "Verifiëren...",
           "finish": "Voltooien"
+        }
+      },
+      "error": {
+        "validation": {
+          "title": "Velden Ontbreken",
+          "fields": "E-mailadres en wachtwoord zijn verplicht."
+        },
+        "login": {
+          "title": "Inloggen Mislukt",
+          "body": "Kon Frank Energie inloggegevens niet verifiëren. Controleer uw e-mailadres en wachtwoord."
         }
       }
     }

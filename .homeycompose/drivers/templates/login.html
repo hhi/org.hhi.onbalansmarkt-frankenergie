@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frank Energie</title>
+</head>
+<body>
+  <homey-pair>
+    <h1 data-i18n="pair.common.login.title">Frank Energie</h1>
+    <p data-i18n="pair.common.login.subtitle">Inloggen met je Frank Energie account</p>
+
+    <form class="homey-form">
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="email" data-i18n="pair.login.email">E-mailadres</label>
+        <input id="email" type="email" required class="homey-form-input" placeholder="jij@example.com" />
+        <small class="homey-form-hint" data-i18n="pair.login.email.hint">Uw Frank Energie account e-mailadres</small>
+      </div>
+
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="password" data-i18n="pair.login.password">Wachtwoord</label>
+        <input id="password" type="password" required class="homey-form-input" placeholder="••••••••" />
+        <small class="homey-form-hint" data-i18n="pair.login.password.hint">Uw Frank Energie account wachtwoord</small>
+      </div>
+
+      <button type="submit" class="button positive" data-i18n="pair.buttons.next">Volgende</button>
+    </form>
+  </homey-pair>
+
+  <script>
+    Homey.setTitle(Homey.__('pair.common.login.title'));
+
+    const form = document.querySelector('form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        Homey.showDialog('error', {
+          title: Homey.__('error.validation.title'),
+          body: Homey.__('error.validation.fields'),
+        });
+        return;
+      }
+
+      // Disable form during verification
+      submitButton.disabled = true;
+      submitButton.textContent = Homey.__('pair.buttons.verifying') || 'Verifying...';
+
+      try {
+        // Store credentials for list_devices handler
+        await Homey.emit('store_credentials', {
+          email,
+          password,
+        });
+
+        // Navigate to next view (list_devices template)
+        Homey.nextView();
+      } catch (error) {
+        Homey.showDialog('error', {
+          title: Homey.__('error.login.title') || 'Login Failed',
+          body: error.message || Homey.__('error.login.body') || 'Failed to verify credentials.',
+        });
+        submitButton.disabled = false;
+        submitButton.textContent = Homey.__('pair.buttons.next') || 'Next';
+      }
+    });
+
+    emailInput.focus();
+  </script>
+</body>
+</html>
