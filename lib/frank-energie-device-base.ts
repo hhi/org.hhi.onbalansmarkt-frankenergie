@@ -20,6 +20,8 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
   protected frankEnergieClient?: FrankEnergieClient;
   protected onbalansmarktClient?: OnbalansmarktClient;
   protected pollInterval?: NodeJS.Timeout;
+  protected countdownInterval?: NodeJS.Timeout;
+  protected nextPollTime: number | null = null;
 
   // Common flow card state tracking
   protected previousRank: number | null = null;
@@ -175,11 +177,18 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
     // Initial poll
     await this.pollData();
 
+    // Set next poll time and start countdown
+    this.nextPollTime = Date.now() + pollIntervalMs;
+    this.startCountdownTimer();
+
     // Setup recurring poll using Homey's timer management
     this.pollInterval = this.homey.setInterval(
       async () => {
         try {
           await this.pollData();
+          // Update next poll time after successful poll
+          this.nextPollTime = Date.now() + pollIntervalMs;
+          this.updatePollCountdown();
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'Unknown error';
           this.error('Polling failed:', errorMsg);
@@ -189,6 +198,61 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
     );
 
     await this.setAvailable();
+  }
+
+  /**
+   * Update the countdown timer showing minutes until next poll
+   * Called every minute to keep the sensor up-to-date
+   */
+  protected updatePollCountdown(): void {
+    if (!this.nextPollTime) {
+      // No poll scheduled yet, set to 0
+      if (this.hasCapability('frank_energie_next_poll_minutes')) {
+        this.setCapabilityValue('frank_energie_next_poll_minutes', 0).catch((err) => {
+          this.error('Failed to update countdown capability:', err);
+        });
+      }
+      return;
+    }
+
+    const now = Date.now();
+    const remainingMs = this.nextPollTime - now;
+    const remainingMinutes = Math.max(0, Math.ceil(remainingMs / (60 * 1000)));
+
+    if (this.hasCapability('frank_energie_next_poll_minutes')) {
+      this.setCapabilityValue('frank_energie_next_poll_minutes', remainingMinutes).catch((err) => {
+        this.error('Failed to update countdown capability:', err);
+      });
+    }
+
+    // If countdown reached 0 and poll should have happened, something went wrong
+    if (remainingMinutes === 0 && remainingMs < -60000) {
+      this.log('Warning: Poll countdown reached 0 but poll may not have executed');
+    }
+  }
+
+  /**
+   * Start the countdown interval timer
+   * Updates the countdown capability every minute
+   */
+  protected startCountdownTimer(): void {
+    // Clear existing countdown timer if any
+    if (this.countdownInterval) {
+      this.homey.clearInterval(this.countdownInterval);
+    }
+
+    // Update immediately
+    this.updatePollCountdown();
+
+    // Update every minute
+    this.countdownInterval = this.homey.setInterval(
+      () => {
+        this.updatePollCountdown();
+      },
+      60 * 1000, // 1 minute
+    );
+
+    this.log('Countdown timer started');
   }
 
   /**
@@ -397,6 +461,10 @@ export abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     if (this.pollInterval) {
       this.homey.clearInterval(this.pollInterval);
+    }
+
+    if (this.countdownInterval) {
+      this.homey.clearInterval(this.countdownInterval);
     }
   }
 }
