@@ -1938,6 +1938,21 @@
       "setable": false,
       "uiComponent": "sensor"
     },
+    "battery_10_total": {
+      "type": "number",
+      "title": {
+        "en": "Battery 10 Total",
+        "nl": "Batterij 10 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
     "battery_2_total": {
       "type": "number",
       "title": {
@@ -1988,6 +2003,66 @@
       "title": {
         "en": "Battery 5 Total",
         "nl": "Batterij 5 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "battery_6_total": {
+      "type": "number",
+      "title": {
+        "en": "Battery 6 Total",
+        "nl": "Batterij 6 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "battery_7_total": {
+      "type": "number",
+      "title": {
+        "en": "Battery 7 Total",
+        "nl": "Batterij 7 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "battery_8_total": {
+      "type": "number",
+      "title": {
+        "en": "Battery 8 Total",
+        "nl": "Batterij 8 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
+    },
+    "battery_9_total": {
+      "type": "number",
+      "title": {
+        "en": "Battery 9 Total",
+        "nl": "Batterij 9 Totaal"
       },
       "units": {
         "en": "€",
