@@ -685,6 +685,78 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Sanitize battery ID to make it safe for use in capability IDs
+   * Replaces spaces and special characters with underscores, converts to lowercase
+   */
+  private sanitizeBatteryId(batteryId: string): string {
+    return batteryId
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '');
+  }
+
+  /**
+   * Ensure individual battery capabilities exist for a given battery ID
+   * Creates capabilities dynamically if they don't exist
+   * Returns the capability IDs for charged, discharged, and percentage
+   */
+  private async ensureExternalBatteryCapabilities(batteryId: string): Promise<{
+    chargedId: string;
+    dischargedId: string;
+    percentageId: string;
+  }> {
+    const sanitizedId = this.sanitizeBatteryId(batteryId);
+    const chargedId = `external_battery_${sanitizedId}_charged`;
+    const dischargedId = `external_battery_${sanitizedId}_discharged`;
+    const percentageId = `external_battery_${sanitizedId}_percentage`;
+
+    // Create charged capability if it doesn't exist
+    if (!this.hasCapability(chargedId)) {
+      await this.addCapability(chargedId);
+      await this.setCapabilityOptions(chargedId, {
+        title: {
+          en: `${batteryId} Charged`,
+          nl: `${batteryId} Geladen`,
+        },
+        units: { en: 'kWh', nl: 'kWh' },
+        decimals: 2,
+      });
+      this.log(`Created capability: ${chargedId} for battery ${batteryId}`);
+    }
+
+    // Create discharged capability if it doesn't exist
+    if (!this.hasCapability(dischargedId)) {
+      await this.addCapability(dischargedId);
+      await this.setCapabilityOptions(dischargedId, {
+        title: {
+          en: `${batteryId} Discharged`,
+          nl: `${batteryId} Geleverd`,
+        },
+        units: { en: 'kWh', nl: 'kWh' },
+        decimals: 2,
+      });
+      this.log(`Created capability: ${dischargedId} for battery ${batteryId}`);
+    }
+
+    // Create percentage capability if it doesn't exist
+    if (!this.hasCapability(percentageId)) {
+      await this.addCapability(percentageId);
+      await this.setCapabilityOptions(percentageId, {
+        title: {
+          en: `${batteryId} Level`,
+          nl: `${batteryId} Niveau`,
+        },
+        units: { en: '%', nl: '%' },
+        decimals: 0,
+      });
+      this.log(`Created capability: ${percentageId} for battery ${batteryId}`);
+    }
+
+    return { chargedId, dischargedId, percentageId };
+  }
+
+  /**
    * Action: Receive battery metrics from external sources
    * Stores metrics and triggers aggregation/flow cards
    */
@@ -706,11 +778,21 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       batteryPercentage: args.battery_percentage,
     });
 
-    // Update device capabilities
+    // Update aggregated device capabilities
     await this.setCapabilityValue('external_battery_daily_charged', aggregated.dailyChargedKwh);
     await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
     await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
     await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
+
+    // Update individual battery capabilities
+    const batteryData = aggregated.batteries.find((b) => b.id === args.battery_id);
+    if (batteryData) {
+      const capIds = await this.ensureExternalBatteryCapabilities(args.battery_id);
+      await this.setCapabilityValue(capIds.chargedId, batteryData.dailyChargedKwh);
+      await this.setCapabilityValue(capIds.dischargedId, batteryData.dailyDischargedKwh);
+      await this.setCapabilityValue(capIds.percentageId, batteryData.percentage);
+      this.log(`Updated individual battery ${args.battery_id}: charged=${batteryData.dailyChargedKwh.toFixed(2)} kWh, discharged=${batteryData.dailyDischargedKwh.toFixed(2)} kWh, ${batteryData.percentage}%`);
+    }
 
     // Trigger flow card with aggregated data
     await this.homey.flow.getTriggerCard('external_battery_metrics_updated').trigger(this, {
@@ -746,11 +828,21 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       batteryPercentage: args.battery_percentage,
     });
 
-    // Update device capabilities
+    // Update aggregated device capabilities
     await this.setCapabilityValue('external_battery_daily_charged', aggregated.dailyChargedKwh);
     await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
     await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
     await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
+
+    // Update individual battery capabilities
+    const batteryData = aggregated.batteries.find((b) => b.id === args.battery_id);
+    if (batteryData) {
+      const capIds = await this.ensureExternalBatteryCapabilities(args.battery_id);
+      await this.setCapabilityValue(capIds.chargedId, batteryData.dailyChargedKwh);
+      await this.setCapabilityValue(capIds.dischargedId, batteryData.dailyDischargedKwh);
+      await this.setCapabilityValue(capIds.percentageId, batteryData.percentage);
+      this.log(`Updated individual battery ${args.battery_id}: charged=${batteryData.dailyChargedKwh.toFixed(2)} kWh, discharged=${batteryData.dailyDischargedKwh.toFixed(2)} kWh, ${batteryData.percentage}%`);
+    }
 
     // Trigger flow card with aggregated data
     await this.homey.flow.getTriggerCard('external_battery_metrics_updated').trigger(this, {
