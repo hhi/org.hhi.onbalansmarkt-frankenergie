@@ -60,6 +60,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('No smart batteries found on Frank Energie account');
     }
 
+    // Ensure external battery capabilities exist (migration for existing devices)
+    await this.ensureExternalBatteryAggregatedCapabilities();
+
     // Setup individual battery capabilities
     await this.setupIndividualBatteryCapabilities();
 
@@ -69,6 +72,28 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       logger: (msg, ...args) => this.log(msg, ...args),
     });
     this.log('External battery metrics store initialized');
+  }
+
+  /**
+   * Ensure aggregated external battery capabilities exist
+   * This is needed for migration of existing devices that were paired before these capabilities were added
+   */
+  private async ensureExternalBatteryAggregatedCapabilities(): Promise<void> {
+    const requiredCapabilities = [
+      'external_battery_daily_charged',
+      'external_battery_daily_discharged',
+      'external_battery_percentage',
+      'external_battery_count',
+    ];
+
+    for (const capabilityId of requiredCapabilities) {
+      if (!this.hasCapability(capabilityId)) {
+        this.log(`Adding missing capability: ${capabilityId}`);
+        await this.addCapability(capabilityId);
+      }
+    }
+
+    this.log('External battery aggregated capabilities verified');
   }
 
   /**
