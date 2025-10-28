@@ -1332,7 +1332,7 @@
         "en": "Smart Battery",
         "nl": "Slimme Batterij"
       },
-      "class": "service",
+      "class": "battery",
       "capabilities": [
         "battery_charging_state",
         "meter_power",
@@ -1497,6 +1497,28 @@
               "hint": {
                 "en": "Automatically send trading results to Onbalansmarkt.com (requires API key)",
                 "nl": "Automatisch handelsresultaten versturen naar Onbalansmarkt.com (vereist API-sleutel)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Energy Dashboard",
+            "nl": "Energie Dashboard"
+          },
+          "children": [
+            {
+              "id": "exclude_from_energy",
+              "type": "checkbox",
+              "label": {
+                "en": "Exclude from Energy",
+                "nl": "Uitsluiten van Energie"
+              },
+              "value": true,
+              "hint": {
+                "en": "Exclude this device from the Homey Energy dashboard",
+                "nl": "Dit apparaat uitsluiten van het Homey Energie dashboard"
               }
             }
           ]

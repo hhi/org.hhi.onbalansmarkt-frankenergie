@@ -3,7 +3,7 @@
     "en": "Smart Battery",
     "nl": "Slimme Batterij"
   },
-  "class": "service",
+  "class": "battery",
   "capabilities": [
     "battery_charging_state",
     "meter_power",

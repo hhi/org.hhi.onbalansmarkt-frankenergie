@@ -124,6 +124,28 @@
   {
     "type": "group",
     "label": {
+      "en": "Energy Dashboard",
+      "nl": "Energie Dashboard"
+    },
+    "children": [
+      {
+        "id": "exclude_from_energy",
+        "type": "checkbox",
+        "label": {
+          "en": "Exclude from Energy",
+          "nl": "Uitsluiten van Energie"
+        },
+        "value": true,
+        "hint": {
+          "en": "Exclude this device from the Homey Energy dashboard",
+          "nl": "Dit apparaat uitsluiten van het Homey Energie dashboard"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
       "en": "Manual Actions",
       "nl": "Handmatige Acties"
     },

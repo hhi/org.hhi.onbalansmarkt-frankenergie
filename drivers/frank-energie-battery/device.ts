@@ -60,6 +60,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('No smart batteries found on Frank Energie account');
     }
 
+    // Migrate settings for existing devices
+    await this.migrateSettings();
+
     // Ensure external battery capabilities exist (migration for existing devices)
     await this.ensureExternalBatteryAggregatedCapabilities();
 
@@ -72,6 +75,28 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       logger: (msg, ...args) => this.log(msg, ...args),
     });
     this.log('External battery metrics store initialized');
+  }
+
+  /**
+   * Migrate settings for existing devices
+   * Fixes type mismatches that can occur after app updates
+   */
+  private async migrateSettings(): Promise<void> {
+    const settings = this.getSettings();
+    const updates: Record<string, string | number | boolean> = {};
+
+    // Fix poll_interval type: must be string for dropdown
+    const pollInterval = settings.poll_interval;
+    if (typeof pollInterval === 'number') {
+      this.log(`Migrating poll_interval from number (${pollInterval}) to string ("${pollInterval}")`);
+      updates.poll_interval = String(pollInterval);
+    }
+
+    // Apply migrations if any
+    if (Object.keys(updates).length > 0) {
+      await this.setSettings(updates);
+      this.log('Settings migration completed:', Object.keys(updates));
+    }
   }
 
   /**
