@@ -58,7 +58,7 @@ export = class SmartPvSystemDriver extends Homey.Driver {
       const firstPv = pvSystems[0];
       const deviceName = pvSystems.length > 1
         ? `Smart PV Systems (${pvSystems.length})`
-        : `Smart PV System`;
+        : 'Smart PV System';
 
       return [
         {

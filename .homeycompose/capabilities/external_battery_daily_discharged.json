@@ -13,6 +13,7 @@
     "nl": "kWh"
   },
   "decimals": 2,
+  "insights": true,
   "chartType": "stepLine",
   "getable": true,
   "setable": false,

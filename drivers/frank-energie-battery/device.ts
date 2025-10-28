@@ -667,6 +667,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       case 'monthly_milestone':
         message = `Monthly Milestone\nTotal: €${totalResult.toFixed(2)}`;
         break;
+      default:
+        message = `Notification\nResult: €${batteryResult.toFixed(2)}`;
+        break;
     }
 
     this.log(`Sending rich notification: ${args.type}`);
@@ -695,6 +698,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       case 'toggle':
         newValue = !currentValue;
         break;
+      default:
+        this.error(`Invalid measurement sending state: ${args.state}`);
+        return;
     }
 
     if (newValue !== currentValue) {
@@ -841,7 +847,10 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       await this.setCapabilityValue(capIds.chargedId, batteryData.dailyChargedKwh);
       await this.setCapabilityValue(capIds.dischargedId, batteryData.dailyDischargedKwh);
       await this.setCapabilityValue(capIds.percentageId, batteryData.percentage);
-      this.log(`Updated individual battery ${args.battery_id}: charged=${batteryData.dailyChargedKwh.toFixed(2)} kWh, discharged=${batteryData.dailyDischargedKwh.toFixed(2)} kWh, ${batteryData.percentage}%`);
+      this.log(`Updated individual battery ${args.battery_id}: `
+        + `charged=${batteryData.dailyChargedKwh.toFixed(2)} kWh, `
+        + `discharged=${batteryData.dailyDischargedKwh.toFixed(2)} kWh, `
+        + `level=${batteryData.percentage}%`);
     }
 
     // Trigger flow card with aggregated data
@@ -852,7 +861,10 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       battery_count: aggregated.batteryCount,
     });
 
-    this.log(`External battery metrics updated - Daily: charged ${aggregated.dailyChargedKwh.toFixed(2)} kWh, discharged ${aggregated.dailyDischargedKwh.toFixed(2)} kWh, avg ${aggregated.averageBatteryPercentage.toFixed(1)}%, count ${aggregated.batteryCount}`);
+    this.log(
+      `External battery metrics updated - Daily: charged ${aggregated.dailyChargedKwh.toFixed(2)} kWh, `
+      + `discharged ${aggregated.dailyDischargedKwh.toFixed(2)} kWh, avg ${aggregated.averageBatteryPercentage.toFixed(1)}%, count ${aggregated.batteryCount}`,
+    );
   }
 
   /**
@@ -868,7 +880,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('External battery metrics store not initialized');
     }
 
-    this.log(`Receiving daily metrics for battery ${args.battery_id}: daily charged=${args.daily_charged_kwh} kWh, daily discharged=${args.daily_discharged_kwh} kWh, percentage=${args.battery_percentage}%`);
+    this.log(`Receiving daily metrics for battery ${args.battery_id}: `
+      + `daily charged=${args.daily_charged_kwh} kWh, daily discharged=${args.daily_discharged_kwh} kWh, percentage=${args.battery_percentage}%`);
 
     // Store the daily metric and get aggregated results
     const aggregated: ExternalBatteryMetrics = await this.externalBatteryMetrics.storeDailyMetric({
@@ -891,7 +904,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       await this.setCapabilityValue(capIds.chargedId, batteryData.dailyChargedKwh);
       await this.setCapabilityValue(capIds.dischargedId, batteryData.dailyDischargedKwh);
       await this.setCapabilityValue(capIds.percentageId, batteryData.percentage);
-      this.log(`Updated individual battery ${args.battery_id}: charged=${batteryData.dailyChargedKwh.toFixed(2)} kWh, discharged=${batteryData.dailyDischargedKwh.toFixed(2)} kWh, ${batteryData.percentage}%`);
+      this.log(
+        `Updated individual battery ${args.battery_id}: `
+        + `charged=${batteryData.dailyChargedKwh.toFixed(2)} kWh, `
+        + `discharged=${batteryData.dailyDischargedKwh.toFixed(2)} kWh, `
+        + `${batteryData.percentage}%`,
+      );
     }
 
     // Trigger flow card with aggregated data
@@ -902,7 +920,10 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       battery_count: aggregated.batteryCount,
     });
 
-    this.log(`External battery daily metrics updated - Daily: charged ${aggregated.dailyChargedKwh.toFixed(2)} kWh, discharged ${aggregated.dailyDischargedKwh.toFixed(2)} kWh, avg ${aggregated.averageBatteryPercentage.toFixed(1)}%, count ${aggregated.batteryCount}`);
+    this.log(
+      `External battery daily metrics updated - Daily: charged ${aggregated.dailyChargedKwh.toFixed(2)} kWh, `
+      + `discharged ${aggregated.dailyDischargedKwh.toFixed(2)} kWh, avg ${aggregated.averageBatteryPercentage.toFixed(1)}%, count ${aggregated.batteryCount}`,
+    );
   }
 
   // ===== Trigger Emission Methods =====
@@ -953,7 +974,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   private async emitTopPerformerAlert(currentRank: number, rankType: string) {
-    const percentile = currentRank <= 10 ? 'Top 1%' : currentRank <= 50 ? 'Top 5%' : 'Top 10%';
+    let percentile: string;
+    if (currentRank <= 10) {
+      percentile = 'Top 1%';
+    } else if (currentRank <= 50) {
+      percentile = 'Top 5%';
+    } else {
+      percentile = 'Top 10%';
+    }
     await this.homey.flow
       .getTriggerCard('top_performer_alert')
       .trigger({

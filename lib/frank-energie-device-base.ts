@@ -18,7 +18,7 @@ import {
  * - Polling management
  * - Ranking/measurement tracking
  */
-export abstract class FrankEnergieDeviceBase extends Homey.Device {
+export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   protected frankEnergieClient?: FrankEnergieClient;
   protected onbalansmarktClient?: OnbalansmarktClient;
   protected pollInterval?: NodeJS.Timeout;

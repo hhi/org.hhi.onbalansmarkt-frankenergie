@@ -58,9 +58,7 @@ export {
 } from './battery-metrics-store';
 
 // Device Base Class
-export {
-  FrankEnergieDeviceBase,
-} from './frank-energie-device-base';
+export { default as FrankEnergieDeviceBase } from './frank-energie-device-base';
 
 // Flow Card Types
 export type {

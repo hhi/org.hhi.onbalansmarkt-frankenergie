@@ -10,19 +10,6 @@ export interface FrankEnergieAuth {
   refreshToken: string;
 }
 
-export interface SmartBattery {
-  brand: string;
-  capacity: number;
-  createdAt: string;
-  externalReference: string;
-  id: string;
-  maxChargePower: number;
-  maxDischargePower: number;
-  provider: string;
-  updatedAt: string;
-  settings?: BatterySettings;
-}
-
 export interface BatterySettings {
   aggressivenessPercentage: number;
   algorithm: string;
@@ -41,6 +28,19 @@ export interface BatterySettings {
     effectiveFrom: string;
     imbalanceTradingStrategy: string;
   };
+}
+
+export interface SmartBattery {
+  brand: string;
+  capacity: number;
+  createdAt: string;
+  externalReference: string;
+  id: string;
+  maxChargePower: number;
+  maxDischargePower: number;
+  provider: string;
+  updatedAt: string;
+  settings?: BatterySettings;
 }
 
 export interface BatterySession {

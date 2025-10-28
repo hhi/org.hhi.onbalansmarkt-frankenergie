@@ -134,8 +134,8 @@ export class BatteryMetricsStore {
       this.logger(`BatteryMetricsStore: New day detected (${metrics.lastResetDate} → ${currentDate}), resetting daily counters`);
 
       // Move current totals to startOfDay (for cumulative batteries)
-      metrics.startOfDay.discharged = Object.assign({}, metrics.current.discharged);
-      metrics.startOfDay.charged = Object.assign({}, metrics.current.charged);
+      metrics.startOfDay.discharged = { ...metrics.current.discharged };
+      metrics.startOfDay.charged = { ...metrics.current.charged };
 
       // Reset daily-only values to zero (for daily-reset batteries)
       metrics.dailyOnly.dailyCharged = {};
@@ -207,7 +207,9 @@ export class BatteryMetricsStore {
     await this.saveMetrics(metrics);
 
     this.logger(
-      `BatteryMetricsStore: Updated daily battery ${metric.batteryId} - Daily Discharged: ${metric.dailyDischargedKwh} kWh, Daily Charged: ${metric.dailyChargedKwh} kWh, Percentage: ${metric.batteryPercentage}%`,
+      `BatteryMetricsStore: Updated daily battery ${metric.batteryId} -`,
+      `Daily Discharged: ${metric.dailyDischargedKwh} kWh, Daily Charged: ${metric.dailyChargedKwh} kWh,`,
+      `Percentage: ${metric.batteryPercentage}%`,
     );
 
     // Calculate and return aggregated metrics

@@ -1,16 +1,18 @@
 {
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.9",
+  "version": "0.0.12",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "SmartBattery liveresults Onbalansmarkt"
+    "en": "SmartBattery liveresults Onbalansmarkt",
+    "nl": "SmartBattery liveresultaten Onbalansmarkt"
   },
   "description": {
-    "en": "Delivers battery trading liveresults to the onbalansmarkt.com site."
+    "en": "Delivers battery trading liveresults to the onbalansmarkt.com site.",
+    "nl": "Levert batterij handelsresultaten live aan de onbalansmarkt.com site."
   },
   "category": [
     "energy"
