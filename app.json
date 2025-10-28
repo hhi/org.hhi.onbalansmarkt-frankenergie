@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.12",
+  "version": "0.0.14",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -28,124 +28,6 @@
     "email": "iphone.HHi@me.com"
   },
   "brandColor": "#69B34C",
-  "locales": {
-    "en": {
-      "pair": {
-        "common": {
-          "login": {
-            "title": "Frank Energie",
-            "subtitle": "Sign in with your Frank Energie account"
-          }
-        },
-        "battery": {
-          "login": {
-            "title": "Frank Energie Battery",
-            "subtitle": "Sign in with your Frank Energie account"
-          }
-        },
-        "ev": {
-          "login": {
-            "title": "Frank Energie EV Charger",
-            "subtitle": "Sign in with your Frank Energie account"
-          }
-        },
-        "meter": {
-          "login": {
-            "title": "Frank Energie Meter",
-            "subtitle": "Sign in with your Frank Energie account"
-          }
-        },
-        "pv": {
-          "login": {
-            "title": "Frank Energie PV System",
-            "subtitle": "Sign in with your Frank Energie account"
-          }
-        },
-        "login": {
-          "email": "Email Address",
-          "email.hint": "Your Frank Energie account email address",
-          "password": "Password",
-          "password.hint": "Your Frank Energie account password",
-          "apiKey": "Onbalansmarkt API Key",
-          "apiKey.hint": "Your Onbalansmarkt.com API key (required for battery device)"
-        },
-        "buttons": {
-          "next": "Next",
-          "back": "Back",
-          "verifying": "Verifying...",
-          "finish": "Finish"
-        }
-      },
-      "error": {
-        "validation": {
-          "title": "Missing Fields",
-          "fields": "Email and password are required."
-        },
-        "login": {
-          "title": "Login Failed",
-          "body": "Failed to verify Frank Energie credentials. Please check your email and password."
-        }
-      }
-    },
-    "nl": {
-      "pair": {
-        "common": {
-          "login": {
-            "title": "Frank Energie",
-            "subtitle": "Inloggen met je Frank Energie account"
-          }
-        },
-        "battery": {
-          "login": {
-            "title": "Frank Energie Batterij",
-            "subtitle": "Inloggen met je Frank Energie account"
-          }
-        },
-        "ev": {
-          "login": {
-            "title": "Frank Energie Laadpaal",
-            "subtitle": "Inloggen met je Frank Energie account"
-          }
-        },
-        "meter": {
-          "login": {
-            "title": "Frank Energie Meter",
-            "subtitle": "Inloggen met je Frank Energie account"
-          }
-        },
-        "pv": {
-          "login": {
-            "title": "Frank Energie PV Systeem",
-            "subtitle": "Inloggen met je Frank Energie account"
-          }
-        },
-        "login": {
-          "email": "E-mailadres",
-          "email.hint": "Uw Frank Energie account e-mailadres",
-          "password": "Wachtwoord",
-          "password.hint": "Uw Frank Energie account wachtwoord",
-          "apiKey": "Onbalansmarkt API Key",
-          "apiKey.hint": "Uw Onbalansmarkt.com API sleutel (verplicht voor batterij device)"
-        },
-        "buttons": {
-          "next": "Volgende",
-          "back": "Vorige",
-          "verifying": "Verifiëren...",
-          "finish": "Voltooien"
-        }
-      },
-      "error": {
-        "validation": {
-          "title": "Velden Ontbreken",
-          "fields": "E-mailadres en wachtwoord zijn verplicht."
-        },
-        "login": {
-          "title": "Inloggen Mislukt",
-          "body": "Kon Frank Energie inloggegevens niet verifiëren. Controleer uw e-mailadres en wachtwoord."
-        }
-      }
-    }
-  },
   "flow": {
     "triggers": [
       {
@@ -2076,6 +1958,7 @@
   ],
   "capabilities": {
     "battery_1_total": {
+      "id": "battery_1_total",
       "type": "number",
       "title": {
         "en": "Battery 1 Total",
@@ -2091,6 +1974,7 @@
       "uiComponent": "sensor"
     },
     "battery_10_total": {
+      "id": "battery_10_total",
       "type": "number",
       "title": {
         "en": "Battery 10 Total",
@@ -2106,6 +1990,7 @@
       "uiComponent": "sensor"
     },
     "battery_2_total": {
+      "id": "battery_2_total",
       "type": "number",
       "title": {
         "en": "Battery 2 Total",
@@ -2121,6 +2006,7 @@
       "uiComponent": "sensor"
     },
     "battery_3_total": {
+      "id": "battery_3_total",
       "type": "number",
       "title": {
         "en": "Battery 3 Total",
@@ -2136,6 +2022,7 @@
       "uiComponent": "sensor"
     },
     "battery_4_total": {
+      "id": "battery_4_total",
       "type": "number",
       "title": {
         "en": "Battery 4 Total",
@@ -2151,6 +2038,7 @@
       "uiComponent": "sensor"
     },
     "battery_5_total": {
+      "id": "battery_5_total",
       "type": "number",
       "title": {
         "en": "Battery 5 Total",
@@ -2166,6 +2054,7 @@
       "uiComponent": "sensor"
     },
     "battery_6_total": {
+      "id": "battery_6_total",
       "type": "number",
       "title": {
         "en": "Battery 6 Total",
@@ -2181,6 +2070,7 @@
       "uiComponent": "sensor"
     },
     "battery_7_total": {
+      "id": "battery_7_total",
       "type": "number",
       "title": {
         "en": "Battery 7 Total",
@@ -2196,6 +2086,7 @@
       "uiComponent": "sensor"
     },
     "battery_8_total": {
+      "id": "battery_8_total",
       "type": "number",
       "title": {
         "en": "Battery 8 Total",
@@ -2211,6 +2102,7 @@
       "uiComponent": "sensor"
     },
     "battery_9_total": {
+      "id": "battery_9_total",
       "type": "number",
       "title": {
         "en": "Battery 9 Total",
@@ -2226,10 +2118,11 @@
       "uiComponent": "sensor"
     },
     "external_battery_count": {
+      "id": "external_battery_count",
       "type": "number",
       "title": {
-        "en": "Battery count",
-        "nl": "Aantal batterijen"
+        "en": "Battery # flow metrics",
+        "nl": "Batterij # flow metrieken"
       },
       "desc": {
         "en": "Number of external batteries providing metrics",
@@ -2248,6 +2141,7 @@
       "icon": "/assets/icon.svg"
     },
     "external_battery_daily_charged": {
+      "id": "external_battery_daily_charged",
       "type": "number",
       "title": {
         "en": "Daily charged",
@@ -2270,6 +2164,7 @@
       "icon": "/assets/icon.svg"
     },
     "external_battery_daily_discharged": {
+      "id": "external_battery_daily_discharged",
       "type": "number",
       "title": {
         "en": "Daily discharged",
@@ -2292,6 +2187,7 @@
       "icon": "/assets/icon.svg"
     },
     "external_battery_percentage": {
+      "id": "external_battery_percentage",
       "type": "number",
       "title": {
         "en": "Average battery percentage",
@@ -2316,6 +2212,7 @@
       "icon": "/assets/icon.svg"
     },
     "frank_energie_avg_market_price_today": {
+      "id": "frank_energie_avg_market_price_today",
       "type": "number",
       "title": {
         "en": "Average Market Price Today",
@@ -2408,6 +2305,7 @@
       ]
     },
     "frank_energie_current_market_price": {
+      "id": "frank_energie_current_market_price",
       "type": "number",
       "title": {
         "en": "Current Market Price",
@@ -2423,6 +2321,7 @@
       "uiComponent": "sensor"
     },
     "frank_energie_epex_result": {
+      "id": "frank_energie_epex_result",
       "type": "number",
       "title": {
         "en": "EPEX Result",
@@ -2495,6 +2394,7 @@
       ]
     },
     "frank_energie_frank_slim_bonus": {
+      "id": "frank_energie_frank_slim_bonus",
       "type": "number",
       "title": {
         "en": "Frank Slim Bonus",
@@ -2512,6 +2412,7 @@
       "uiComponent": "sensor"
     },
     "frank_energie_imbalance_result": {
+      "id": "frank_energie_imbalance_result",
       "type": "number",
       "title": {
         "en": "Imbalance Result",
@@ -2529,6 +2430,7 @@
       "uiComponent": "sensor"
     },
     "frank_energie_last_upload": {
+      "id": "frank_energie_last_upload",
       "type": "string",
       "title": {
         "en": "Last Upload",
@@ -2544,6 +2446,7 @@
       "uiQuickAction": false
     },
     "frank_energie_lifetime_total": {
+      "id": "frank_energie_lifetime_total",
       "type": "number",
       "title": {
         "en": "Lifetime Total",
@@ -2566,6 +2469,7 @@
       "uiQuickAction": false
     },
     "frank_energie_max_market_price_today": {
+      "id": "frank_energie_max_market_price_today",
       "type": "number",
       "title": {
         "en": "Highest Market Price Today",
@@ -2581,6 +2485,7 @@
       "uiComponent": "sensor"
     },
     "frank_energie_min_market_price_today": {
+      "id": "frank_energie_min_market_price_today",
       "type": "number",
       "title": {
         "en": "Lowest Market Price Today",
@@ -2596,6 +2501,7 @@
       "uiComponent": "sensor"
     },
     "frank_energie_next_hour_market_price": {
+      "id": "frank_energie_next_hour_market_price",
       "type": "number",
       "title": {
         "en": "Next Hour Market Price",
@@ -2611,6 +2517,7 @@
       "uiComponent": "sensor"
     },
     "frank_energie_next_poll_minutes": {
+      "id": "frank_energie_next_poll_minutes",
       "type": "number",
       "title": {
         "en": "Next Poll In",
@@ -2677,6 +2584,7 @@
       "decimals": 2
     },
     "frank_energie_pv_current_power": {
+      "id": "frank_energie_pv_current_power",
       "type": "number",
       "title": {
         "en": "Current Power",
@@ -2730,6 +2638,7 @@
       ]
     },
     "frank_energie_pv_today_generation": {
+      "id": "frank_energie_pv_today_generation",
       "type": "number",
       "title": {
         "en": "Generation Today",
@@ -2778,6 +2687,7 @@
       "units": "kWh"
     },
     "frank_energie_today_consumption": {
+      "id": "frank_energie_today_consumption",
       "type": "number",
       "title": {
         "en": "Consumption Today",
@@ -2793,6 +2703,7 @@
       "uiComponent": "sensor"
     },
     "frank_energie_today_costs": {
+      "id": "frank_energie_today_costs",
       "type": "number",
       "title": {
         "en": "Costs Today",
@@ -2826,6 +2737,7 @@
       "chartType": "stepLine"
     },
     "frank_energie_trading_result_split": {
+      "id": "frank_energie_trading_result_split",
       "type": "number",
       "title": {
         "en": "Trading Result",

@@ -2,8 +2,8 @@
   "id": "external_battery_count",
   "type": "number",
   "title": {
-    "en": "Battery count",
-    "nl": "Aantal batterijen"
+    "en": "Battery # flow metrics",
+    "nl": "Batterij # flow metrieken"
   },
   "desc": {
     "en": "Number of external batteries providing metrics",

@@ -1,0 +1,58 @@
+{
+  "pair": {
+    "common": {
+      "login": {
+        "title": "Frank Energie",
+        "subtitle": "Inloggen met je Frank Energie account"
+      }
+    },
+    "battery": {
+      "login": {
+        "title": "Frank Energie Batterij",
+        "subtitle": "Inloggen met je Frank Energie account"
+      }
+    },
+    "ev": {
+      "login": {
+        "title": "Frank Energie Laadpaal",
+        "subtitle": "Inloggen met je Frank Energie account"
+      }
+    },
+    "meter": {
+      "login": {
+        "title": "Frank Energie Meter",
+        "subtitle": "Inloggen met je Frank Energie account"
+      }
+    },
+    "pv": {
+      "login": {
+        "title": "Frank Energie PV Systeem",
+        "subtitle": "Inloggen met je Frank Energie account"
+      }
+    },
+    "login": {
+      "email": "E-mailadres",
+      "email.hint": "Uw Frank Energie account e-mailadres",
+      "password": "Wachtwoord",
+      "password.hint": "Uw Frank Energie account wachtwoord",
+      "apiKey": "Onbalansmarkt API Key",
+      "apiKey.hint": "Uw Onbalansmarkt.com API sleutel (verplicht voor batterij device)"
+    },
+    "buttons": {
+      "next": "Volgende",
+      "back": "Vorige",
+      "verifying": "Verifiëren...",
+      "finish": "Voltooien"
+    }
+  },
+  "error": {
+    "validation": {
+      "title": "Velden Ontbreken",
+      "fields": "E-mailadres en wachtwoord zijn verplicht."
+    },
+    "login": {
+      "title": "Inloggen Mislukt",
+      "body": "Kon Frank Energie inloggegevens niet verifiëren. Controleer uw e-mailadres en wachtwoord."
+    }
+  }
+}

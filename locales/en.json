@@ -1,1 +1,58 @@
-{}
+{
+  "pair": {
+    "common": {
+      "login": {
+        "title": "Frank Energie",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "battery": {
+      "login": {
+        "title": "Frank Energie Battery",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "ev": {
+      "login": {
+        "title": "Frank Energie EV Charger",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "meter": {
+      "login": {
+        "title": "Frank Energie Meter",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "pv": {
+      "login": {
+        "title": "Frank Energie PV System",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "login": {
+      "email": "Email Address",
+      "email.hint": "Your Frank Energie account email address",
+      "password": "Password",
+      "password.hint": "Your Frank Energie account password",
+      "apiKey": "Onbalansmarkt API Key",
+      "apiKey.hint": "Your Onbalansmarkt.com API key (required for battery device)"
+    },
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "verifying": "Verifying...",
+      "finish": "Finish"
+    }
+  },
+  "error": {
+    "validation": {
+      "title": "Missing Fields",
+      "fields": "Email and password are required."
+    },
+    "login": {
+      "title": "Login Failed",
+      "body": "Failed to verify Frank Energie credentials. Please check your email and password."
+    }
+  }
+}

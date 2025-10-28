@@ -200,31 +200,41 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       // Continue with setup even if initial poll fails
     }
 
-    // Set next poll time and start countdown
+    this.schedulePollInterval(pollIntervalMs);
+
+    this.log(`Polling interval started: will poll every ${pollIntervalMinutes} minutes`);
+    await this.setAvailable();
+  }
+
+  /**
+   * Schedule recurring polling and countdown updates
+   * @param pollIntervalMs Poll interval in milliseconds
+   */
+  private schedulePollInterval(pollIntervalMs: number): void {
+    // Clear existing polling interval so we start counting from "now"
+    if (this.pollInterval) {
+      this.homey.clearInterval(this.pollInterval);
+    }
+
+    // Update countdown capability immediately
     this.nextPollTime = Date.now() + pollIntervalMs;
     this.startCountdownTimer();
 
-    // Setup recurring poll using Homey's timer management
     this.pollInterval = this.homey.setInterval(
       async () => {
         try {
           await this.pollData();
-          // Update next poll time after successful poll
-          this.nextPollTime = Date.now() + pollIntervalMs;
-          this.updatePollCountdown();
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'Unknown error';
           this.error('Polling failed:', errorMsg);
-          // Still update next poll time so countdown continues
+        } finally {
+          // Always schedule the next poll and refresh countdown
           this.nextPollTime = Date.now() + pollIntervalMs;
           this.updatePollCountdown();
         }
       },
       pollIntervalMs,
     );
-
-    this.log(`Polling interval started: will poll every ${pollIntervalMinutes} minutes`);
-    await this.setAvailable();
   }
 
   /**
@@ -457,6 +467,11 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
         this.log('Manual action: Refresh data now');
         try {
           await this.pollData();
+          const pollIntervalSetting = this.getSetting('poll_interval');
+          const pollIntervalMinutes = this.validatePollInterval(pollIntervalSetting);
+          const pollIntervalMs = pollIntervalMinutes * 60 * 1000;
+          this.schedulePollInterval(pollIntervalMs);
+          this.log(`Polling schedule reset: next poll in ${pollIntervalMinutes} minutes`);
           this.log('Manual data refresh completed successfully');
           // Reset dropdown to "none" after onSettings completes
           this.homey.setTimeout(() => {

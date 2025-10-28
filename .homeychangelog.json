@@ -1,4 +1,9 @@
 {
+  "0.0.15": {
+    "en": "Ranking data now displays correctly. Translations moved to separate locale files.",
+    "nl": "Ranking data wordt nu correct weergegeven. Vertalingen verplaatst naar aparte locale bestanden."
+  },
+
   "0.0.14": {
     "en": "Added missing capability ID fields for better compatibility and validation.",
     "nl": "Ontbrekende capability ID velden toegevoegd voor betere compatibiliteit en validatie."

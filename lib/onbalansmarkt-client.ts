@@ -186,8 +186,35 @@ export class OnbalansmarktClient {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const profile: ProfileResponse = (await response.json()) as ProfileResponse;
+      // API returns { username, name, results: [...] }
+      // Need to transform to { username, name, resultToday, resultYesterday }
+      interface ApiResponse {
+        username: string;
+        name: string;
+        results: DailyResult[];
+      }
+
+      const apiResponse = (await response.json()) as ApiResponse;
+
+      // Get today's and yesterday's dates in YYYY-MM-DD format
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      // Find today's and yesterday's results from the array
+      const resultToday = apiResponse.results.find((r) => r.date === todayStr) || null;
+      const resultYesterday = apiResponse.results.find((r) => r.date === yesterdayStr) || null;
+
+      const profile: ProfileResponse = {
+        username: apiResponse.username,
+        name: apiResponse.name,
+        resultToday,
+        resultYesterday,
+      };
+
       this.logger('OnbalansmarktClient: Successfully fetched profile', {
         username: profile.username,
         overallRank: profile.resultToday?.overallRank || null,
