@@ -1,4 +1,9 @@
 {
+  "0.0.12": {
+    "en": "Historical data graphs available for trading results, rankings, and battery metrics. App name and description now available in Dutch.",
+    "nl": "Historische grafieken beschikbaar voor handelsresultaten, rankings en batterij metrieken. App naam en beschrijving nu beschikbaar in het Nederlands."
+  },
+
   "0.0.1": {
     "en": "test",
     "nl": "test",
