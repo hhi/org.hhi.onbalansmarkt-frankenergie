@@ -1,4 +1,5 @@
 {
+  "id": "external_battery_percentage",
   "type": "number",
   "title": {
     "en": "Average battery percentage",

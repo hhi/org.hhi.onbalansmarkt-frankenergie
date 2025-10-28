@@ -1,4 +1,5 @@
 {
+  "id": "frank_energie_avg_market_price_today",
   "type": "number",
   "title": {
     "en": "Average Market Price Today",

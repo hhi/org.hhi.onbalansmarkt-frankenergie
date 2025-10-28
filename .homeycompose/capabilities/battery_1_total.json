@@ -1,4 +1,5 @@
 {
+  "id": "battery_1_total",
   "type": "number",
   "title": {
     "en": "Battery 1 Total",

@@ -1,4 +1,5 @@
 {
+  "id": "frank_energie_next_hour_market_price",
   "type": "number",
   "title": {
     "en": "Next Hour Market Price",

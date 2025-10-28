@@ -1,4 +1,5 @@
 {
+  "id": "external_battery_daily_discharged",
   "type": "number",
   "title": {
     "en": "Daily discharged",

@@ -1,4 +1,5 @@
 {
+  "id": "frank_energie_next_poll_minutes",
   "type": "number",
   "title": {
     "en": "Next Poll In",

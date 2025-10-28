@@ -1,4 +1,9 @@
 {
+  "0.0.14": {
+    "en": "Added missing capability ID fields for better compatibility and validation.",
+    "nl": "Ontbrekende capability ID velden toegevoegd voor betere compatibiliteit en validatie."
+  },
+
   "0.0.13": {
     "en": "Manual data refresh now works correctly without settings conflicts.",
     "nl": "Handmatig gegevens verversen werkt nu correct zonder instellingen conflicten."

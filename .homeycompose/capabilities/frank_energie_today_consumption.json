@@ -1,4 +1,5 @@
 {
+  "id": "frank_energie_today_consumption",
   "type": "number",
   "title": {
     "en": "Consumption Today",
