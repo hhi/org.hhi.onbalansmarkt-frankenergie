@@ -458,14 +458,20 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
         try {
           await this.pollData();
           this.log('Manual data refresh completed successfully');
-          // Reset dropdown to "none"
-          await this.setSettings({ manual_action: 'none' });
+          // Reset dropdown to "none" after onSettings completes
+          this.homey.setTimeout(() => {
+            this.setSettings({ manual_action: 'none' })
+              .catch((error) => this.error('Failed to reset manual_action dropdown:', error));
+          }, 100);
           return; // Don't restart polling or reinitialize clients
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'Unknown error';
           this.error('Manual data refresh failed:', errorMsg);
           // Reset dropdown to "none" even on failure
-          await this.setSettings({ manual_action: 'none' });
+          this.homey.setTimeout(() => {
+            this.setSettings({ manual_action: 'none' })
+              .catch((err) => this.error('Failed to reset manual_action dropdown:', err));
+          }, 100);
           throw new Error(`Manual refresh failed: ${errorMsg}`);
         }
       }
@@ -473,8 +479,11 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       // If action is "none" or unknown, just reset and return
       if (action !== 'none') {
         this.log(`Unknown manual action: ${action}`);
+        this.homey.setTimeout(() => {
+          this.setSettings({ manual_action: 'none' })
+            .catch((error) => this.error('Failed to reset manual_action dropdown:', error));
+        }, 100);
       }
-      await this.setSettings({ manual_action: 'none' });
       return;
     }
 
