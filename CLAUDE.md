@@ -374,6 +374,36 @@ and better user experience."
 - **driver.settings.compose.json**: Device settings that users can configure per device instance
 - **tsconfig.json**: TypeScript compilation settings targeting Node 16
 
+### Custom Capability Requirements (CRITICAL)
+
+According to [Homey documentation](https://apps.developer.homey.app/the-basics/devices/capabilities), **every custom capability MUST have an `id` field that matches the filename**.
+
+**Required Structure**:
+
+```json
+{
+  "id": "capability_name",
+  "type": "number",
+  "title": {
+    "en": "Capability Title",
+    "nl": "Capability Titel"
+  },
+  ...
+}
+```
+
+**Rules**:
+
+- ✅ **Filename**: `capability_name.json`
+- ✅ **ID field**: `"id": "capability_name"` (must match filename without .json)
+- ✅ **Position**: ID should be the first field in the JSON object
+- ❌ **Missing ID**: Causes validation issues and breaks Homey SDK compliance
+
+**Example**:
+
+- File: `.homeycompose/capabilities/frank_energie_trading_result.json`
+- Required ID: `"id": "frank_energie_trading_result"`
+
 ### Context Token Optimization
 
 **Context Token Optimization**: The auto-generated `app.json` file can become large and should be handled efficiently:
