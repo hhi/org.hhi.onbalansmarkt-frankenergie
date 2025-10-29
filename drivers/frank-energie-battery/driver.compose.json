@@ -6,7 +6,6 @@
   "class": "battery",
   "capabilities": [
     "battery_charging_state",
-    "meter_power",
     "frank_energie_battery_charge",
     "frank_energie_battery_mode",
     "frank_energie_overall_rank",

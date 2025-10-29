@@ -457,9 +457,6 @@ async pollData() {
 // Charging state: 'charging' | 'discharging' | 'idle'
 await this.setCapabilityValue('battery_charging_state', chargingState);
 
-// Power meter (Watt) - positive = charging, negative = discharging
-await this.setCapabilityValue('meter_power', powerWatt);
-
 // Battery charge percentage
 await this.setCapabilityValue('frank_energie_battery_charge', batteryCharge);
 
@@ -828,15 +825,13 @@ async onSettings({
 │  └───────────────────────────────────────────────────────────────────┘ │
 │                                                                         │
 │  ┌───────────────────────────────────────────────────────────────────┐ │
-│  │ Capabilities (16 total)                                           │ │
+│  │ Capabilities (15 total)                                           │ │
 │  │  • battery_charging_state                                         │ │
-│  │  • meter_power                                                    │ │
 │  │  • frank_energie_battery_charge                                   │ │
 │  │  • frank_energie_battery_mode                                     │ │
 │  │  • frank_energie_trading_result                                   │ │
 │  │  • frank_energie_frank_slim_bonus                                 │ │
 │  │  • frank_energie_epex_result                                      │ │
-│  │  • frank_energie_trading_result_split                             │ │
 │  │  • frank_energie_imbalance_result                                 │ │
 │  │  • frank_energie_overall_rank                                     │ │
 │  │  • frank_energie_provider_rank                                    │ │
@@ -907,8 +902,7 @@ async onSettings({
    → Set frank_energie_imbalance_result: 0.30
    → Set frank_energie_frank_slim_bonus: 0.06
    → Set battery_charging_state: 'charging'
-   → Set meter_power: 2500 W
-   → ... (16 capabilities total)
+   → ... (15 capabilities total)
 
 3. updateRankings() (if API key set)
    → Call Onbalansmarkt.com /api/me

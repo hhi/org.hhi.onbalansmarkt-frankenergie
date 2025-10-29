@@ -126,11 +126,12 @@ const modeInfo = TradingModeDetector.detectTradingMode(battery.settings);
 
 ### Key Concepts
 
-- **Capabilities**: The app exposes four capabilities for the Frank Energie driver:
+- **Capabilities**: The app exposes multiple capabilities for the Frank Energie battery driver including:
   - `battery_charging_state`: Battery charging state
-  - `meter_power`: Power meter readings
   - `frank_energie_overall_rank`: Overall ranking position on Onbalansmarkt.com
   - `frank_energie_provider_rank`: Provider-specific ranking position
+  - `frank_energie_trading_result`: Daily trading result in euros
+  - And many more for trading results, battery metrics, and external battery integration
 
 - **Configuration via Compose**: The app uses Homey's "compose" format for configuration:
   - `.homeycompose/app.json`: Main app configuration (gets compiled to `app.json`)

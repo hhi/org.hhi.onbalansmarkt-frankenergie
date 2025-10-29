@@ -334,14 +334,6 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       );
     }
 
-    // Update power meter
-    if (results.periodTradingResult !== null) {
-      updatePromises.push(
-        this.setCapabilityValue('meter_power', Math.round(results.periodTradingResult * 1000))
-          .catch((error) => this.error('Failed to update meter_power:', error)),
-      );
-    }
-
     // Update battery trading result (custom capability)
     if (results.periodTradingResult !== null) {
       updatePromises.push(

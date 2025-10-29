@@ -17,11 +17,11 @@ Uitgebreide documentatie over alle sensor data (capabilities) die de Frank Energ
 
 ## Overzicht
 
-De Frank Energie app biedt **41 totaal unieke sensors** verdeeld over 4 driver types:
+De Frank Energie app biedt **40 totaal unieke sensors** verdeeld over 4 driver types:
 
 | Driver | Aantal Sensors | Primaire Focus |
 |--------|---------------|----------------|
-| **Smart Battery** | 16 | Trading results, battery state, rankings, externe batterijen |
+| **Smart Battery** | 15 | Trading results, battery state, rankings, externe batterijen |
 | **EV Charger** | 6 | Laadstatus, bonus, rankings |
 | **Site Energy Meter** | 12 | Marktprijzen, verbruik, kosten |
 | **Smart PV System** | 7 | PV opwek, status, bonus, rankings |
@@ -38,9 +38,9 @@ Alle sensors worden bijgewerkt volgens de **poll interval** instelling (configur
 
 ---
 
-## Smart Battery Driver (16 sensors)
+## Smart Battery Driver (15 sensors)
 
-### Batterij Status Sensors (4)
+### Batterij Status Sensors (3)
 
 #### 1. `battery_charging_state`
 **Type**: String (Homey standaard capability)
@@ -58,32 +58,7 @@ idle        → Batterij is inactief
 
 ---
 
-#### 2. `meter_power`
-**Type**: Number (Watt)
-**Unit**: W
-**Range**: -10000 tot +10000 W
-**Beschrijving**: Huidig vermogen van de batterij
-**Bron**: Frank Energie GraphQL - berekend uit `lastActiveSession`
-**Conversie**:
-- Positief getal = opladen (bijv. +2500 W)
-- Negatief getal = ontladen (bijv. -3200 W)
-
-**Voorbeeld**:
-```
-+2500 W  → Batterij laadt op met 2.5 kW
--3200 W  → Batterij ontlaadt met 3.2 kW
-0 W      → Batterij inactief
-```
-
-**Flow Card Gebruik**:
-```
-IF meter_power > 2000
-THEN "Batterij laadt krachtig op"
-```
-
----
-
-#### 3. `frank_energie_battery_charge`
+#### 2. `frank_energie_battery_charge`
 **Type**: Number (Percentage)
 **Unit**: %
 **Range**: 0 - 100%
@@ -106,7 +81,7 @@ THEN "Batterij bijna leeg - check handelsresultaten"
 
 ---
 
-#### 4. `frank_energie_battery_mode`
+#### 3. `frank_energie_battery_mode`
 **Type**: String
 **Waarden**:
 - `imbalance` - Onbalansmarkt (standaard)
@@ -1098,11 +1073,11 @@ THEN Send notification
 ### Unieke vs Gedeelde Capabilities
 
 **Gedeelde capabilities** (meerdere drivers):
-- `meter_power` - Battery, EV, Meter, PV
+- `meter_power` - EV, Meter, PV
 - `frank_energie_overall_rank` - Battery, EV, Meter, PV
 - `frank_energie_provider_rank` - Battery, EV, Meter, PV
 
-**Driver-specifieke capabilities**: 32 unieke sensors
+**Driver-specifieke capabilities**: 33 unieke sensors
 
 ---
 

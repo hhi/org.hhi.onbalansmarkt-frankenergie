@@ -1,4 +1,9 @@
 {
+  "0.0.20": {
+    "en": "Removed redundant meter_power capability from battery driver.",
+    "nl": "Overbodige meter_power capability verwijderd uit batterij driver."
+  },
+
   "0.0.19": {
     "en": "External battery metrics fixed. Rankings update after measurement upload. Removed duplicate capability.",
     "nl": "Externe batterij metrieken gefixed. Rankings updaten na measurement upload. Dubbele capability verwijderd."
