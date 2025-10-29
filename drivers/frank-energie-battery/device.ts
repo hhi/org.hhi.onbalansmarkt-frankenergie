@@ -111,14 +111,27 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       'external_battery_count',
     ];
 
+    // Check if we need to refresh capabilities (v0.0.14+ added "id" field to capability definitions)
+    const needsRefresh = await this.getStoreValue('capabilities_refreshed_v014') !== true;
+
     for (const capabilityId of requiredCapabilities) {
       if (!this.hasCapability(capabilityId)) {
         this.log(`Adding missing capability: ${capabilityId}`);
         await this.addCapability(capabilityId);
+      } else if (needsRefresh) {
+        // Refresh capability to load new definition with "id" field
+        this.log(`Refreshing capability definition: ${capabilityId}`);
+        await this.removeCapability(capabilityId);
+        await this.addCapability(capabilityId);
       }
     }
 
-    this.log('External battery aggregated capabilities verified');
+    if (needsRefresh) {
+      await this.setStoreValue('capabilities_refreshed_v014', true);
+      this.log('External battery capabilities refreshed with new definitions');
+    } else {
+      this.log('External battery aggregated capabilities verified');
+    }
   }
 
   /**
@@ -279,9 +292,15 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       const sendMeasurements = this.getSetting('send_measurements') as boolean;
       if (sendMeasurements && results.periodTradingResult !== 0) {
         await this.sendMeasurement(results, tradingModeInfo.mode);
+
+        // Wait for Onbalansmarkt to process the measurement and recalculate rankings
+        this.log('Waiting 5 seconds for Onbalansmarkt to update rankings...');
+        await new Promise((resolve) => {
+          this.homey.setTimeout(resolve, 5000);
+        });
       }
 
-      // Update ranking information
+      // Update ranking information (after measurement has been processed)
       await this.updateRankings();
 
       // Store last poll data
@@ -352,14 +371,6 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       updatePromises.push(
         this.setCapabilityValue('frank_energie_epex_result', results.periodEpexResult)
           .catch((error) => this.error('Failed to update frank_energie_epex_result:', error)),
-      );
-    }
-
-    // Update Trading result split (same as period trading result)
-    if (results.periodTradingResult !== null) {
-      updatePromises.push(
-        this.setCapabilityValue('frank_energie_trading_result_split', results.periodTradingResult)
-          .catch((error) => this.error('Failed to update frank_energie_trading_result_split:', error)),
       );
     }
 

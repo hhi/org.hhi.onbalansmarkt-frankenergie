@@ -6,12 +6,12 @@
     "nl": "Dagelijks geladen"
   },
   "desc": {
-    "en": "Total kWh charged today from external batteries",
-    "nl": "Totaal kWh vandaag geladen van externe batterijen"
+    "en": "Total Watt charged today from external batteries",
+    "nl": "Totaal Watt vandaag geladen van externe batterijen"
   },
   "units": {
-    "en": "kWh",
-    "nl": "kWh"
+    "en": "W",
+    "nl": "W"
   },
   "decimals": 2,
   "insights": true,

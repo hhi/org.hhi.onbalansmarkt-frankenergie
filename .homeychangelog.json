@@ -1,4 +1,9 @@
 {
+  "0.0.19": {
+    "en": "External battery metrics fixed. Rankings update after measurement upload. Removed duplicate capability.",
+    "nl": "Externe batterij metrieken gefixed. Rankings updaten na measurement upload. Dubbele capability verwijderd."
+  },
+
   "0.0.15": {
     "en": "Ranking data now displays correctly. Translations moved to separate locale files.",
     "nl": "Ranking data wordt nu correct weergegeven. Vertalingen verplaatst naar aparte locale bestanden."

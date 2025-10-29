@@ -1,15 +1,15 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.14",
+  "version": "0.0.19",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "SmartBattery liveresults Onbalansmarkt",
-    "nl": "SmartBattery liveresultaten Onbalansmarkt"
+    "en": "Onbalansmarkt smartBattery liveresults",
+    "nl": "Onbalansmarkt smartBattery liveresultaten"
   },
   "description": {
     "en": "Delivers battery trading liveresults to the onbalansmarkt.com site.",
@@ -1233,7 +1233,6 @@
         "frank_energie_lifetime_total",
         "frank_energie_frank_slim_bonus",
         "frank_energie_epex_result",
-        "frank_energie_trading_result_split",
         "frank_energie_imbalance_result",
         "frank_energie_last_upload",
         "frank_energie_next_poll_minutes",
@@ -2148,12 +2147,12 @@
         "nl": "Dagelijks geladen"
       },
       "desc": {
-        "en": "Total kWh charged today from external batteries",
-        "nl": "Totaal kWh vandaag geladen van externe batterijen"
+        "en": "Total Watt charged today from external batteries",
+        "nl": "Totaal Watt vandaag geladen van externe batterijen"
       },
       "units": {
-        "en": "kWh",
-        "nl": "kWh"
+        "en": "W",
+        "nl": "W"
       },
       "decimals": 2,
       "insights": true,
@@ -2171,12 +2170,12 @@
         "nl": "Dagelijks geleverd"
       },
       "desc": {
-        "en": "Total kWh discharged today from external batteries",
-        "nl": "Totaal kWh vandaag geleverd van externe batterijen"
+        "en": "Total Watt discharged today from external batteries",
+        "nl": "Totaal Watt vandaag geleverd van externe batterijen"
       },
       "units": {
-        "en": "kWh",
-        "nl": "kWh"
+        "en": "W",
+        "nl": "W"
       },
       "decimals": 2,
       "insights": true,
@@ -2735,24 +2734,6 @@
       "units": "€",
       "decimals": 2,
       "chartType": "stepLine"
-    },
-    "frank_energie_trading_result_split": {
-      "id": "frank_energie_trading_result_split",
-      "type": "number",
-      "title": {
-        "en": "Trading Result",
-        "nl": "Trading Opbrengst"
-      },
-      "units": {
-        "en": "€",
-        "nl": "€"
-      },
-      "decimals": 2,
-      "insights": true,
-      "chartType": "stepLine",
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor"
     }
   }
 }
