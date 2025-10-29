@@ -1,4 +1,9 @@
 {
+  "0.0.22": {
+    "en": "Historical graphs available for trading results, rankings, and external battery metrics. Custom icons added for all capabilities.",
+    "nl": "Historische grafieken beschikbaar voor handelsresultaten, rankings, en externe batterij metrieken. Aangepaste iconen toegevoegd voor alle capabilities."
+  },
+
   "0.0.20": {
     "en": "Removed redundant meter_power capability from battery driver.",
     "nl": "Overbodige meter_power capability verwijderd uit batterij driver."
