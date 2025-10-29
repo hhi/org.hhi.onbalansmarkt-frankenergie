@@ -1,4 +1,9 @@
 {
+  "0.0.23": {
+    "en": "Added Zonneplan battery driver support. Updated app branding with new Onbalansmarkt logo and images. Enhanced visual design with improved icons.",
+    "nl": "Zonneplan batterij driver ondersteuning toegevoegd. App branding bijgewerkt met nieuw Onbalansmarkt logo en afbeeldingen. Verbeterd visueel ontwerp met improved iconen."
+  },
+
   "0.0.22": {
     "en": "Historical graphs available for trading results, rankings, and external battery metrics. Custom icons added for all capabilities.",
     "nl": "Historische grafieken beschikbaar voor handelsresultaten, rankings, en externe batterij metrieken. Aangepaste iconen toegevoegd voor alle capabilities."

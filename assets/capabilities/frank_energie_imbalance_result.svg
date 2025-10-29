@@ -1,6 +1,6 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="#F5F0FF" stroke="#6C5CE7" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#6C5CE7" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Balance scale -->
   <g transform="translate(100, 95)">

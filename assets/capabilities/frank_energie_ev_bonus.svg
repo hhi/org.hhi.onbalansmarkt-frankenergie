@@ -1,6 +1,6 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="#F0F4FF" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Electric vehicle -->
   <g transform="translate(75, 95)">

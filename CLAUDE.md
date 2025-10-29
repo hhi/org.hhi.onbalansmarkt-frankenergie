@@ -137,6 +137,67 @@ const modeInfo = TradingModeDetector.detectTradingMode(battery.settings);
   - `.homeycompose/app.json`: Main app configuration (gets compiled to `app.json`)
   - `drivers/frank-energie/driver.compose.json`: Driver configuration (gets compiled to `app.json`)
 
+### Zonneplan Battery Driver
+
+The app also includes a **Zonneplan Battery Driver** for users with Zonneplan battery systems:
+
+**Architecture:**
+- **Flow-Card Driven**: Unlike Frank Energie driver (API polling), Zonneplan driver is passive - it receives data via Homey flow cards
+- **Virtual Device**: Manual pairing without credential verification or API access
+- **Single-Battery**: One driver instance per battery (no multi-battery aggregation)
+- **Standalone**: Completely independent from Frank Energie - no shared dependencies
+
+**Key Differences:**
+- **Data Source**: Flow cards only (Zonneplan has no public API)
+- **Trading Results**: Provided by Zonneplan battery device via flow card
+- **Lifetime Totals**: Tracked from Zonneplan's `meter_power.total_earned` capability + optional offset
+- **Trading Mode**: Manual dropdown selection in device settings
+- **Polling**: None - waits passively for flow card triggers
+
+**Capabilities:**
+- `zonneplan_daily_earned`: Daily battery earnings (€)
+- `zonneplan_total_earned`: Lifetime earnings with optional offset (€)
+- `zonneplan_daily_charged`: Daily energy charged (kWh)
+- `zonneplan_daily_discharged`: Daily energy discharged (kWh)
+- `zonneplan_cycle_count`: Battery charge/discharge cycles
+- `zonneplan_load_balancing`: Dynamic load balancing status (boolean)
+- `zonneplan_last_update`: Timestamp of last data receipt
+- `measure_battery`: Battery percentage (standard capability)
+
+**Flow Cards:**
+- **Action Card**: `receive_zonneplan_metrics` - Receives battery data and optionally sends to Onbalansmarkt
+- **Trigger Card**: `zonneplan_metrics_updated` - Emitted when new data received
+
+**Usage Example:**
+1. User adds Zonneplan Battery device to app (manual pairing)
+2. User creates Homey flow:
+   - Trigger: When Zonneplan battery data updates (from Zonneplan app)
+   - Action: "Receive Zonneplan metrics" → Select device, fill in values from Zonneplan battery capabilities
+3. Driver updates capabilities and optionally sends to Onbalansmarkt (if auto-send enabled)
+4. Trigger card fires with updated values for use in additional flows
+
+**Device Settings:**
+- `device_name`: Display name
+- `trading_mode`: Dropdown (imbalance, imbalance_aggressive, self_consumption_plus, manual)
+- `total_earned_offset`: Manual offset for lifetime total corrections (€)
+- `onbalansmarkt_api_key`: Optional API key for Onbalansmarkt integration
+- `auto_send_measurements`: Auto-send to Onbalansmarkt when data received
+
+**Integration Example (from homey-onbalans-zonneplan.js):**
+```javascript
+// Zonneplan battery provides these capabilities:
+// - meter_power.daily_earned (€)
+// - meter_power.total_earned (€)
+// - meter_power.daily_import (kWh)
+// - meter_power.daily_export (kWh)
+// - measure_battery (%)
+// - cycle_count
+// - boolean.dynamicloadbalancingactive
+// - lastmeasured (timestamp)
+
+// Flow card maps these to Zonneplan driver capabilities
+```
+
 ### Build Output
 
 - TypeScript is compiled to JavaScript in the `.homeybuild/` directory

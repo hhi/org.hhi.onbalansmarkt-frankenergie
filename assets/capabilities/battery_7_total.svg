@@ -6,7 +6,7 @@
     </linearGradient>
   </defs>
 
-  <circle cx="100" cy="100" r="95" fill="#F0FFF4" stroke="#00A8E8" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#00A8E8" stroke-width="1.5" opacity="0.6"/>
 
   <g transform="translate(100, 100)">
     <rect x="-20" y="-35" width="40" height="70" rx="2" fill="none" stroke="#00A8E8" stroke-width="2"/>

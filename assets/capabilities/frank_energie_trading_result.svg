@@ -7,7 +7,7 @@
   </defs>
 
   <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="#F0F8FF" stroke="#00A8E8" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#00A8E8" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Trend line chart area -->
   <path d="M 40 140 L 60 120 L 80 95 L 100 110 L 120 75 L 140 85 L 160 50"

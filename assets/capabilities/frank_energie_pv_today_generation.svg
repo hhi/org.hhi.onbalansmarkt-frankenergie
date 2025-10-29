@@ -7,7 +7,7 @@
   </defs>
 
   <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="#FFFAF0" stroke="#FFB703" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#FFB703" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Sun -->
   <g transform="translate(100, 65)">

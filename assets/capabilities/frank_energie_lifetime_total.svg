@@ -1,6 +1,6 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="#F0FFF4" stroke="#00A854" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#00A854" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Infinity symbol as growth curve -->
   <path d="M 50 100 Q 65 70 80 70 Q 95 70 95 85 Q 95 100 80 130 Q 65 130 50 100 M 105 100 Q 120 70 135 70 Q 150 70 150 85 Q 150 100 135 130 Q 120 130 105 100"

@@ -7,7 +7,7 @@
   </defs>
 
   <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="#F0FFF4" stroke="#00D084" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#00D084" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Battery outline -->
   <g transform="translate(100, 100)">
