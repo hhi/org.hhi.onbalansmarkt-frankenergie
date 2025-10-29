@@ -153,7 +153,22 @@ export class OnbalansmarktClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const contentType = response.headers.get('content-type') || '';
+        let errorDetails = `HTTP ${response.status} ${response.statusText}`;
+
+        if (contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json();
+            errorDetails += `: ${JSON.stringify(errorData)}`;
+          } catch {
+            // Failed to parse JSON error response
+          }
+        } else if (contentType.includes('text/html')) {
+          errorDetails += ' (HTML response - API may be down or invalid API key)';
+        }
+
+        this.logger(`OnbalansmarktClient HTTP error: ${errorDetails}`);
+        throw new Error(`API returned ${errorDetails}`);
       }
 
       const responseText = await response.text();
@@ -183,7 +198,31 @@ export class OnbalansmarktClient {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const contentType = response.headers.get('content-type') || '';
+        let errorDetails = `HTTP ${response.status} ${response.statusText}`;
+
+        if (contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json();
+            errorDetails += `: ${JSON.stringify(errorData)}`;
+          } catch {
+            // Failed to parse JSON error response
+          }
+        } else if (contentType.includes('text/html')) {
+          errorDetails += ' (HTML response - API may be down or invalid API key)';
+        }
+
+        this.logger(`OnbalansmarktClient HTTP error: ${errorDetails}`);
+        throw new Error(`API returned ${errorDetails}`);
+      }
+
+      // Check Content-Type before parsing JSON
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        const responseText = await response.text();
+        this.logger(`OnbalansmarktClient unexpected content type: ${contentType}`);
+        this.logger(`Response preview: ${responseText.substring(0, 200)}`);
+        throw new Error(`Expected JSON response but got ${contentType}. API may have changed or invalid API key.`);
       }
 
       // API returns { username, name, results: [...] }

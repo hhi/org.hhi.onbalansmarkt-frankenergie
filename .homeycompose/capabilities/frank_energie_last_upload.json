@@ -5,12 +5,13 @@
     "en": "Last Upload",
     "nl": "Laatste Upload"
   },
-  "desc": {
-    "en": "Last successful upload to Onbalansmarkt.com",
-    "nl": "Laatste succesvolle upload naar Onbalansmarkt.com"
-  },
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",
-  "uiQuickAction": false
+  "uiQuickAction": false,
+  "icon": "/assets/capabilities/frank_energie_last_upload.svg",
+  "description": {
+    "en": "Last successful upload to Onbalansmarkt.com",
+    "nl": "Laatste succesvolle upload naar Onbalansmarkt.com"
+  }
 }

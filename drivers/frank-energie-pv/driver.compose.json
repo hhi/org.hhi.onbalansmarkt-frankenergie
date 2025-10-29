@@ -1,7 +1,7 @@
 {
   "name": {
-    "en": "Smart PV System",
-    "nl": "Slimme PV Systeem"
+    "en": "FE Smart PV System",
+    "nl": "FE Slimme PV Systeem"
   },
   "class": "service",
   "capabilities": [

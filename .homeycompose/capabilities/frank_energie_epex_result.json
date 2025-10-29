@@ -14,5 +14,6 @@
   "chartType": "stepLine",
   "getable": true,
   "setable": false,
-  "uiComponent": "sensor"
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_epex_result.svg"
 }

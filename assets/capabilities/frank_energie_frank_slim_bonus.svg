@@ -1,0 +1,23 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#FFF8F0" stroke="#FB5607" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Star badge -->
+  <g transform="translate(100, 75)">
+    <path d="M 0 -20 L 6 -4 L 24 -4 L 10 8 L 16 24 L 0 12 L -16 24 L -10 8 L -24 -4 L -6 -4 Z"
+          fill="#FB5607" opacity="0.2" stroke="#FB5607" stroke-width="1"/>
+    <path d="M 0 -16 L 4.5 -2 L 18 -2 L 8 6 L 12 18 L 0 10 L -12 18 L -8 6 L -18 -2 L -4.5 -2 Z"
+          fill="#FFB703" opacity="0.3"/>
+  </g>
+
+  <!-- Euro symbol with bonus glow -->
+  <g transform="translate(100, 120)">
+    <circle cx="0" cy="0" r="22" fill="#FFB703" opacity="0.1"/>
+    <circle cx="0" cy="0" r="16" fill="#FFB703" opacity="0.15"/>
+    <text x="0" y="6" font-size="24" font-weight="bold" fill="#FB5607" text-anchor="middle" font-family="Arial, sans-serif">€</text>
+  </g>
+
+  <!-- Bonus ribbons on sides -->
+  <path d="M 50 80 Q 45 85 50 90" stroke="#FFB703" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M 150 80 Q 155 85 150 90" stroke="#FFB703" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

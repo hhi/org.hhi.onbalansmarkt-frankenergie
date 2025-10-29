@@ -1,0 +1,29 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="medalGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#FFFAF0" stroke="#FFA500" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Trophy/Medal -->
+  <g transform="translate(100, 85)">
+    <!-- Medal cup -->
+    <path d="M -18 5 Q -25 5 -25 15 L -22 28 Q -22 32 -18 32 L 18 32 Q 22 32 22 28 L 25 15 Q 25 5 18 5 L 10 5 Q 8 5 8 7 L 8 15 L -8 15 L -8 7 Q -8 5 -10 5 Z"
+          fill="url(#medalGold)" stroke="#FFD700" stroke-width="1.5"/>
+
+    <!-- Medal ribbon -->
+    <line x1="-12" y1="5" x2="-15" y2="-10" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
+    <line x1="12" y1="5" x2="15" y2="-10" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Rank indicator -->
+    <text x="0" y="23" font-size="12" font-weight="bold" fill="#333333" text-anchor="middle" font-family="Arial, sans-serif">#1</text>
+  </g>
+
+  <!-- Star accent -->
+  <path d="M 100 35 L 105 48 L 120 48 L 107 57 L 112 70 L 100 61 L 88 70 L 93 57 L 80 48 L 95 48 Z"
+        fill="#FFA500" opacity="0.3" stroke="#FFA500" stroke-width="1"/>
+</svg>

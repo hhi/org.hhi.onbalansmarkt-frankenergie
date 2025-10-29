@@ -5,10 +5,6 @@
     "en": "Lifetime Total",
     "nl": "Totaal Lifetime"
   },
-  "desc": {
-    "en": "Total lifetime trading result (all time)",
-    "nl": "Totaal lifetime handelsresultaat (all-time)"
-  },
   "units": {
     "en": "€",
     "nl": "€"
@@ -19,5 +15,10 @@
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",
-  "uiQuickAction": false
+  "uiQuickAction": false,
+  "icon": "/assets/capabilities/frank_energie_lifetime_total.svg",
+  "description": {
+    "en": "Total lifetime trading result (all time)",
+    "nl": "Totaal lifetime handelsresultaat (all-time)"
+  }
 }

@@ -1,17 +1,61 @@
 {
   "id": "frank_energie_battery_mode",
-  "title": {"en": "Battery Mode", "nl": "Batterijtmodus"},
-  "description": {"en": "Current battery trading mode", "nl": "Huidige batterijhandelsmodus"},
+  "title": {
+    "en": "Battery Mode",
+    "nl": "Batterijtmodus"
+  },
+  "description": {
+    "en": "Current battery trading mode",
+    "nl": "Huidige batterijhandelsmodus"
+  },
   "type": "enum",
   "insights": false,
   "getable": true,
   "setable": false,
+  "uiComponent": "picker",
   "values": [
-    {"id": "imbalance", "title": {"en": "Imbalance", "nl": "Onbalans"}},
-    {"id": "imbalance_aggressive", "title": {"en": "Imbalance Aggressive", "nl": "Onbalans Agressief"}},
-    {"id": "self_consumption", "title": {"en": "Self Consumption", "nl": "Zelf Verbruik"}},
-    {"id": "self_consumption_plus", "title": {"en": "Self Consumption Plus", "nl": "Zelf Verbruik Plus"}},
-    {"id": "manual", "title": {"en": "Manual", "nl": "Handmatig"}},
-    {"id": "day_ahead", "title": {"en": "Day Ahead", "nl": "Day-Ahead"}}
-  ]
+    {
+      "id": "imbalance",
+      "title": {
+        "en": "Imbalance",
+        "nl": "Onbalans"
+      }
+    },
+    {
+      "id": "imbalance_aggressive",
+      "title": {
+        "en": "Imbalance Aggressive",
+        "nl": "Onbalans Agressief"
+      }
+    },
+    {
+      "id": "self_consumption",
+      "title": {
+        "en": "Self Consumption",
+        "nl": "Zelf Verbruik"
+      }
+    },
+    {
+      "id": "self_consumption_plus",
+      "title": {
+        "en": "Self Consumption Plus",
+        "nl": "Zelf Verbruik Plus"
+      }
+    },
+    {
+      "id": "manual",
+      "title": {
+        "en": "Manual",
+        "nl": "Handmatig"
+      }
+    },
+    {
+      "id": "day_ahead",
+      "title": {
+        "en": "Day Ahead",
+        "nl": "Day-Ahead"
+      }
+    }
+  ],
+  "icon": "/assets/capabilities/frank_energie_battery_mode.svg"
 }

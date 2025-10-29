@@ -1,7 +1,7 @@
 {
   "name": {
-    "en": "EV Charger",
-    "nl": "EV Laader"
+    "en": "FE EV Charger",
+    "nl": "FE EV Lader"
   },
   "class": "service",
   "capabilities": [

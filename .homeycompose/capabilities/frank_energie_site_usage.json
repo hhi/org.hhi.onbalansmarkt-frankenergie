@@ -1,10 +1,18 @@
 {
   "id": "frank_energie_site_usage",
-  "title": {"en": "Site Usage", "nl": "Locatie Verbruik"},
-  "description": {"en": "Total site energy usage", "nl": "Totaal locatie energieverbruik"},
+  "title": {
+    "en": "Site Usage",
+    "nl": "Locatie Verbruik"
+  },
+  "description": {
+    "en": "Total site energy usage",
+    "nl": "Totaal locatie energieverbruik"
+  },
   "type": "number",
   "insights": false,
   "getable": true,
   "setable": false,
-  "units": "kWh"
+  "units": "kWh",
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_site_usage.svg"
 }

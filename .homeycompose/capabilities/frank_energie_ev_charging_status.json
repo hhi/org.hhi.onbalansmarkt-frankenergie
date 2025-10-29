@@ -1,14 +1,40 @@
 {
   "id": "frank_energie_ev_charging_status",
-  "title": {"en": "EV Charging Status", "nl": "EV Laadstatus"},
-  "description": {"en": "Current EV charger status", "nl": "Huidige EV laader status"},
+  "title": {
+    "en": "EV Charging Status",
+    "nl": "EV Laadstatus"
+  },
+  "description": {
+    "en": "Current EV charger status",
+    "nl": "Huidige EV lader status"
+  },
   "type": "enum",
   "insights": false,
   "getable": true,
   "setable": false,
   "values": [
-    {"id": "charging", "title": {"en": "Charging", "nl": "Laden"}},
-    {"id": "idle", "title": {"en": "Idle", "nl": "Inactief"}},
-    {"id": "error", "title": {"en": "Error", "nl": "Fout"}}
-  ]
+    {
+      "id": "charging",
+      "title": {
+        "en": "Charging",
+        "nl": "Laden"
+      }
+    },
+    {
+      "id": "idle",
+      "title": {
+        "en": "Idle",
+        "nl": "Inactief"
+      }
+    },
+    {
+      "id": "error",
+      "title": {
+        "en": "Error",
+        "nl": "Fout"
+      }
+    }
+  ],
+  "uiComponent": "picker",
+  "icon": "/assets/capabilities/frank_energie_ev_charging_status.svg"
 }

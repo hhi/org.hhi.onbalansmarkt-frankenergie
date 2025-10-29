@@ -1,18 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 267.1 508" style="enable-background:new 0 0 267.1 508;" xml:space="preserve">
-<g>
-	<path d="M231,286.6c8.2-90.9-16-183.6-69.9-251.6L133.5,0l-27.6,35C52.1,103.1,27.8,195.8,36,286.7c-23.2,24.8-36,56.9-36,91
-		c0,30,12.3,64.4,12.3,64.4S20,391.7,49.7,359c3.4,20.7,15,41.8,15,41.8h137.6c0,0,7.9-13.1,15-41.8c28.5,32.6,37.4,83.1,37.4,83.1
-		s12.4-26.7,12.4-64.4C267.1,343.6,254.2,311.5,231,286.6z M16.4,376.3c0.3-24.6,8.1-48,22.4-67.5c1.6,10.8,3.6,21.5,6,31.9
-		C33.3,351,23.7,363,16.4,376.3z M133.5,26.6c0,0,25.4,30.5,37.7,52.6H95.7C107.1,56.9,133.5,26.6,133.5,26.6z M191.3,384.3h-49.5
-		v-74.2h-16.5v74.2H75.8C38.4,290.5,43.8,181.6,87,95.7h93.2C223.4,181.6,228.7,290.5,191.3,384.3z M222.1,340.6
-		c2.5-10.4,4.5-21,6.1-31.8c14.3,19.5,22.1,42.9,22.4,67.5C243.3,363,233.7,351,222.1,340.6z"/>
-	<path d="M133.5,112.2c-18.2,0-33,14.8-33,33s14.8,33,33,33s33-14.8,33-33S151.7,112.2,133.5,112.2z M133.5,161.7
-		c-9.1,0-16.5-7.4-16.5-16.5s7.4-16.5,16.5-16.5s16.5,7.4,16.5,16.5S142.6,161.7,133.5,161.7z"/>
-	<rect x="125.3" y="417.3" width="16.5" height="66"/>
-	<rect x="183" y="458.5" width="16.5" height="49.5"/>
-	<rect x="67.5" y="458.5" width="16.5" height="49.5"/>
-</g>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="batteryGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00A8E8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066CC;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00D084;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00A854;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFB703;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FB5607;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="250" cy="250" r="240" fill="#F8F9FA" stroke="#E9ECEF" stroke-width="2"/>
+
+  <!-- Main battery container with gradient -->
+  <g>
+    <!-- Battery body -->
+    <rect x="140" y="120" width="220" height="180" rx="12" fill="url(#batteryGradient)" opacity="0.95"/>
+    <!-- Battery terminal -->
+    <rect x="340" y="155" width="25" height="90" rx="4" fill="#0066CC" opacity="0.9"/>
+    <rect x="345" y="150" width="15" height="10" rx="2" fill="#0052A3" opacity="0.8"/>
+  </g>
+
+  <!-- Battery charge segments -->
+  <g stroke="white" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.9">
+    <!-- Segment 1 (bottom) -->
+    <line x1="175" y1="260" x2="175" y2="280" />
+    <!-- Segment 2 -->
+    <line x1="220" y1="260" x2="220" y2="280" />
+    <!-- Segment 3 -->
+    <line x1="265" y1="260" x2="265" y2="280" />
+    <!-- Segment 4 (top) -->
+    <line x1="310" y1="260" x2="310" y2="280" />
+  </g>
+
+  <!-- Energy/Trading indicator - upward trending arrows -->
+  <g transform="translate(250, 160)">
+    <!-- First arrow (green, going up) -->
+    <path d="M -30 20 L -30 -5 L -40 5 M -30 -5 L -20 5" stroke="#00D084" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Second arrow (green, higher) -->
+    <path d="M 0 10 L 0 -15 L -10 -5 M 0 -15 L 10 -5" stroke="#00D084" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Third arrow (orange accent, highest) -->
+    <path d="M 30 0 L 30 -25 L 20 -15 M 30 -25 L 40 -15" stroke="#FFB703" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- € symbol for trading -->
+  <g transform="translate(380, 220)">
+    <circle cx="0" cy="0" r="28" fill="#FFB703" opacity="0.2"/>
+    <text x="0" y="8" font-size="32" font-weight="bold" fill="#FB5607" text-anchor="middle" font-family="Arial, sans-serif">€</text>
+  </g>
+
+  <!-- Connection dots network - representing platform integration -->
+  <g stroke="#00A8E8" stroke-width="2" fill="none" opacity="0.6">
+    <!-- Connection lines -->
+    <line x1="120" y1="380" x2="180" y2="420" />
+    <line x1="180" y1="420" x2="250" y2="430" />
+    <line x1="250" y1="430" x2="320" y2="420" />
+    <line x1="320" y1="420" x2="380" y2="380" />
+    <!-- Connection dots -->
+    <circle cx="120" cy="380" r="5" fill="#00A8E8"/>
+    <circle cx="180" cy="420" r="5" fill="#00A8E8"/>
+    <circle cx="250" cy="430" r="6" fill="#00D084"/>
+    <circle cx="320" cy="420" r="5" fill="#00A8E8"/>
+    <circle cx="380" cy="380" r="5" fill="#00A8E8"/>
+  </g>
+
+  <!-- App name/label area with subtle gradient background -->
+  <rect x="80" y="380" width="340" height="60" rx="8" fill="white" opacity="0.7" stroke="#E9ECEF" stroke-width="1"/>
+  <text x="250" y="410" font-size="16" font-weight="600" fill="#0066CC" text-anchor="middle" font-family="Arial, sans-serif">Frank Energie</text>
+  <text x="250" y="430" font-size="12" font-weight="400" fill="#00A8E8" text-anchor="middle" font-family="Arial, sans-serif">Smart Trading</text>
 </svg>

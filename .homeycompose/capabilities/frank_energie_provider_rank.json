@@ -1,11 +1,19 @@
 {
   "id": "frank_energie_provider_rank",
-  "title": {"en": "Provider Ranking", "nl": "Provider Ranglijst"},
-  "description": {"en": "Your ranking among same provider users", "nl": "Je ranglijst onder dezelfde provider gebruikers"},
+  "title": {
+    "en": "Provider Ranking",
+    "nl": "Provider Ranglijst"
+  },
+  "description": {
+    "en": "Your ranking among same provider users",
+    "nl": "Je ranglijst onder dezelfde provider gebruikers"
+  },
   "type": "number",
   "insights": true,
   "getable": true,
   "setable": false,
   "min": 1,
-  "chartType": "spline"
+  "chartType": "spline",
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_provider_rank.svg"
 }

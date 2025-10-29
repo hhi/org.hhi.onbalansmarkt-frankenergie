@@ -1,7 +1,7 @@
 {
   "name": {
-    "en": "Site Energy Meter",
-    "nl": "Site Energiemeter"
+    "en": "FE Energy Meter",
+    "nl": "FE Energiemeter"
   },
   "class": "sensor",
   "capabilities": [

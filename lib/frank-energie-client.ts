@@ -396,6 +396,36 @@ export class FrankEnergieClient {
         body: JSON.stringify(queryData),
       });
 
+      // Check HTTP status code first
+      if (!response.ok) {
+        // Try to get error details from response
+        const contentType = response.headers.get('content-type') || '';
+        let errorDetails = `HTTP ${response.status} ${response.statusText}`;
+
+        if (contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json();
+            errorDetails += `: ${JSON.stringify(errorData)}`;
+          } catch {
+            // Failed to parse JSON error response
+          }
+        } else if (contentType.includes('text/html')) {
+          errorDetails += ' (HTML response - API may be down or authentication failed)';
+        }
+
+        this.logger(`FrankEnergieClient HTTP error: ${errorDetails}`);
+        throw new Error(`API returned ${errorDetails}`);
+      }
+
+      // Check Content-Type before parsing JSON
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        const responseText = await response.text();
+        this.logger(`FrankEnergieClient unexpected content type: ${contentType}`);
+        this.logger(`Response preview: ${responseText.substring(0, 200)}`);
+        throw new Error(`Expected JSON response but got ${contentType}. API may have changed or authentication failed.`);
+      }
+
       const data = await response.json() as { data?: T; errors?: Array<{ message: string }> };
 
       if (data.errors) {

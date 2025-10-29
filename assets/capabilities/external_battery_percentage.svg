@@ -1,0 +1,29 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="batteryPercent" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#00D084;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00A854;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#F0FFF4" stroke="#00A854" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Battery outline -->
+  <g transform="translate(100, 100)">
+    <!-- Battery body -->
+    <rect x="-24" y="-38" width="48" height="76" rx="3" fill="none" stroke="#00A8E8" stroke-width="2.5"/>
+
+    <!-- Battery terminal -->
+    <rect x="-10" y="-46" width="20" height="10" rx="1" fill="#0066CC" opacity="0.6" stroke="#0066CC" stroke-width="1"/>
+
+    <!-- Charge fill (65%) -->
+    <rect x="-22" y="-36" width="44" height="50" rx="2" fill="url(#batteryPercent)" opacity="0.6"/>
+
+    <!-- Percentage display -->
+    <g fill="#00A854">
+      <text x="0" y="5" font-size="20" font-weight="bold" text-anchor="middle" font-family="Arial, sans-serif">65</text>
+      <text x="15" y="0" font-size="12" font-weight="bold" text-anchor="start" font-family="Arial, sans-serif">%</text>
+    </g>
+  </g>
+</svg>

@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -28,6 +28,7 @@
     "email": "iphone.HHi@me.com"
   },
   "brandColor": "#69B34C",
+  "icon": "/assets/icon.svg",
   "flow": {
     "triggers": [
       {
@@ -1218,8 +1219,8 @@
   "drivers": [
     {
       "name": {
-        "en": "Smart Battery",
-        "nl": "Slimme Batterij"
+        "en": "FE Smart Battery",
+        "nl": "FE Slimme Batterij"
       },
       "class": "battery",
       "capabilities": [
@@ -1452,8 +1453,8 @@
     },
     {
       "name": {
-        "en": "EV Charger",
-        "nl": "EV Laader"
+        "en": "FE EV Charger",
+        "nl": "FE EV Lader"
       },
       "class": "service",
       "capabilities": [
@@ -1617,8 +1618,8 @@
     },
     {
       "name": {
-        "en": "Site Energy Meter",
-        "nl": "Site Energiemeter"
+        "en": "FE Energy Meter",
+        "nl": "FE Energiemeter"
       },
       "class": "sensor",
       "capabilities": [
@@ -1789,8 +1790,8 @@
     },
     {
       "name": {
-        "en": "Smart PV System",
-        "nl": "Slimme PV Systeem"
+        "en": "FE Smart PV System",
+        "nl": "FE Slimme PV Systeem"
       },
       "class": "service",
       "capabilities": [
@@ -1969,7 +1970,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_1_total.svg"
     },
     "battery_10_total": {
       "id": "battery_10_total",
@@ -1985,7 +1987,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_10_total.svg"
     },
     "battery_2_total": {
       "id": "battery_2_total",
@@ -2001,7 +2004,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_2_total.svg"
     },
     "battery_3_total": {
       "id": "battery_3_total",
@@ -2017,7 +2021,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_3_total.svg"
     },
     "battery_4_total": {
       "id": "battery_4_total",
@@ -2033,7 +2038,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_4_total.svg"
     },
     "battery_5_total": {
       "id": "battery_5_total",
@@ -2049,7 +2055,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_5_total.svg"
     },
     "battery_6_total": {
       "id": "battery_6_total",
@@ -2065,7 +2072,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_6_total.svg"
     },
     "battery_7_total": {
       "id": "battery_7_total",
@@ -2081,7 +2089,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_7_total.svg"
     },
     "battery_8_total": {
       "id": "battery_8_total",
@@ -2097,7 +2106,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_8_total.svg"
     },
     "battery_9_total": {
       "id": "battery_9_total",
@@ -2113,7 +2123,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_9_total.svg"
     },
     "external_battery_count": {
       "id": "external_battery_count",
@@ -2121,10 +2132,6 @@
       "title": {
         "en": "Battery # flow metrics",
         "nl": "Batterij # flow metrieken"
-      },
-      "desc": {
-        "en": "Number of external batteries providing metrics",
-        "nl": "Aantal externe batterijen die metrieken leveren"
       },
       "units": {
         "en": "",
@@ -2136,7 +2143,11 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "icon": "/assets/icon.svg"
+      "icon": "/assets/capabilities/external_battery_count.svg",
+      "description": {
+        "en": "Number of external batteries providing metrics",
+        "nl": "Aantal externe batterijen die metrieken leveren"
+      }
     },
     "external_battery_daily_charged": {
       "id": "external_battery_daily_charged",
@@ -2145,10 +2156,6 @@
         "en": "Daily charged",
         "nl": "Dagelijks geladen"
       },
-      "desc": {
-        "en": "Total Watt charged today from external batteries",
-        "nl": "Totaal Watt vandaag geladen van externe batterijen"
-      },
       "units": {
         "en": "W",
         "nl": "W"
@@ -2159,7 +2166,11 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "icon": "/assets/icon.svg"
+      "icon": "/assets/capabilities/external_battery_daily_charged.svg",
+      "description": {
+        "en": "Total Watt charged today from external batteries",
+        "nl": "Totaal Watt vandaag geladen van externe batterijen"
+      }
     },
     "external_battery_daily_discharged": {
       "id": "external_battery_daily_discharged",
@@ -2168,10 +2179,6 @@
         "en": "Daily discharged",
         "nl": "Dagelijks geleverd"
       },
-      "desc": {
-        "en": "Total Watt discharged today from external batteries",
-        "nl": "Totaal Watt vandaag geleverd van externe batterijen"
-      },
       "units": {
         "en": "W",
         "nl": "W"
@@ -2182,7 +2189,11 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "icon": "/assets/icon.svg"
+      "icon": "/assets/capabilities/external_battery_daily_discharged.svg",
+      "description": {
+        "en": "Total Watt discharged today from external batteries",
+        "nl": "Totaal Watt vandaag geleverd van externe batterijen"
+      }
     },
     "external_battery_percentage": {
       "id": "external_battery_percentage",
@@ -2190,10 +2201,6 @@
       "title": {
         "en": "Average battery percentage",
         "nl": "Gemiddeld batterij percentage"
-      },
-      "desc": {
-        "en": "Average battery charge percentage across all external batteries",
-        "nl": "Gemiddeld batterij laadpercentage van alle externe batterijen"
       },
       "units": {
         "en": "%",
@@ -2207,7 +2214,11 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "icon": "/assets/icon.svg"
+      "icon": "/assets/capabilities/external_battery_percentage.svg",
+      "description": {
+        "en": "Average battery charge percentage across all external batteries",
+        "nl": "Gemiddeld batterij laadpercentage van alle externe batterijen"
+      }
     },
     "frank_energie_avg_market_price_today": {
       "id": "frank_energie_avg_market_price_today",
@@ -2223,7 +2234,8 @@
       "decimals": 4,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_avg_market_price_today.svg"
     },
     "frank_energie_battery_charge": {
       "id": "frank_energie_battery_charge",
@@ -2241,7 +2253,9 @@
       "setable": false,
       "min": 0,
       "max": 100,
-      "units": "%"
+      "units": "%",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_battery_charge.svg"
     },
     "frank_energie_battery_mode": {
       "id": "frank_energie_battery_mode",
@@ -2257,6 +2271,7 @@
       "insights": false,
       "getable": true,
       "setable": false,
+      "uiComponent": "picker",
       "values": [
         {
           "id": "imbalance",
@@ -2300,7 +2315,8 @@
             "nl": "Day-Ahead"
           }
         }
-      ]
+      ],
+      "icon": "/assets/capabilities/frank_energie_battery_mode.svg"
     },
     "frank_energie_current_market_price": {
       "id": "frank_energie_current_market_price",
@@ -2316,7 +2332,8 @@
       "decimals": 4,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_current_market_price.svg"
     },
     "frank_energie_epex_result": {
       "id": "frank_energie_epex_result",
@@ -2334,7 +2351,8 @@
       "chartType": "stepLine",
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_epex_result.svg"
     },
     "frank_energie_ev_bonus": {
       "id": "frank_energie_ev_bonus",
@@ -2351,7 +2369,9 @@
       "getable": true,
       "setable": false,
       "units": "€",
-      "decimals": 2
+      "decimals": 2,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_ev_bonus.svg"
     },
     "frank_energie_ev_charging_status": {
       "id": "frank_energie_ev_charging_status",
@@ -2361,7 +2381,7 @@
       },
       "description": {
         "en": "Current EV charger status",
-        "nl": "Huidige EV laader status"
+        "nl": "Huidige EV lader status"
       },
       "type": "enum",
       "insights": false,
@@ -2389,7 +2409,9 @@
             "nl": "Fout"
           }
         }
-      ]
+      ],
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/frank_energie_ev_charging_status.svg"
     },
     "frank_energie_frank_slim_bonus": {
       "id": "frank_energie_frank_slim_bonus",
@@ -2407,7 +2429,8 @@
       "chartType": "stepLine",
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_frank_slim_bonus.svg"
     },
     "frank_energie_imbalance_result": {
       "id": "frank_energie_imbalance_result",
@@ -2425,7 +2448,8 @@
       "chartType": "stepLine",
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_imbalance_result.svg"
     },
     "frank_energie_last_upload": {
       "id": "frank_energie_last_upload",
@@ -2434,14 +2458,15 @@
         "en": "Last Upload",
         "nl": "Laatste Upload"
       },
-      "desc": {
-        "en": "Last successful upload to Onbalansmarkt.com",
-        "nl": "Laatste succesvolle upload naar Onbalansmarkt.com"
-      },
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "uiQuickAction": false
+      "uiQuickAction": false,
+      "icon": "/assets/capabilities/frank_energie_last_upload.svg",
+      "description": {
+        "en": "Last successful upload to Onbalansmarkt.com",
+        "nl": "Laatste succesvolle upload naar Onbalansmarkt.com"
+      }
     },
     "frank_energie_lifetime_total": {
       "id": "frank_energie_lifetime_total",
@@ -2449,10 +2474,6 @@
       "title": {
         "en": "Lifetime Total",
         "nl": "Totaal Lifetime"
-      },
-      "desc": {
-        "en": "Total lifetime trading result (all time)",
-        "nl": "Totaal lifetime handelsresultaat (all-time)"
       },
       "units": {
         "en": "€",
@@ -2464,7 +2485,12 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
-      "uiQuickAction": false
+      "uiQuickAction": false,
+      "icon": "/assets/capabilities/frank_energie_lifetime_total.svg",
+      "description": {
+        "en": "Total lifetime trading result (all time)",
+        "nl": "Totaal lifetime handelsresultaat (all-time)"
+      }
     },
     "frank_energie_max_market_price_today": {
       "id": "frank_energie_max_market_price_today",
@@ -2480,7 +2506,8 @@
       "decimals": 4,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_max_market_price_today.svg"
     },
     "frank_energie_min_market_price_today": {
       "id": "frank_energie_min_market_price_today",
@@ -2496,7 +2523,8 @@
       "decimals": 4,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_min_market_price_today.svg"
     },
     "frank_energie_next_hour_market_price": {
       "id": "frank_energie_next_hour_market_price",
@@ -2512,7 +2540,8 @@
       "decimals": 4,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_next_hour_market_price.svg"
     },
     "frank_energie_next_poll_minutes": {
       "id": "frank_energie_next_poll_minutes",
@@ -2528,7 +2557,8 @@
       "decimals": 0,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_next_poll_minutes.svg"
     },
     "frank_energie_overall_rank": {
       "id": "frank_energie_overall_rank",
@@ -2545,7 +2575,9 @@
       "getable": true,
       "setable": false,
       "min": 1,
-      "chartType": "spline"
+      "chartType": "spline",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_overall_rank.svg"
     },
     "frank_energie_provider_rank": {
       "id": "frank_energie_provider_rank",
@@ -2562,7 +2594,9 @@
       "getable": true,
       "setable": false,
       "min": 1,
-      "chartType": "spline"
+      "chartType": "spline",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_provider_rank.svg"
     },
     "frank_energie_pv_bonus": {
       "id": "frank_energie_pv_bonus",
@@ -2579,7 +2613,9 @@
       "getable": true,
       "setable": false,
       "units": "€",
-      "decimals": 2
+      "decimals": 2,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_pv_bonus.svg"
     },
     "frank_energie_pv_current_power": {
       "id": "frank_energie_pv_current_power",
@@ -2595,7 +2631,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_pv_current_power.svg"
     },
     "frank_energie_pv_status": {
       "id": "frank_energie_pv_status",
@@ -2633,7 +2670,9 @@
             "nl": "Fout"
           }
         }
-      ]
+      ],
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/frank_energie_pv_status.svg"
     },
     "frank_energie_pv_today_generation": {
       "id": "frank_energie_pv_today_generation",
@@ -2649,7 +2688,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_pv_today_generation.svg"
     },
     "frank_energie_site_costs": {
       "id": "frank_energie_site_costs",
@@ -2666,7 +2706,9 @@
       "getable": true,
       "setable": false,
       "units": "€",
-      "decimals": 2
+      "decimals": 2,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_site_costs.svg"
     },
     "frank_energie_site_usage": {
       "id": "frank_energie_site_usage",
@@ -2682,7 +2724,9 @@
       "insights": false,
       "getable": true,
       "setable": false,
-      "units": "kWh"
+      "units": "kWh",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_site_usage.svg"
     },
     "frank_energie_today_consumption": {
       "id": "frank_energie_today_consumption",
@@ -2698,7 +2742,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_today_consumption.svg"
     },
     "frank_energie_today_costs": {
       "id": "frank_energie_today_costs",
@@ -2714,7 +2759,8 @@
       "decimals": 2,
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_today_costs.svg"
     },
     "frank_energie_trading_result": {
       "id": "frank_energie_trading_result",
@@ -2732,7 +2778,9 @@
       "setable": false,
       "units": "€",
       "decimals": 2,
-      "chartType": "stepLine"
+      "chartType": "stepLine",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_trading_result.svg"
     }
   }
 }

@@ -5,10 +5,6 @@
     "en": "Daily charged",
     "nl": "Dagelijks geladen"
   },
-  "desc": {
-    "en": "Total Watt charged today from external batteries",
-    "nl": "Totaal Watt vandaag geladen van externe batterijen"
-  },
   "units": {
     "en": "W",
     "nl": "W"
@@ -19,5 +15,9 @@
   "getable": true,
   "setable": false,
   "uiComponent": "sensor",
-  "icon": "/assets/icon.svg"
+  "icon": "/assets/capabilities/external_battery_daily_charged.svg",
+  "description": {
+    "en": "Total Watt charged today from external batteries",
+    "nl": "Totaal Watt vandaag geladen van externe batterijen"
+  }
 }
