@@ -1,4 +1,9 @@
 {
+  "0.0.24": {
+    "en": "Login automatically skipped when adding PV, EV, or Meter devices if credentials already exist. Removed redundant capabilities from drivers.",
+    "nl": "Inloggen automatisch overgeslagen bij toevoegen van PV, EV of Meter apparaten als inloggegevens al bestaan. Overbodige capabilities verwijderd uit drivers."
+  },
+
   "0.0.23": {
     "en": "Added Zonneplan battery driver support. Updated app branding with new Onbalansmarkt logo and images. Enhanced visual design with improved icons.",
     "nl": "Zonneplan batterij driver ondersteuning toegevoegd. App branding bijgewerkt met nieuw Onbalansmarkt logo en afbeeldingen. Verbeterd visueel ontwerp met improved iconen."
