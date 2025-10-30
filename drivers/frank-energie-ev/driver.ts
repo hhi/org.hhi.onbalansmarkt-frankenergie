@@ -77,6 +77,26 @@ export = class EvChargerDriver extends Homey.Driver {
       const email = data.email || appCreds?.email || '';
       const password = data.password || appCreds?.password || '';
 
+      // Fetch Enode location ID from sessions
+      let locationId = 'default-location';
+      try {
+        const client = new FrankEnergieClient({
+          logger: (msg, ...args) => this.log(msg, ...args),
+        });
+        await client.login(email, password);
+        const sessions = await client.getEnodeSessions();
+
+        // Get location ID from first session if available
+        if (sessions.rows.length > 0 && sessions.rows[0].locationId) {
+          locationId = sessions.rows[0].locationId;
+          this.log(`Using Enode location ID: ${locationId}`);
+        } else {
+          this.log('Warning: No location ID found in sessions, using default');
+        }
+      } catch (error) {
+        this.error('Failed to fetch location ID, using default:', error);
+      }
+
       return [
         {
           name: 'EV Charger',
@@ -90,6 +110,7 @@ export = class EvChargerDriver extends Homey.Driver {
             frank_energie_password: password,
             charge_limit: limit,
             poll_interval: 5,
+            enode_location_id: locationId,
           },
         },
       ];
