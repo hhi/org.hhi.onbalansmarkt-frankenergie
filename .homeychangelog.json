@@ -1,4 +1,9 @@
 {
+  "0.0.25": {
+    "en": "Updated app icon with a bolder lightning bolt for improved visibility.",
+    "nl": "App-pictogram bijgewerkt met een opvallendere bliksemschicht voor betere zichtbaarheid."
+  },
+
   "0.0.24": {
     "en": "Login automatically skipped when adding PV, EV, or Meter devices if credentials already exist. Removed redundant capabilities from drivers.",
     "nl": "Inloggen automatisch overgeslagen bij toevoegen van PV, EV of Meter apparaten als inloggegevens al bestaan. Overbodige capabilities verwijderd uit drivers."

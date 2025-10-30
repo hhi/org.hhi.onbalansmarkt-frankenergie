@@ -5,8 +5,6 @@
   },
   "class": "battery",
   "capabilities": [
-    "battery_charging_state",
-    "frank_energie_battery_charge",
     "frank_energie_battery_mode",
     "frank_energie_overall_rank",
     "frank_energie_provider_rank",

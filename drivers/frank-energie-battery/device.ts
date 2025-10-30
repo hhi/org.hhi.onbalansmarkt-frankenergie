@@ -326,14 +326,6 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   private async updateCapabilities(results: AggregatedResults): Promise<void> {
     const updatePromises: Promise<void>[] = [];
 
-    // Update battery charging state
-    if (results.periodTradingResult !== null) {
-      updatePromises.push(
-        this.setCapabilityValue('battery_charging_state', results.periodTradingResult > 0 ? 'charging' : 'discharging')
-          .catch((error) => this.error('Failed to update battery_charging_state:', error)),
-      );
-    }
-
     // Update battery trading result (custom capability)
     if (results.periodTradingResult !== null) {
       updatePromises.push(

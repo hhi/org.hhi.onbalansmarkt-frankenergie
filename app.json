@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.23",
+  "version": "0.0.25",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -29,7 +29,7 @@
     "email": "iphone.HHi@me.com"
   },
   "brandColor": "#00b8a9",
-  "icon": "/assets/onbalansmarkt.svg",
+  "icon": "/assets/icon.svg",
   "flow": {
     "triggers": [
       {
@@ -1423,13 +1423,11 @@
   "drivers": [
     {
       "name": {
-        "en": "FE Smart Battery",
-        "nl": "FE Slimme Batterij"
+        "en": "Frank Energie Battery",
+        "nl": "Frank Energie Batterij"
       },
       "class": "battery",
       "capabilities": [
-        "battery_charging_state",
-        "frank_energie_battery_charge",
         "frank_energie_battery_mode",
         "frank_energie_overall_rank",
         "frank_energie_provider_rank",
@@ -1657,13 +1655,12 @@
     },
     {
       "name": {
-        "en": "FE EV Charger",
-        "nl": "FE EV Lader"
+        "en": "Frank Energie EV Charger",
+        "nl": "Frank Energie EV Lader"
       },
       "class": "service",
       "capabilities": [
         "onoff",
-        "meter_power",
         "frank_energie_ev_charging_status",
         "frank_energie_ev_bonus",
         "frank_energie_overall_rank",
@@ -1679,8 +1676,7 @@
       },
       "pair": [
         {
-          "id": "login",
-          "template": "login"
+          "id": "login"
         },
         {
           "id": "list_devices",
@@ -1756,6 +1752,43 @@
         {
           "type": "group",
           "label": {
+            "en": "EV Charger Settings",
+            "nl": "Laadpaal Instellingen"
+          },
+          "children": [
+            {
+              "id": "enode_location_id",
+              "type": "text",
+              "label": {
+                "en": "Enode Location ID",
+                "nl": "Enode Locatie ID"
+              },
+              "value": "default-location",
+              "hint": {
+                "en": "Enode location identifier (automatically set during pairing)",
+                "nl": "Enode locatie identificatie (automatisch ingesteld tijdens koppelen)"
+              }
+            },
+            {
+              "id": "charge_limit",
+              "type": "number",
+              "label": {
+                "en": "Charge Limit (A)",
+                "nl": "Laadlimiet (A)"
+              },
+              "value": 16,
+              "min": 6,
+              "max": 32,
+              "hint": {
+                "en": "Maximum charging current in Amperes (6-32A)",
+                "nl": "Maximale laadstroom in Ampère (6-32A)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
             "en": "Data Polling Settings",
             "nl": "Gegevensopvraag Instellingen"
           },
@@ -1822,13 +1855,11 @@
     },
     {
       "name": {
-        "en": "FE Energy Meter",
-        "nl": "FE Energiemeter"
+        "en": "Frank Energie Energy Meter",
+        "nl": "Frank Energie Energiemeter"
       },
       "class": "sensor",
       "capabilities": [
-        "measure_power",
-        "meter_power",
         "frank_energie_current_market_price",
         "frank_energie_next_hour_market_price",
         "frank_energie_today_consumption",
@@ -1994,12 +2025,11 @@
     },
     {
       "name": {
-        "en": "FE Smart PV System",
-        "nl": "FE Slimme PV Systeem"
+        "en": "Frank Energie PV System",
+        "nl": "Frank Energie PV Systeem"
       },
       "class": "service",
       "capabilities": [
-        "meter_power",
         "frank_energie_pv_current_power",
         "frank_energie_pv_today_generation",
         "frank_energie_pv_status",
@@ -2017,8 +2047,7 @@
       },
       "pair": [
         {
-          "id": "login",
-          "template": "login"
+          "id": "login"
         },
         {
           "id": "list_devices",
