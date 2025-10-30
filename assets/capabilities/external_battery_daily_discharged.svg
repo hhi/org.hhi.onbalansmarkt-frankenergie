@@ -14,13 +14,13 @@
     <rect x="-20" y="18" width="40" height="8" rx="1" fill="#FF6B6B" opacity="0.5"/>
   </g>
 
-  <!-- Downward arrow - discharging indicator (scaled) -->
+  <!-- Upward arrow - discharging indicator (out of battery) (scaled) -->
   <g transform="translate(100, 30) scale(1.1)">
     <!-- Arrow shaft -->
-    <line x1="0" y1="0" x2="0" y2="15" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
+    <line x1="0" y1="15" x2="0" y2="0" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
 
     <!-- Arrow head -->
-    <path d="M 0 15 L -7 7 M 0 15 L 7 7" stroke="#FF6B6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 0 0 L -7 8 M 0 0 L 7 8" stroke="#FF6B6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
   <!-- Energy flow waves -->
