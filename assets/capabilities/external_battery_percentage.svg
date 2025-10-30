@@ -9,8 +9,8 @@
   <!-- Background circle -->
   <circle cx="100" cy="100" r="95" fill="none" stroke="#00A854" stroke-width="1.5" opacity="0.6"/>
 
-  <!-- Battery outline -->
-  <g transform="translate(100, 100)">
+  <!-- Battery outline - scaled for better visibility, moved up -->
+  <g transform="translate(100, 85) scale(1.1)">
     <!-- Battery body -->
     <rect x="-24" y="-38" width="48" height="76" rx="3" fill="none" stroke="#00A8E8" stroke-width="2.5"/>
 
@@ -19,11 +19,10 @@
 
     <!-- Charge fill (65%) -->
     <rect x="-22" y="-36" width="44" height="50" rx="2" fill="url(#batteryPercent)" opacity="0.6"/>
+  </g>
 
-    <!-- Percentage display -->
-    <g fill="#00A854">
-      <text x="0" y="5" font-size="20" font-weight="bold" text-anchor="middle" font-family="Arial, sans-serif">65</text>
-      <text x="15" y="0" font-size="12" font-weight="bold" text-anchor="start" font-family="Arial, sans-serif">%</text>
-    </g>
+  <!-- Percentage display - positioned below battery -->
+  <g transform="translate(100, 165)">
+    <text x="0" y="0" font-size="18" font-weight="bold" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">65%</text>
   </g>
 </svg>

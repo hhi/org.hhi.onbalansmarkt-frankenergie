@@ -1,6 +1,6 @@
 {
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -28,5 +28,5 @@
     "email": "iphone.HHi@me.com"
   },
   "brandColor": "#00b8a9",
-  "icon": "/assets/onbalansmarkt.svg"
+  "icon": "/assets/icon.svg"
 }

@@ -1,12 +1,11 @@
 {
   "name": {
-    "en": "FE EV Charger",
-    "nl": "FE EV Lader"
+    "en": "Frank Energie EV Charger",
+    "nl": "Frank Energie EV Lader"
   },
   "class": "service",
   "capabilities": [
     "onoff",
-    "meter_power",
     "frank_energie_ev_charging_status",
     "frank_energie_ev_bonus",
     "frank_energie_overall_rank",
@@ -22,8 +21,7 @@
   },
   "pair": [
     {
-      "id": "login",
-      "template": "login"
+      "id": "login"
     },
     {
       "id": "list_devices",

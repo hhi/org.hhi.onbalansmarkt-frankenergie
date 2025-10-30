@@ -118,12 +118,6 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
         .catch((error) => this.error('Failed to update current power:', error)),
     );
 
-    // Update power meter with current power (placeholder)
-    updatePromises.push(
-      this.setCapabilityValue('meter_power', Math.round(currentPower * 1000))
-        .catch((error) => this.error('Failed to update meter_power:', error)),
-    );
-
     // Update today's generation (placeholder)
     updatePromises.push(
       this.setCapabilityValue('frank_energie_pv_today_generation', todayGeneration)

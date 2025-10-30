@@ -123,12 +123,6 @@ export = class EvChargerDevice extends FrankEnergieDeviceBase {
       );
     }
 
-    // Update power meter with cost indicator
-    updatePromises.push(
-      this.setCapabilityValue('meter_power', Math.round(sessions.totalSavings * 1000))
-        .catch((error) => this.error('Failed to update meter_power:', error)),
-    );
-
     // Update battery level if available from latest session
     if (latestSession && latestSession.endCharge !== null) {
       updatePromises.push(

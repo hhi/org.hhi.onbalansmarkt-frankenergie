@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Clock - indicating "now" -->
-  <g transform="translate(75, 80)">
+  <g transform="translate(75, 80) scale(1.2)">
     <!-- Clock circle -->
     <circle cx="0" cy="0" r="20" fill="none" stroke="#0066CC" stroke-width="2"/>
 

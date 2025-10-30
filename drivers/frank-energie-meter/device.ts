@@ -180,18 +180,6 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
         .catch((error) => this.error('Failed to update site costs:', error)),
     );
 
-    // Update power meter with current average price as indicator
-    updatePromises.push(
-      this.setCapabilityValue('meter_power', Math.round(currentPrice * 100))
-        .catch((error) => this.error('Failed to update meter_power:', error)),
-    );
-
-    // Update measure_power with actual usage
-    updatePromises.push(
-      this.setCapabilityValue('measure_power', Math.round(usage.electricity.usageTotal * 1000))
-        .catch((error) => this.error('Failed to update measure_power:', error)),
-    );
-
     // eslint-disable-next-line node/no-unsupported-features/es-builtins
     await Promise.allSettled(updatePromises);
 

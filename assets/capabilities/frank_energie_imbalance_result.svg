@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#6C5CE7" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Balance scale -->
-  <g transform="translate(100, 95)">
+  <g transform="translate(100, 95) scale(1.05)">
     <!-- Fulcrum -->
     <path d="M -2 15 L 2 15 L 5 20 L -5 20 Z" fill="#6C5CE7" opacity="0.4"/>
     <circle cx="0" cy="15" r="3" fill="#6C5CE7"/>
@@ -20,9 +20,10 @@
     <line x1="-35" y1="0" x2="35" y2="-10" stroke="#6C5CE7" stroke-width="2.5" stroke-linecap="round"/>
   </g>
 
-  <!-- Euro symbol -->
-  <g transform="translate(100, 145)">
-    <circle cx="0" cy="0" r="12" fill="#6C5CE7" opacity="0.15"/>
-    <text x="0" y="4" font-size="16" font-weight="bold" fill="#6C5CE7" text-anchor="middle" font-family="Arial, sans-serif">€</text>
+  <!-- Euro symbol - enlarged to match frank_slim_bonus size -->
+  <g transform="translate(100, 145) scale(1.05)">
+    <circle cx="0" cy="0" r="22" fill="#6C5CE7" opacity="0.1"/>
+    <circle cx="0" cy="0" r="16" fill="#6C5CE7" opacity="0.15"/>
+    <text x="0" y="6" font-size="24" font-weight="bold" fill="#6C5CE7" text-anchor="middle" font-family="Arial, sans-serif">€</text>
   </g>
 </svg>

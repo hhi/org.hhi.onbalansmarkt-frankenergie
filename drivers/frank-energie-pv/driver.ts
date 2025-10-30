@@ -17,14 +17,32 @@ export = class SmartPvSystemDriver extends Homey.Driver {
    * Automatically uses first PV system found (or aggregates all)
    */
   async onPair(session: Homey.Driver.PairSession) {
-    // Handler to verify credentials and fetch PV systems
-    session.setHandler('verify_and_create_pv', async (data: { email: string; password: string }) => {
+    // Check if app-level credentials are already configured
+    session.setHandler('check_credentials', async () => {
+      // @ts-expect-error - Accessing app instance with specific methods
+      const hasCredentials = this.homey.app.hasCredentials?.() as boolean | undefined;
+      return { hasCredentials: hasCredentials || false };
+    });
+
+    // Handler to verify PV systems with provided or app-level credentials
+    session.setHandler('verify_pv_system', async (data?: { email?: string; password?: string }) => {
       try {
+        // Get credentials from app settings or data
+        // @ts-expect-error - Accessing app instance with specific methods
+        const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+
+        const email = data?.email || appCreds?.email;
+        const password = data?.password || appCreds?.password;
+
+        if (!email || !password) {
+          throw new Error('Frank Energie credentials not configured. Please add a Battery device first or provide credentials.');
+        }
+
         const client = new FrankEnergieClient({
           logger: (msg, ...args) => this.log(msg, ...args),
         });
 
-        await client.login(data.email, data.password);
+        await client.login(email, password);
         const pvSystems = await client.getSmartPvSystems();
 
         this.log(`Found ${pvSystems.length} PV systems`);
@@ -33,9 +51,12 @@ export = class SmartPvSystemDriver extends Homey.Driver {
           throw new Error('No PV systems found on this Frank Energie account');
         }
 
-        // Store credentials at app level
-        // @ts-expect-error - Accessing app instance with specific methods
-        this.homey.app.setCredentials?.(data.email, data.password);
+        // Store credentials at app level if provided
+        if (data?.email && data?.password) {
+          // @ts-expect-error - Accessing app instance with specific methods
+          this.homey.app.setCredentials?.(data.email, data.password);
+          this.log('Stored Frank Energie credentials at app level');
+        }
 
         return { success: true, pvSystemCount: pvSystems.length };
       } catch (error) {
@@ -46,12 +67,19 @@ export = class SmartPvSystemDriver extends Homey.Driver {
     });
 
     // Handler for device creation - uses first PV system
-    session.setHandler('list_devices', async (data: { email: string; password: string }) => {
+    session.setHandler('list_devices', async (data?: { email?: string; password?: string }) => {
+      // Get credentials (may be from app settings or provided during pairing)
+      // @ts-expect-error - Accessing app instance with specific methods
+      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+
+      const email = data?.email || appCreds?.email || '';
+      const password = data?.password || appCreds?.password || '';
+
       const client = new FrankEnergieClient({
         logger: (msg, ...args) => this.log(msg, ...args),
       });
 
-      await client.login(data.email, data.password);
+      await client.login(email, password);
       const pvSystems = await client.getSmartPvSystems();
 
       // Use first PV system (similar to battery aggregator approach)
@@ -68,8 +96,9 @@ export = class SmartPvSystemDriver extends Homey.Driver {
             pvSystemId: firstPv.id,
           },
           settings: {
-            frank_energie_email: data.email,
-            frank_energie_password: data.password,
+            // Store credentials at device level for backwards compatibility
+            frank_energie_email: email,
+            frank_energie_password: password,
             poll_interval: 5,
           },
         },

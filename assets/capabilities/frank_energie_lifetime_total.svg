@@ -2,20 +2,15 @@
   <!-- Background circle -->
   <circle cx="100" cy="100" r="95" fill="none" stroke="#00A854" stroke-width="1.5" opacity="0.6"/>
 
-  <!-- Infinity symbol as growth curve -->
-  <path d="M 50 100 Q 65 70 80 70 Q 95 70 95 85 Q 95 100 80 130 Q 65 130 50 100 M 105 100 Q 120 70 135 70 Q 150 70 150 85 Q 150 100 135 130 Q 120 130 105 100"
-        stroke="#00A854" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <!-- Euro symbol in center -->
-  <g transform="translate(100, 100)">
-    <circle cx="0" cy="0" r="18" fill="#FFB703" opacity="0.15"/>
-    <text x="0" y="6" font-size="24" font-weight="bold" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">€</text>
+  <!-- Sigma symbol for summation/total -->
+  <g transform="translate(100, 85) scale(1.05)">
+    <circle cx="0" cy="0" r="35" fill="#00A854" opacity="0.1"/>
+    <text x="0" y="18" font-size="60" font-weight="bold" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">Σ</text>
   </g>
 
-  <!-- Growth indicator dots -->
-  <circle cx="50" cy="100" r="2" fill="#00A854" opacity="0.6"/>
-  <circle cx="80" cy="70" r="2.5" fill="#00A854" opacity="0.7"/>
-  <circle cx="95" cy="85" r="2.5" fill="#00A854" opacity="0.8"/>
-  <circle cx="135" cy="70" r="2.5" fill="#00A854" opacity="0.7"/>
-  <circle cx="150" cy="85" r="2" fill="#00A854" opacity="0.6"/>
+  <!-- Euro symbol at bottom -->
+  <g transform="translate(100, 160) scale(1.05)">
+    <circle cx="0" cy="0" r="18" fill="#FFB703" opacity="0.15"/>
+    <text x="0" y="6" font-size="22" font-weight="bold" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">€</text>
+  </g>
 </svg>

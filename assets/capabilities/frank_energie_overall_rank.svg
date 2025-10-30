@@ -9,21 +9,20 @@
   <!-- Background circle -->
   <circle cx="100" cy="100" r="95" fill="none" stroke="#FFA500" stroke-width="1.5" opacity="0.6"/>
 
-  <!-- Trophy/Medal -->
-  <g transform="translate(100, 85)">
-    <!-- Medal cup -->
-    <path d="M -18 5 Q -25 5 -25 15 L -22 28 Q -22 32 -18 32 L 18 32 Q 22 32 22 28 L 25 15 Q 25 5 18 5 L 10 5 Q 8 5 8 7 L 8 15 L -8 15 L -8 7 Q -8 5 -10 5 Z"
-          fill="url(#medalGold)" stroke="#FFD700" stroke-width="1.5"/>
+  <!-- Double star badge for rank -->
+  <g transform="translate(100, 85) scale(1.15)">
+    <!-- Outer star (larger, golden) -->
+    <path d="M 0 -28 L 8 -8 L 30 -8 L 13 6 L 21 26 L 0 14 L -21 26 L -13 6 L -30 -8 L -8 -8 Z"
+          fill="#FFD700" opacity="0.3" stroke="#FFD700" stroke-width="1.5"/>
 
-    <!-- Medal ribbon -->
-    <line x1="-12" y1="5" x2="-15" y2="-10" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
-    <line x1="12" y1="5" x2="15" y2="-10" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
-
-    <!-- Rank indicator -->
-    <text x="0" y="23" font-size="12" font-weight="bold" fill="#333333" text-anchor="middle" font-family="Arial, sans-serif">#1</text>
+    <!-- Inner star (smaller, brighter gold) -->
+    <path d="M 0 -20 L 6 -6 L 22 -6 L 10 4 L 15 18 L 0 10 L -15 18 L -10 4 L -22 -6 L -6 -6 Z"
+          fill="#FFA500" opacity="0.5" stroke="#FFA500" stroke-width="1.5"/>
   </g>
 
-  <!-- Star accent -->
-  <path d="M 100 35 L 105 48 L 120 48 L 107 57 L 112 70 L 100 61 L 88 70 L 93 57 L 80 48 L 95 48 Z"
-        fill="#FFA500" opacity="0.3" stroke="#FFA500" stroke-width="1"/>
+  <!-- Rank #3 below stars -->
+  <g transform="translate(100, 155)">
+    <circle cx="0" cy="0" r="20" fill="#FFD700" opacity="0.2" stroke="#FFA500" stroke-width="1.5"/>
+    <text x="0" y="7" font-size="22" font-weight="bold" fill="#FFA500" text-anchor="middle" font-family="Arial, sans-serif">#3</text>
+  </g>
 </svg>

@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#FFB703" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Sun -->
-  <g transform="translate(75, 80)">
+  <g transform="translate(75, 80) scale(1.05)">
     <!-- Sun circle -->
     <circle cx="0" cy="0" r="13" fill="#FFB703" opacity="0.2" stroke="#FFB703" stroke-width="1.5"/>
 
@@ -17,7 +17,7 @@
   </g>
 
   <!-- Lightning bolt - power indicator -->
-  <g transform="translate(130, 85)">
+  <g transform="translate(130, 85) scale(1.05)">
     <!-- Lightning bolt -->
     <path d="M 0 -15 L -6 -2 L -2 -2 L -8 12 L 0 3 L -4 3 Z"
           fill="#FF6B6B" opacity="0.2" stroke="#FF6B6B" stroke-width="1.5" stroke-linejoin="round"/>
@@ -27,7 +27,7 @@
   </g>
 
   <!-- Power output indicator -->
-  <g transform="translate(100, 145)">
+  <g transform="translate(100, 145) scale(1.05)">
     <rect x="-20" y="-6" width="40" height="12" rx="2" fill="none" stroke="#FF6B6B" stroke-width="1.5" opacity="0.4"/>
 
     <!-- Power level bars -->

@@ -1,7 +1,7 @@
 {
   "name": {
-    "en": "FE Smart Battery",
-    "nl": "FE Slimme Batterij"
+    "en": "Frank Energie Battery",
+    "nl": "Frank Energie Batterij"
   },
   "class": "battery",
   "capabilities": [

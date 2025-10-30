@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#666666" stroke-width="1.5" opacity="0.6"/>
 
   <!-- House outline -->
-  <g transform="translate(100, 90)">
+  <g transform="translate(100, 90) scale(1.05)">
     <!-- Roof -->
     <path d="M -30 -10 L 0 -35 L 30 -10 Z" fill="none" stroke="#666666" stroke-width="2.5" stroke-linejoin="round"/>
 
@@ -23,7 +23,7 @@
   </g>
 
   <!-- Euro symbol with cost indicator -->
-  <g transform="translate(145, 50)">
+  <g transform="translate(145, 50) scale(1.05)">
     <circle cx="0" cy="0" r="16" fill="#FF6B6B" opacity="0.2"/>
     <text x="0" y="5" font-size="18" font-weight="bold" fill="#FF6B6B" text-anchor="middle" font-family="Arial, sans-serif">€</text>
   </g>

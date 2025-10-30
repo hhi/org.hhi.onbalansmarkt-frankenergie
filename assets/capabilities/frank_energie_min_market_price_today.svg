@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#00A854" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Price chart with minimum point -->
-  <g transform="translate(100, 95)">
+  <g transform="translate(100, 95) scale(1.05)">
     <!-- Chart area -->
     <rect x="-35" y="-25" width="70" height="50" rx="2" fill="#00A854" opacity="0.05" stroke="none"/>
 
@@ -22,7 +22,7 @@
   </g>
 
   <!-- Minimum indicator -->
-  <g transform="translate(145, 140)">
+  <g transform="translate(145, 140) scale(1.05)">
     <circle cx="0" cy="0" r="14" fill="#00A854" opacity="0.15"/>
     <text x="0" y="4" font-size="14" font-weight="bold" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">€</text>
     <text x="0" y="18" font-size="8" font-weight="600" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">MIN</text>

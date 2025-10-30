@@ -10,7 +10,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#FFB703" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Sun -->
-  <g transform="translate(100, 65)">
+  <g transform="translate(100, 65) scale(1.05)">
     <!-- Sun circle -->
     <circle cx="0" cy="0" r="12" fill="#FFB703" opacity="0.2" stroke="#FFB703" stroke-width="1.5"/>
 
@@ -25,21 +25,21 @@
   </g>
 
   <!-- Generation chart/arrows -->
-  <g transform="translate(100, 130)">
-    <!-- Energy arrows going up -->
+  <g transform="translate(100, 130) scale(1.05)">
+    <!-- Generation total indicator (text box first, above arrows) -->
+    <rect x="-28" y="-15" width="56" height="18" rx="2" fill="#00D084" opacity="0.1" stroke="#00D084" stroke-width="1"/>
+    <text x="0" y="-1" font-size="11" font-weight="600" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">18.4 kWh</text>
+
+    <!-- Energy arrows going up (moved down below text) -->
     <g stroke="#00D084" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <!-- Arrow 1 -->
-      <path d="M -20 15 L -20 5 L -25 10 M -20 5 L -15 10"/>
+      <path d="M -20 25 L -20 10 L -25 17 M -20 10 L -15 17"/>
       <!-- Arrow 2 -->
-      <path d="M -5 20 L -5 5 L -10 12 M -5 5 L 0 12"/>
+      <path d="M -5 28 L -5 10 L -10 18 M -5 10 L 0 18"/>
       <!-- Arrow 3 -->
-      <path d="M 10 18 L 10 3 L 5 10 M 10 3 L 15 10"/>
+      <path d="M 10 26 L 10 10 L 5 17 M 10 10 L 15 17"/>
       <!-- Arrow 4 -->
-      <path d="M 25 16 L 25 6 L 20 13 M 25 6 L 30 13"/>
+      <path d="M 25 24 L 25 10 L 20 17 M 25 10 L 30 17"/>
     </g>
-
-    <!-- Generation total indicator -->
-    <rect x="-28" y="-5" width="56" height="18" rx="2" fill="#00D084" opacity="0.1" stroke="#00D084" stroke-width="1"/>
-    <text x="0" y="9" font-size="11" font-weight="600" fill="#00A854" text-anchor="middle" font-family="Arial, sans-serif">18.4 kWh</text>
   </g>
 </svg>

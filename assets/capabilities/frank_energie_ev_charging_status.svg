@@ -2,8 +2,8 @@
   <!-- Background circle -->
   <circle cx="100" cy="100" r="95" fill="none" stroke="#00D084" stroke-width="1.5" opacity="0.6"/>
 
-  <!-- Electric vehicle -->
-  <g transform="translate(70, 95)">
+  <!-- Electric vehicle - scaled 10% larger -->
+  <g transform="translate(70, 95) scale(1.15)">
     <!-- Car body -->
     <ellipse cx="0" cy="0" rx="22" ry="11" fill="none" stroke="#00A8E8" stroke-width="2"/>
 
@@ -20,8 +20,8 @@
     <rect x="-5" y="-14" width="10" height="7" rx="1" fill="none" stroke="#00A8E8" stroke-width="1" opacity="0.6"/>
   </g>
 
-  <!-- Charging plug with status -->
-  <g transform="translate(130, 95)">
+  <!-- Charging plug with status - scaled 10% larger -->
+  <g transform="translate(130, 95) scale(1.15)">
     <!-- Plug outline -->
     <path d="M -8 -10 L -8 8 L -4 10 L 4 10 L 8 8 L 8 -10 Z" fill="none" stroke="#00D084" stroke-width="2" stroke-linejoin="round"/>
 

@@ -4,7 +4,7 @@
 
   <g transform="translate(500, 500)">
     <!-- Teal background circle -->
-    <circle cx="0" cy="0" r="400" fill="none" stroke="white" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="400" fill="#00b8a9"/>
 
     <!-- White lightning bolt - classic zigzag style -->
     <g fill="#ffffff">

@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Clock with forward arrow -->
-  <g transform="translate(75, 85)">
+  <g transform="translate(75, 85) scale(1.05)">
     <!-- Clock circle -->
     <circle cx="0" cy="0" r="18" fill="none" stroke="#0066CC" stroke-width="2"/>
 
@@ -19,7 +19,7 @@
   </g>
 
   <!-- Euro symbol -->
-  <g transform="translate(130, 100)">
+  <g transform="translate(130, 100) scale(1.05)">
     <circle cx="0" cy="0" r="18" fill="#0066CC" opacity="0.15" stroke="#0066CC" stroke-width="1"/>
     <text x="0" y="5" font-size="20" font-weight="bold" fill="#0066CC" text-anchor="middle" font-family="Arial, sans-serif">€</text>
   </g>

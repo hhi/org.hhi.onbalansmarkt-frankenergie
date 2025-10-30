@@ -15,7 +15,7 @@
 
   <!-- Trend line -->
   <polyline points="40,140 60,120 80,95 100,110 120,75 140,85 160,50"
-            stroke="#00D084" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            stroke="#00D084" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 
   <!-- Upward arrow indicator -->
   <g transform="translate(150, 45)">

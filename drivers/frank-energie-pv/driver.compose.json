@@ -1,11 +1,10 @@
 {
   "name": {
-    "en": "FE Smart PV System",
-    "nl": "FE Slimme PV Systeem"
+    "en": "Frank Energie PV System",
+    "nl": "Frank Energie PV Systeem"
   },
   "class": "service",
   "capabilities": [
-    "meter_power",
     "frank_energie_pv_current_power",
     "frank_energie_pv_today_generation",
     "frank_energie_pv_status",
@@ -23,8 +22,7 @@
   },
   "pair": [
     {
-      "id": "login",
-      "template": "login"
+      "id": "login"
     },
     {
       "id": "list_devices",

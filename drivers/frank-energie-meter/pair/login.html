@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frank Energie</title>
+</head>
+<body>
+  <homey-pair>
+    <h1 data-i18n="pair.meter.login.title">Frank Energie Energy Meter</h1>
+    <p data-i18n="pair.meter.login.subtitle">Sign in with your Frank Energie account</p>
+
+    <div id="checking" style="text-align: center; padding: 20px;">
+      <p data-i18n="pair.login.checking">Checking credentials...</p>
+    </div>
+
+    <form class="homey-form" style="display: none;">
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="email" data-i18n="pair.login.email">Email Address</label>
+        <input id="email" type="email" required class="homey-form-input" placeholder="you@example.com" />
+        <small class="homey-form-hint" data-i18n="pair.login.email.hint">Your Frank Energie account email</small>
+      </div>
+
+      <div class="homey-form-group">
+        <label class="homey-form-label" for="password" data-i18n="pair.login.password">Password</label>
+        <input id="password" type="password" required class="homey-form-input" placeholder="••••••••" />
+        <small class="homey-form-hint" data-i18n="pair.login.password.hint">Your Frank Energie account password</small>
+      </div>
+
+      <button type="submit" class="button positive" data-i18n="pair.buttons.next">Next</button>
+    </form>
+  </homey-pair>
+
+  <script>
+    Homey.setTitle(Homey.__('pair.meter.login.title'));
+
+    const checkingDiv = document.getElementById('checking');
+    const form = document.querySelector('form');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    // Check if credentials already exist on app level
+    async function checkCredentials() {
+      try {
+        const result = await Homey.emit('check_credentials', {});
+
+        if (result && result.hasCredentials) {
+          // Credentials exist, skip login and verify directly
+          checkingDiv.textContent = Homey.__('pair.login.using_existing') || 'Using existing credentials...';
+
+          try {
+            await Homey.emit('verify_meter', {});
+            // Verification successful, proceed to next view
+            Homey.nextView();
+          } catch (error) {
+            // Verification failed, show login form
+            checkingDiv.style.display = 'none';
+            form.style.display = 'block';
+            emailInput.focus();
+
+            Homey.showDialog('warning', {
+              title: Homey.__('pair.login.credentials_invalid_title') || 'Credentials Invalid',
+              body: Homey.__('pair.login.credentials_invalid_body') || 'Existing credentials are invalid. Please sign in again.',
+            });
+          }
+        } else {
+          // No credentials, show login form
+          checkingDiv.style.display = 'none';
+          form.style.display = 'block';
+          emailInput.focus();
+        }
+      } catch (error) {
+        // Handler not available or error, show login form
+        checkingDiv.style.display = 'none';
+        form.style.display = 'block';
+        emailInput.focus();
+      }
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        Homey.showDialog('error', {
+          title: Homey.__('error.validation.title') || 'Validation Error',
+          body: Homey.__('error.validation.fields') || 'Please fill in all required fields.',
+        });
+        return;
+      }
+
+      // Disable form during verification
+      submitButton.disabled = true;
+      submitButton.textContent = Homey.__('pair.buttons.verifying') || 'Verifying...';
+
+      try {
+        // Verify credentials and check meter access
+        const result = await Homey.emit('verify_meter', {
+          email,
+          password,
+        });
+
+        if (result && result.success) {
+          // Credentials verified, proceed to next view
+          Homey.nextView();
+        } else {
+          throw new Error('Verification failed');
+        }
+      } catch (error) {
+        Homey.showDialog('error', {
+          title: Homey.__('error.login.title') || 'Login Failed',
+          body: error.message || Homey.__('error.login.body') || 'Failed to verify Frank Energie credentials. Please check your email and password.',
+        });
+        submitButton.disabled = false;
+        submitButton.textContent = Homey.__('pair.buttons.next') || 'Next';
+      }
+    });
+
+    // Start credential check on page load
+    checkCredentials();
+  </script>
+</body>
+</html>

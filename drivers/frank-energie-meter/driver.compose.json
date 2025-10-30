@@ -1,12 +1,10 @@
 {
   "name": {
-    "en": "FE Energy Meter",
-    "nl": "FE Energiemeter"
+    "en": "Frank Energie Energy Meter",
+    "nl": "Frank Energie Energiemeter"
   },
   "class": "sensor",
   "capabilities": [
-    "measure_power",
-    "meter_power",
     "frank_energie_current_market_price",
     "frank_energie_next_hour_market_price",
     "frank_energie_today_consumption",

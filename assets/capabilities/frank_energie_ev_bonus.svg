@@ -2,8 +2,8 @@
   <!-- Background circle -->
   <circle cx="100" cy="100" r="95" fill="none" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
 
-  <!-- Electric vehicle -->
-  <g transform="translate(75, 95)">
+  <!-- Electric vehicle - scaled 10% larger -->
+  <g transform="translate(75, 95) scale(1.15)">
     <!-- Car body -->
     <ellipse cx="0" cy="0" rx="24" ry="12" fill="none" stroke="#0066CC" stroke-width="2"/>
 
@@ -20,8 +20,8 @@
     <rect x="-6" y="-15" width="12" height="8" rx="1" fill="none" stroke="#0066CC" stroke-width="1" opacity="0.6"/>
   </g>
 
-  <!-- Bonus badge with euro -->
-  <g transform="translate(130, 95)">
+  <!-- Bonus badge with euro - scaled 10% larger -->
+  <g transform="translate(130, 95) scale(1.15)">
     <!-- Star badge -->
     <path d="M 0 -16 L 4 -6 L 14 -6 L 6 0 L 10 10 L 0 4 L -10 10 L -6 0 L -14 -6 L -4 -6 Z"
           fill="#FFB703" opacity="0.25" stroke="#FFB703" stroke-width="1"/>

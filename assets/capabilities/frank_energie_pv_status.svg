@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#FFB703" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Sun -->
-  <g transform="translate(100, 80)">
+  <g transform="translate(100, 80) scale(1.05)">
     <!-- Sun circle -->
     <circle cx="0" cy="0" r="16" fill="#FFB703" opacity="0.25" stroke="#FFB703" stroke-width="2"/>
 
@@ -18,7 +18,7 @@
   </g>
 
   <!-- Status indicator circle -->
-  <g transform="translate(100, 145)">
+  <g transform="translate(100, 145) scale(1.05)">
     <!-- Status ring -->
     <circle cx="0" cy="0" r="18" fill="none" stroke="#FFB703" stroke-width="2" opacity="0.3"/>
 

@@ -3,7 +3,7 @@
   <circle cx="100" cy="100" r="95" fill="none" stroke="#00A8E8" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Battery outline -->
-  <g transform="translate(65, 85)">
+  <g transform="translate(65, 85) scale(1.05)">
     <!-- Battery body -->
     <rect x="0" y="0" width="40" height="60" rx="2" fill="none" stroke="#00A8E8" stroke-width="2"/>
 
@@ -15,7 +15,7 @@
   </g>
 
   <!-- Gear/Settings icon -->
-  <g transform="translate(130, 85)">
+  <g transform="translate(130, 85) scale(1.05)">
     <!-- Outer gear circle -->
     <circle cx="0" cy="0" r="22" fill="none" stroke="#6C5CE7" stroke-width="2"/>
 
