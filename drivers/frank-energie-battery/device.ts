@@ -143,6 +143,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     if (this.hasCapability('external_battery_selector')) {
       try {
         await this.setCapabilityValue('external_battery_selector', 'none');
+        const currentValue = await this.getCapabilityValue('external_battery_selector');
+        this.log(`external_battery_selector initialized. Current value: ${currentValue}`);
       } catch (error) {
         this.error('Failed to initialize external_battery_selector:', error);
       }
@@ -154,6 +156,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     } else {
       this.log('External battery aggregated capabilities verified');
     }
+
+    this.log(`ensureExternalBatteryAggregatedCapabilities completed. externalBatteries Map size: ${this.externalBatteries.size}`);
   }
 
   /**
@@ -844,6 +848,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     }
 
     // Register battery in selector (if new)
+    this.log(`Flow card 'receive_battery_metrics' triggered with battery_id: ${args.battery_id}`);
     await this.registerExternalBattery(args.battery_id, 'total');
 
     this.log(`Receiving metrics for battery ${args.battery_id}: charged=${args.total_charged_kwh} kWh, discharged=${args.total_discharged_kwh} kWh, percentage=${args.battery_percentage}%`);
@@ -903,6 +908,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     }
 
     // Register battery in selector (if new)
+    this.log(`Flow card 'receive_battery_daily_metrics' triggered with battery_id: ${args.battery_id}`);
     await this.registerExternalBattery(args.battery_id, 'daily');
 
     this.log(`Receiving daily metrics for battery ${args.battery_id}: `
@@ -1087,12 +1093,20 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     const stored = (await this.getStoreValue('externalBatteries')) as Record<string, 'total' | 'daily'> | undefined;
     if (stored && Object.keys(stored).length > 0) {
       this.externalBatteries = new Map(Object.entries(stored));
-      this.log(`Loaded ${this.externalBatteries.size} external batteries from store: ${Array.from(this.externalBatteries.keys()).join(', ')}`);
+
+      // Detailed logging of what was loaded
+      const batteryDetails = Array.from(this.externalBatteries.entries())
+        .map(([id, type]) => `${id} (${type})`)
+        .join(', ');
+
+      this.log(`Loaded ${this.externalBatteries.size} external batteries from store: ${batteryDetails}`);
+      this.log(`externalBatteries Map contents: ${JSON.stringify(Object.fromEntries(this.externalBatteries))}`);
 
       // Update selector with loaded batteries
       await this.updateBatterySelectorCapability();
     } else {
       this.log('No external batteries found in store');
+      this.log(`Stored value: ${JSON.stringify(stored)}`);
     }
   }
 
@@ -1100,16 +1114,36 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
    * Register an external battery (from flow card)
    */
   private async registerExternalBattery(batteryId: string, type: 'total' | 'daily'): Promise<void> {
-    if (!this.externalBatteries.has(batteryId)) {
+    const isNewBattery = !this.externalBatteries.has(batteryId);
+    const previousType = this.externalBatteries.get(batteryId);
+    const typeChanged = previousType && previousType !== type;
+
+    if (isNewBattery) {
       this.externalBatteries.set(batteryId, type);
       this.log(`Registered external battery: ${batteryId} (${type})`);
+      this.log(`Map now contains ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ')}`);
 
       // Persist to store
       const stored = Object.fromEntries(this.externalBatteries);
+      this.log(`Persisting to store: ${JSON.stringify(stored)}`);
       await this.setStoreValue('externalBatteries', stored);
 
       // Update picker capability
       await this.updateBatterySelectorCapability();
+    } else if (typeChanged) {
+      this.log(`Battery ${batteryId} type changed from ${previousType} to ${type}`);
+      this.externalBatteries.set(batteryId, type);
+      this.log(`Map now contains ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ')}`);
+
+      // Persist to store
+      const stored = Object.fromEntries(this.externalBatteries);
+      this.log(`Persisting to store: ${JSON.stringify(stored)}`);
+      await this.setStoreValue('externalBatteries', stored);
+
+      // Update picker capability
+      await this.updateBatterySelectorCapability();
+    } else {
+      this.log(`Battery ${batteryId} already registered (${type}), skipping registration`);
     }
   }
 
@@ -1122,6 +1156,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       return;
     }
 
+    this.log(`updateBatterySelectorCapability called. externalBatteries Map size: ${this.externalBatteries.size}`);
+    this.log(`Current Map contents: ${JSON.stringify(Object.fromEntries(this.externalBatteries))}`);
+
     const batteryValues: Array<{ id: string; title: { en: string; nl: string } }> = [];
 
     // Add all registered batteries
@@ -1133,6 +1170,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
           nl: `${batteryId} (${type})`,
         },
       });
+      this.log(`  Adding to picker: ${batteryId} (${type})`);
     }
 
     // Always add "none" option first
@@ -1144,6 +1182,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       },
     });
 
+    this.log(`Final picker values to set: ${JSON.stringify(batteryValues, null, 2)}`);
+
     try {
       // For enum capabilities, we need to set the options with all possible values
       await this.setCapabilityOptions('external_battery_selector', {
@@ -1153,6 +1193,27 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       this.log(`Updated battery selector with ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ') || 'none'}`);
     } catch (error) {
       this.error('Failed to update battery selector capability:', error);
+      this.error('Error details:', JSON.stringify(error));
+    }
+  }
+
+  /**
+   * Diagnostic method: Dump current picker capability state
+   * Useful for debugging picker display issues
+   */
+  async diagnosticDumpPickerState(): Promise<void> {
+    try {
+      if (!this.hasCapability('external_battery_selector')) {
+        this.log('DIAG: external_battery_selector capability not found');
+        return;
+      }
+
+      const currentValue = await this.getCapabilityValue('external_battery_selector');
+      this.log(`DIAG: Current picker value: ${currentValue}`);
+      this.log(`DIAG: Map contents: ${JSON.stringify(Object.fromEntries(this.externalBatteries))}`);
+      this.log(`DIAG: Stored value: ${JSON.stringify(await this.getStoreValue('externalBatteries'))}`);
+    } catch (error) {
+      this.error('Failed to dump picker diagnostics:', error);
     }
   }
 
