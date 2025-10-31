@@ -2,11 +2,11 @@
   "id": "frank_energie_battery_mode",
   "title": {
     "en": "Battery Mode",
-    "nl": "Batterijtmodus"
+    "nl": "Handels handelsmodus"
   },
   "description": {
     "en": "Current battery trading mode",
-    "nl": "Huidige batterijhandelsmodus"
+    "nl": "Huidige batterij handelsmodus"
   },
   "type": "enum",
   "insights": false,

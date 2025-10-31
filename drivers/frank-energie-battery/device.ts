@@ -987,6 +987,32 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     this.log('Baseline reset completed successfully');
   }
 
+  /**
+   * Handle manual reset external batteries action from settings dropdown
+   * Clears the list of registered external batteries so it can be rebuilt
+   */
+  protected async handleManualResetExternalBatteries(): Promise<void> {
+    const previousCount = this.externalBatteries.size;
+
+    // Clear the in-memory Map
+    this.externalBatteries.clear();
+
+    // Clear the persisted store
+    await this.setStoreValue('externalBatteries', {});
+
+    // Update picker to show only "none" option
+    await this.updateBatterySelectorCapability();
+
+    // Reset picker value to "none"
+    try {
+      await this.setCapabilityValue('external_battery_selector', 'none');
+    } catch (error) {
+      this.error('Failed to reset external_battery_selector value:', error);
+    }
+
+    this.log(`External batteries list cleared: removed ${previousCount} batteries. List will be rebuilt from flow cards.`);
+  }
+
   // ===== Trigger Emission Methods =====
 
   private async emitDailyResultsAvailable(

@@ -1668,6 +1668,13 @@
                     "en": "Reset daily baseline (recovery)",
                     "nl": "Dagelijkse baseline herstellen (herstel)"
                   }
+                },
+                {
+                  "id": "reset_external_batteries",
+                  "label": {
+                    "en": "Reset external batteries list",
+                    "nl": "Lijst van externe batterijen herstellen"
+                  }
                 }
               ],
               "hint": {
@@ -2725,11 +2732,11 @@
       "id": "frank_energie_battery_mode",
       "title": {
         "en": "Battery Mode",
-        "nl": "Batterijtmodus"
+        "nl": "Handels handelsmodus"
       },
       "description": {
         "en": "Current battery trading mode",
-        "nl": "Huidige batterijhandelsmodus"
+        "nl": "Huidige batterij handelsmodus"
       },
       "type": "enum",
       "insights": false,

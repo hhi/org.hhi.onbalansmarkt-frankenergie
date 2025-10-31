@@ -179,6 +179,13 @@
               "en": "Reset daily baseline (recovery)",
               "nl": "Dagelijkse baseline herstellen (herstel)"
             }
+          },
+          {
+            "id": "reset_external_batteries",
+            "label": {
+              "en": "Reset external batteries list",
+              "nl": "Lijst van externe batterijen herstellen"
+            }
           }
         ],
         "hint": {
