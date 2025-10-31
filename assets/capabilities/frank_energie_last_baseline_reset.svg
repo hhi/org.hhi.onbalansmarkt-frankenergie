@@ -2,23 +2,23 @@
   <!-- Background circle -->
   <circle cx="100" cy="100" r="95" fill="none" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
 
-  <!-- Large reset arrow icon (circular/refresh symbol) -->
+  <!-- Large reset arrow icon (circular/refresh symbol) - fills available space -->
   <g transform="translate(100, 100)">
-    <!-- Top-right curved arrow -->
-    <path d="M 0 -35 A 40 40 0 0 1 50 0 L 40 -10 A 30 30 0 0 0 0 -25 Z"
+    <!-- Top-right curved arrow - larger to fill space -->
+    <path d="M 0 -50 A 60 60 0 0 1 70 0 L 55 -12 A 45 45 0 0 0 0 -35 Z"
           fill="#0066CC" opacity="0.85"/>
 
-    <!-- Bottom-left curved arrow (lighter) -->
-    <path d="M 0 35 A 40 40 0 0 1 -50 0 L -40 10 A 30 30 0 0 0 0 25 Z"
+    <!-- Bottom-left curved arrow (lighter) - larger to fill space -->
+    <path d="M 0 50 A 60 60 0 0 1 -70 0 L -55 12 A 45 45 0 0 0 0 35 Z"
           fill="#0066CC" opacity="0.4"/>
 
-    <!-- Center filled circle -->
-    <circle cx="0" cy="0" r="18" fill="#0066CC" opacity="0.15"/>
+    <!-- Center filled circle - larger -->
+    <circle cx="0" cy="0" r="25" fill="#0066CC" opacity="0.15"/>
 
-    <!-- Outer circle border -->
-    <circle cx="0" cy="0" r="18" fill="none" stroke="#0066CC" stroke-width="2.5"/>
+    <!-- Outer circle border - larger -->
+    <circle cx="0" cy="0" r="25" fill="none" stroke="#0066CC" stroke-width="2.5"/>
 
-    <!-- Clock hand pointing to 12 (top) - simple vertical line -->
-    <line x1="0" y1="0" x2="0" y2="-13" stroke="#0066CC" stroke-width="3" stroke-linecap="round"/>
+    <!-- Clock hand pointing to 12 (top) - extends more into circle -->
+    <line x1="0" y1="0" x2="0" y2="-45" stroke="#0066CC" stroke-width="3" stroke-linecap="round"/>
   </g>
 </svg>
