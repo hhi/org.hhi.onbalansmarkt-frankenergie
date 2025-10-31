@@ -34,6 +34,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   private batteries: SmartBattery[] = [];
   private externalBatteryMetrics?: BatteryMetricsStore;
 
+  // External battery tracking (from flow cards)
+  private externalBatteries: Map<string, 'total' | 'daily'> = new Map();
+
   // Battery-specific state tracking
   private previousBatteryCount: number = 0;
   private previousTotalResult: number = 0;
@@ -81,6 +84,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     // Ensure day reset happens even if app was running at midnight
     await this.externalBatteryMetrics.ensureDayReset();
+
+    // Load external batteries from store
+    await this.loadExternalBatteries();
   }
 
   /**
@@ -827,6 +833,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('External battery metrics store not initialized');
     }
 
+    // Register battery in selector (if new)
+    await this.registerExternalBattery(args.battery_id, 'total');
+
     this.log(`Receiving metrics for battery ${args.battery_id}: charged=${args.total_charged_kwh} kWh, discharged=${args.total_discharged_kwh} kWh, percentage=${args.battery_percentage}%`);
 
     // Store the metric and get aggregated results
@@ -882,6 +891,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       this.error('External battery metrics store not initialized');
       throw new Error('External battery metrics store not initialized');
     }
+
+    // Register battery in selector (if new)
+    await this.registerExternalBattery(args.battery_id, 'daily');
 
     this.log(`Receiving daily metrics for battery ${args.battery_id}: `
       + `daily charged=${args.daily_charged_kwh} kWh, daily discharged=${args.daily_discharged_kwh} kWh, percentage=${args.battery_percentage}%`);
@@ -1056,6 +1068,70 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         previousBatteryCount: previousCount,
       })
       .catch((error) => this.error('Failed to emit new_battery_added trigger:', error));
+  }
+
+  /**
+   * Load external batteries from device store
+   */
+  private async loadExternalBatteries(): Promise<void> {
+    const stored = (await this.getStoreValue('externalBatteries')) as Record<string, 'total' | 'daily'> | undefined;
+    if (stored) {
+      this.externalBatteries = new Map(Object.entries(stored));
+      this.log(`Loaded ${this.externalBatteries.size} external batteries from store`);
+      await this.updateBatterySelectorCapability();
+    }
+  }
+
+  /**
+   * Register an external battery (from flow card)
+   */
+  private async registerExternalBattery(batteryId: string, type: 'total' | 'daily'): Promise<void> {
+    if (!this.externalBatteries.has(batteryId)) {
+      this.externalBatteries.set(batteryId, type);
+      this.log(`Registered external battery: ${batteryId} (${type})`);
+
+      // Persist to store
+      const stored = Object.fromEntries(this.externalBatteries);
+      await this.setStoreValue('externalBatteries', stored);
+
+      // Update picker capability
+      await this.updateBatterySelectorCapability();
+    }
+  }
+
+  /**
+   * Update battery selector picker capability with registered batteries
+   */
+  private async updateBatterySelectorCapability(): Promise<void> {
+    if (!this.hasCapability('external_battery_selector')) {
+      return;
+    }
+
+    const batteryValues = Array.from(this.externalBatteries.entries()).map(([id, type]) => ({
+      id,
+      title: {
+        en: `${id} (${type})`,
+        nl: `${id} (${type})`,
+      },
+    }));
+
+    // Always add "none" option
+    batteryValues.unshift({
+      id: 'none',
+      title: {
+        en: '— No batteries —',
+        nl: '— Geen batterijen —',
+      },
+    });
+
+    try {
+      await this.setCapabilityOptions('external_battery_selector', {
+        values: batteryValues,
+      });
+      this.log(`Updated battery selector with ${this.externalBatteries.size} batteries`);
+    } catch (error) {
+      this.error('Failed to update battery selector capability:', error);
+    }
   }
 
   /**

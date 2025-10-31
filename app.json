@@ -1660,6 +1660,13 @@
                     "en": "Refresh data now",
                     "nl": "Gegevens nu verversen"
                   }
+                },
+                {
+                  "id": "reset_baseline",
+                  "label": {
+                    "en": "Reset daily baseline (recovery)",
+                    "nl": "Dagelijkse baseline herstellen (herstel)"
+                  }
                 }
               ],
               "hint": {

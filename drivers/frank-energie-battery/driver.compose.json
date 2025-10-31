@@ -18,7 +18,8 @@
     "external_battery_daily_charged",
     "external_battery_daily_discharged",
     "external_battery_percentage",
-    "external_battery_count"
+    "external_battery_count",
+    "external_battery_selector"
   ],
   "platforms": [
     "local"
