@@ -75,6 +75,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       logger: (msg, ...args) => this.log(msg, ...args),
     });
     this.log('External battery metrics store initialized');
+
+    // Schedule automatic daily reset at 00:00
+    this.externalBatteryMetrics.scheduleAutomaticReset();
+
+    // Ensure day reset happens even if app was running at midnight
+    await this.externalBatteryMetrics.ensureDayReset();
   }
 
   /**
@@ -246,6 +252,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       .registerRunListener(this.actionReceiveBatteryMetrics.bind(this));
     this.homey.flow.getActionCard('receive_battery_daily_metrics')
       .registerRunListener(this.actionReceiveBatteryDailyMetrics.bind(this));
+    this.homey.flow.getActionCard('reset_baseline')
+      .registerRunListener(this.actionResetBaseline.bind(this));
 
     this.log('Battery-specific flow cards registered');
   }
@@ -921,6 +929,21 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     );
   }
 
+  /**
+   * Emergency baseline reset (flow card action)
+   * Resets startOfDay to current values for recovery
+   */
+  private async actionResetBaseline(): Promise<void> {
+    if (!this.externalBatteryMetrics) {
+      this.error('External battery metrics store not initialized');
+      throw new Error('External battery metrics store not initialized');
+    }
+
+    this.log('Reset baseline action triggered by user');
+    await this.externalBatteryMetrics.emergencyResetBaseline();
+    this.log('Baseline reset completed successfully');
+  }
+
   // ===== Trigger Emission Methods =====
 
   private async emitDailyResultsAvailable(
@@ -1018,5 +1041,16 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         previousBatteryCount: previousCount,
       })
       .catch((error) => this.error('Failed to emit new_battery_added trigger:', error));
+  }
+
+  /**
+   * Device cleanup on removal
+   * Stops timers and cleanup resources
+   */
+  async onUninit() {
+    this.log('Smart Battery Device uninitializing...');
+    if (this.externalBatteryMetrics) {
+      this.externalBatteryMetrics.destroy();
+    }
   }
 };

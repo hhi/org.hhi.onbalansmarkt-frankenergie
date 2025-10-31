@@ -63,6 +63,8 @@ export class BatteryMetricsStore {
   private device: Device;
   private logger: (message: string, ...args: unknown[]) => void;
   private readonly storeKey = 'batteryMetrics';
+  private resetInterval: NodeJS.Timeout | null = null;
+  private resetTimeout: NodeJS.Timeout | null = null;
 
   constructor(config: BatteryMetricsStoreConfig) {
     this.device = config.device;
@@ -126,6 +128,7 @@ export class BatteryMetricsStore {
 
   /**
    * Check if we need to reset daily counters (new day started)
+   * Internal helper used by storeMetric and other methods
    */
   private async checkAndResetIfNeeded(metrics: StoredMetrics): Promise<StoredMetrics> {
     const currentDate = this.getCurrentDate();
@@ -148,6 +151,15 @@ export class BatteryMetricsStore {
     }
 
     return metrics;
+  }
+
+  /**
+   * Ensure daily reset is applied (public method, call on device init)
+   * Checks if a new day has started and resets daily counters accordingly
+   */
+  async ensureDayReset(): Promise<void> {
+    let metrics = await this.getStoredMetrics();
+    await this.checkAndResetIfNeeded(metrics);
   }
 
   /**
@@ -330,5 +342,110 @@ export class BatteryMetricsStore {
   async clear(): Promise<void> {
     await this.device.unsetStoreValue(this.storeKey);
     this.logger('BatteryMetricsStore: Cleared all metrics');
+  }
+
+  /**
+   * Schedule automatic daily reset at 00:00 (Europe/Amsterdam timezone)
+   * Called on device init to ensure proper daily baseline management
+   */
+  scheduleAutomaticReset(): void {
+    // Calculate milliseconds until next 00:00
+    const now = new Date();
+    const next00 = new Date(now);
+    next00.setDate(next00.getDate() + 1); // Tomorrow
+    next00.setHours(0, 0, 0, 0); // 00:00:00
+
+    const msUntilReset = next00.getTime() - now.getTime();
+
+    // Schedule first reset using Homey's setTimeout (auto-cleanup on app restart)
+    this.resetTimeout = this.device.homey.setTimeout(async () => {
+      await this.performAutomaticReset();
+
+      // Then schedule daily resets every 24 hours using setInterval
+      this.resetInterval = this.device.homey.setInterval(
+        async () => {
+          await this.performAutomaticReset();
+        },
+        24 * 60 * 60 * 1000, // 24 hours
+      );
+    }, msUntilReset);
+
+    this.logger(
+      `BatteryMetricsStore: Scheduled automatic reset at 00:00 (${(msUntilReset / 1000 / 60).toFixed(0)} minutes from now)`,
+    );
+  }
+
+  /**
+   * Perform the actual reset at 00:00
+   * Sets startOfDay = current, ensuring delta calculation is correct for new day
+   */
+  private async performAutomaticReset(): Promise<void> {
+    let metrics = await this.getStoredMetrics();
+    const currentDate = this.getCurrentDate();
+
+    if (metrics.lastResetDate !== currentDate) {
+      // Set startOfDay = current BEFORE polling brings new data
+      metrics.startOfDay.discharged = { ...metrics.current.discharged };
+      metrics.startOfDay.charged = { ...metrics.current.charged };
+
+      // Reset daily-only counters
+      metrics.dailyOnly.dailyCharged = {};
+      metrics.dailyOnly.dailyDischarged = {};
+
+      metrics.lastResetDate = currentDate;
+      await this.saveMetrics(metrics);
+
+      this.logger(
+        'BatteryMetricsStore: Automatic 00:00 reset executed.',
+        `startOfDay set to current values for new day.`,
+      );
+    }
+  }
+
+  /**
+   * Emergency reset requested by user (via flow card)
+   * Sets startOfDay = current immediately for recovery
+   * Use when initialization detected incorrect values
+   *
+   * @param batteryId Optional - reset specific battery, or all if undefined
+   */
+  async emergencyResetBaseline(batteryId?: string): Promise<void> {
+    let metrics = await this.getStoredMetrics();
+
+    if (batteryId) {
+      // Reset specific battery
+      metrics.startOfDay.discharged[batteryId] = metrics.current.discharged[batteryId] ?? 0;
+      metrics.startOfDay.charged[batteryId] = metrics.current.charged[batteryId] ?? 0;
+      this.logger(
+        `EMERGENCY RESET: Baseline for battery ${batteryId} set to current values.`,
+        `Delta will be correct from next measurement.`,
+      );
+    } else {
+      // Reset all batteries
+      metrics.startOfDay.discharged = { ...metrics.current.discharged };
+      metrics.startOfDay.charged = { ...metrics.current.charged };
+      this.logger(
+        `EMERGENCY RESET: Baseline for all batteries set to current values.`,
+        `Delta will be correct from next measurement.`,
+      );
+    }
+
+    await this.saveMetrics(metrics);
+  }
+
+  /**
+   * Cleanup on device destroy
+   * Must be called in device.onUninit()
+   */
+  destroy(): void {
+    if (this.resetTimeout) {
+      this.device.homey.clearTimeout(this.resetTimeout);
+      this.resetTimeout = null;
+    }
+    if (this.resetInterval) {
+      this.device.homey.clearInterval(this.resetInterval);
+      this.resetInterval = null;
+    }
+    this.logger('BatteryMetricsStore: Cleanup completed');
   }
 }

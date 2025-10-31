@@ -1,7 +1,7 @@
 {
   "0.0.26": {
-    "en": "Cleaned up documentation and removed Zonneplan driver documentation.",
-    "nl": "Documentatie opgeschoond en Zonneplan driver documentatie verwijderd."
+    "en": "Added automatic daily baseline reset at 00:00 for accurate delta calculations. Added emergency reset flow card for recovery when metrics are incorrect.",
+    "nl": "Automatische dagelijkse baseline reset toegevoegd om 00:00 voor nauwkeurige delta berekeningen. Nood reset flow card toegevoegd voor herstel wanneer metrieken onjuist zijn."
   },
 
   "0.0.25": {
