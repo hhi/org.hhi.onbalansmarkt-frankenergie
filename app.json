@@ -1223,6 +1223,24 @@
         ]
       },
       {
+        "id": "reset_baseline",
+        "title": {
+          "en": "Reset baseline",
+          "nl": "Baseline resetten"
+        },
+        "description": {
+          "en": "Emergency: Resets daily baseline to current values. Next measurement will establish correct delta.",
+          "nl": "Noodsituatie: Herstelt dagelijkse baseline naar huige waarden. Volgende meting stelt correcte delta in."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ]
+      },
+      {
         "id": "send_notification",
         "title": {
           "en": "Send trading notification",

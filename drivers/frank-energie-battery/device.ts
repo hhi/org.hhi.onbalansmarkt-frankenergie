@@ -939,7 +939,22 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('External battery metrics store not initialized');
     }
 
-    this.log('Reset baseline action triggered by user');
+    this.log('Reset baseline action triggered by user (flow card)');
+    await this.externalBatteryMetrics.emergencyResetBaseline();
+    this.log('Baseline reset completed successfully');
+  }
+
+  /**
+   * Handle manual reset baseline action from settings dropdown
+   * Overrides base class to implement baseline reset
+   */
+  protected async handleManualResetBaseline(): Promise<void> {
+    if (!this.externalBatteryMetrics) {
+      this.error('External battery metrics store not initialized');
+      throw new Error('External battery metrics store not initialized');
+    }
+
+    this.log('Reset baseline action triggered by user (settings)');
     await this.externalBatteryMetrics.emergencyResetBaseline();
     this.log('Baseline reset completed successfully');
   }

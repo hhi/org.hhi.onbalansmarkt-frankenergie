@@ -436,6 +436,14 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   }
 
   /**
+   * Handle manual reset baseline action (override in subclasses if supported)
+   * Default implementation does nothing - subclasses can override
+   */
+  protected async handleManualResetBaseline(): Promise<void> {
+    // Default no-op - subclasses override if they support baseline reset
+  }
+
+  /**
    * Abstract methods - must be implemented by subclasses
    */
   abstract initializeDeviceSpecificClients(): Promise<void>;
@@ -488,6 +496,27 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
               .catch((err) => this.error('Failed to reset manual_action dropdown:', err));
           }, 100);
           throw new Error(`Manual refresh failed: ${errorMsg}`);
+        }
+      } else if (action === 'reset_baseline') {
+        this.log('Manual action: Reset daily baseline');
+        try {
+          await this.handleManualResetBaseline();
+          this.log('Manual baseline reset completed successfully');
+          // Reset dropdown to "none" after onSettings completes
+          this.homey.setTimeout(() => {
+            this.setSettings({ manual_action: 'none' })
+              .catch((error) => this.error('Failed to reset manual_action dropdown:', error));
+          }, 100);
+          return; // Don't restart polling or reinitialize clients
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          this.error('Manual baseline reset failed:', errorMsg);
+          // Reset dropdown to "none" even on failure
+          this.homey.setTimeout(() => {
+            this.setSettings({ manual_action: 'none' })
+              .catch((err) => this.error('Failed to reset manual_action dropdown:', err));
+          }, 100);
+          throw new Error(`Manual baseline reset failed: ${errorMsg}`);
         }
       }
 
