@@ -57,11 +57,13 @@ interface StoredMetrics {
 export interface BatteryMetricsStoreConfig {
   device: Device;
   logger?: (message: string, ...args: unknown[]) => void;
+  onAutomaticReset?: () => Promise<void>;
 }
 
 export class BatteryMetricsStore {
   private device: Device;
   private logger: (message: string, ...args: unknown[]) => void;
+  private onAutomaticReset?: () => Promise<void>;
   private readonly storeKey = 'batteryMetrics';
   private resetInterval: NodeJS.Timeout | null = null;
   private resetTimeout: NodeJS.Timeout | null = null;
@@ -69,6 +71,7 @@ export class BatteryMetricsStore {
   constructor(config: BatteryMetricsStoreConfig) {
     this.device = config.device;
     this.logger = config.logger || (() => {});
+    this.onAutomaticReset = config.onAutomaticReset;
   }
 
   /**
@@ -399,6 +402,15 @@ export class BatteryMetricsStore {
         'BatteryMetricsStore: Automatic 00:00 reset executed.',
         `startOfDay set to current values for new day.`,
       );
+
+      // Notify device about automatic reset
+      if (this.onAutomaticReset) {
+        try {
+          await this.onAutomaticReset();
+        } catch (error) {
+          this.logger('Error calling onAutomaticReset callback:', error);
+        }
+      }
     }
   }
 

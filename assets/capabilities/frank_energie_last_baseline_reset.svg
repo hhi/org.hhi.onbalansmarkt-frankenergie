@@ -1,0 +1,32 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Reset/Refresh circular arrow -->
+  <g transform="translate(80, 80)">
+    <!-- Main circular arrow path (reset icon) -->
+    <path d="M 15 2 A 15 15 0 0 1 28 15" fill="none" stroke="#0066CC" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Arrow head -->
+    <path d="M 28 15 L 22 12 L 24 22" fill="#0066CC" stroke="none"/>
+
+    <!-- Second arc to complete circular effect -->
+    <path d="M 2 15 A 15 15 0 0 1 15 2" fill="none" stroke="#0066CC" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+
+    <!-- Center circle background -->
+    <circle cx="15" cy="15" r="8" fill="#0066CC" opacity="0.1"/>
+  </g>
+
+  <!-- Clock/time indicator - baseline reset time -->
+  <g transform="translate(100, 135) scale(1.3)">
+    <!-- Clock circle -->
+    <circle cx="0" cy="0" r="12" fill="none" stroke="#0066CC" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Clock hands for 00:00 (baseline/reset time) -->
+    <line x1="0" y1="0" x2="0" y2="-7" stroke="#0066CC" stroke-width="1" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="6" y2="0" stroke="#0066CC" stroke-width="0.5" stroke-linecap="round"/>
+
+    <!-- Reset indicator text -->
+    <text x="0" y="20" font-size="10" font-weight="600" fill="#0066CC" text-anchor="middle" font-family="Arial, sans-serif">Reset: —</text>
+  </g>
+</svg>

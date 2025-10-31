@@ -14,6 +14,7 @@
     "frank_energie_epex_result",
     "frank_energie_imbalance_result",
     "frank_energie_last_upload",
+    "frank_energie_last_baseline_reset",
     "frank_energie_next_poll_minutes",
     "external_battery_daily_charged",
     "external_battery_daily_discharged",

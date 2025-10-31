@@ -76,6 +76,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     this.externalBatteryMetrics = new BatteryMetricsStore({
       device: this,
       logger: (msg, ...args) => this.log(msg, ...args),
+      onAutomaticReset: () => this.handleAutomaticBaselineReset(),
     });
     this.log('External battery metrics store initialized');
 
@@ -973,6 +974,20 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Handle automatic baseline reset (called at 00:00)
+   * Updates the last baseline reset timestamp
+   */
+  private async handleAutomaticBaselineReset(): Promise<void> {
+    const resetTimestamp = new Date().toISOString();
+    try {
+      await this.setCapabilityValue('frank_energie_last_baseline_reset', resetTimestamp);
+      this.log(`Automatic baseline reset timestamp updated: ${resetTimestamp}`);
+    } catch (error) {
+      this.error('Failed to update automatic baseline reset timestamp:', error);
+    }
+  }
+
+  /**
    * Handle manual reset baseline action from settings dropdown
    * Overrides base class to implement baseline reset
    */
@@ -984,6 +999,15 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     this.log('Reset baseline action triggered by user (settings)');
     await this.externalBatteryMetrics.emergencyResetBaseline();
+
+    // Update the last baseline reset timestamp
+    const resetTimestamp = new Date().toISOString();
+    try {
+      await this.setCapabilityValue('frank_energie_last_baseline_reset', resetTimestamp);
+    } catch (error) {
+      this.error('Failed to update last baseline reset timestamp:', error);
+    }
+
     this.log('Baseline reset completed successfully');
   }
 
