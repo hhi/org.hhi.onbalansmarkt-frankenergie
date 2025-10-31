@@ -1003,11 +1003,22 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Update picker to show only "none" option
     await this.updateBatterySelectorCapability();
 
-    // Reset picker value to "none"
+    // Reset all external battery capabilities to 0
+    const resetPromises: Promise<void>[] = [];
+
     try {
-      await this.setCapabilityValue('external_battery_selector', 'none');
+      resetPromises.push(this.setCapabilityValue('external_battery_selector', 'none'));
+      resetPromises.push(this.setCapabilityValue('external_battery_count', 0));
+      resetPromises.push(this.setCapabilityValue('external_battery_daily_charged', 0));
+      resetPromises.push(this.setCapabilityValue('external_battery_daily_discharged', 0));
+      resetPromises.push(this.setCapabilityValue('external_battery_percentage', 0));
+
+      // eslint-disable-next-line node/no-unsupported-features/es-builtins
+      await Promise.allSettled(resetPromises);
+
+      this.log('External battery capabilities reset to 0');
     } catch (error) {
-      this.error('Failed to reset external_battery_selector value:', error);
+      this.error('Failed to reset external battery capabilities:', error);
     }
 
     this.log(`External batteries list cleared: removed ${previousCount} batteries. List will be rebuilt from flow cards.`);
