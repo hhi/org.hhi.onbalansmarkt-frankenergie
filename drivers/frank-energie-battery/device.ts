@@ -121,6 +121,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       'external_battery_daily_discharged',
       'external_battery_percentage',
       'external_battery_count',
+      'external_battery_selector',
     ];
 
     // Check if we need to refresh capabilities (v0.0.14+ added "id" field to capability definitions)
@@ -135,6 +136,15 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         this.log(`Refreshing capability definition: ${capabilityId}`);
         await this.removeCapability(capabilityId);
         await this.addCapability(capabilityId);
+      }
+    }
+
+    // Initialize selector to 'none'
+    if (this.hasCapability('external_battery_selector')) {
+      try {
+        await this.setCapabilityValue('external_battery_selector', 'none');
+      } catch (error) {
+        this.error('Failed to initialize external_battery_selector:', error);
       }
     }
 
@@ -1075,10 +1085,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
    */
   private async loadExternalBatteries(): Promise<void> {
     const stored = (await this.getStoreValue('externalBatteries')) as Record<string, 'total' | 'daily'> | undefined;
-    if (stored) {
+    if (stored && Object.keys(stored).length > 0) {
       this.externalBatteries = new Map(Object.entries(stored));
-      this.log(`Loaded ${this.externalBatteries.size} external batteries from store`);
+      this.log(`Loaded ${this.externalBatteries.size} external batteries from store: ${Array.from(this.externalBatteries.keys()).join(', ')}`);
+
+      // Update selector with loaded batteries
       await this.updateBatterySelectorCapability();
+    } else {
+      this.log('No external batteries found in store');
     }
   }
 
@@ -1104,18 +1118,24 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
    */
   private async updateBatterySelectorCapability(): Promise<void> {
     if (!this.hasCapability('external_battery_selector')) {
+      this.log('external_battery_selector capability not yet available, skipping update');
       return;
     }
 
-    const batteryValues = Array.from(this.externalBatteries.entries()).map(([id, type]) => ({
-      id,
-      title: {
-        en: `${id} (${type})`,
-        nl: `${id} (${type})`,
-      },
-    }));
+    const batteryValues: Array<{ id: string; title: { en: string; nl: string } }> = [];
 
-    // Always add "none" option
+    // Add all registered batteries
+    for (const [batteryId, type] of this.externalBatteries.entries()) {
+      batteryValues.push({
+        id: batteryId,
+        title: {
+          en: `${batteryId} (${type})`,
+          nl: `${batteryId} (${type})`,
+        },
+      });
+    }
+
+    // Always add "none" option first
     batteryValues.unshift({
       id: 'none',
       title: {
@@ -1125,10 +1145,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     });
 
     try {
+      // For enum capabilities, we need to set the options with all possible values
       await this.setCapabilityOptions('external_battery_selector', {
         values: batteryValues,
       });
-      this.log(`Updated battery selector with ${this.externalBatteries.size} batteries`);
+
+      this.log(`Updated battery selector with ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ') || 'none'}`);
     } catch (error) {
       this.error('Failed to update battery selector capability:', error);
     }
