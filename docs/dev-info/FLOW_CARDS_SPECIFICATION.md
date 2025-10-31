@@ -40,8 +40,8 @@ This document provides complete technical specifications for all flow cards impl
 ### Implementation Location
 
 All flow card handlers are implemented in:
-- **File:** `drivers/frank-energie/device.ts`
-- **Class:** `FrankEnergieDevice extends Homey.Device`
+- **File:** `drivers/frank-energie-battery/device.ts`
+- **Class:** Frank Energie Battery device class
 
 ### State Tracking
 

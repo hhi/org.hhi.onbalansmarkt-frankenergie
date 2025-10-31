@@ -33,35 +33,27 @@ The battery pairing flow has been simplified from a 2-step process to a single-s
 
 The battery selection step was redundant because:
 
-1. **Automatic Battery Discovery**: The device implementation ([device.ts:54](drivers/frank-energie-battery/device.ts:54)) automatically fetches ALL batteries on the account via `getSmartBatteries()`
+1. **Automatic Battery Discovery**: The device automatically fetches ALL batteries on the account via Frank Energie API
 
 2. **Automatic Aggregation**: The `BatteryAggregator` processes all batteries automatically - there's no need to select one
 
 3. **Single Device = All Batteries**: One device represents ALL Frank Energie batteries on the account, not a single battery
 
-4. **External Batteries via Flows**: External batteries (like Sessy) are now added via flow cards, not during pairing
+4. **External Batteries via Flows**: External batteries (like Sessy, Zonneplan) are now added via flow cards, not during pairing
 
 ## Technical Changes
 
-### 1. Driver Changes ([driver.ts](drivers/frank-energie-battery/driver.ts:1))
+### 1. Driver Changes ([driver.ts](drivers/frank-energie-battery/driver.ts))
 
 **Removed Handler**: `get_batteries`
 - Was used to fetch battery list for selection screen
 - No longer needed
 
-**New Handler**: `verify_credentials`
-- Verifies login credentials
-- Checks if account has batteries
-- Returns battery count for device naming
+**Updated Handlers**: `verify_credentials` and `list_devices`
+- `verify_credentials`: Verifies login credentials and checks if account has batteries
+- `list_devices`: Creates device with fixed ID `frank-energie-batteries`
 
-**Updated Handler**: `list_devices`
-- No longer requires specific `batteryId`
-- Uses fixed device ID: `frank-energie-batteries`
-- Creates device with dynamic name based on battery count:
-  - 1 battery: "Frank Energie Battery"
-  - Multiple batteries: "Frank Energie Batteries (N)"
-
-### 2. Login HTML Changes ([login.html](drivers/frank-energie-battery/pair/login.html:1))
+### 2. Login HTML Changes ([pair/login.html](drivers/frank-energie-battery/pair/login.html))
 
 **Updated Flow**:
 ```javascript
@@ -79,11 +71,11 @@ await Homey.emit('list_devices', { email, password, batteryCount });
 - Button disabled during verification to prevent double-submit
 - Clearer error handling with automatic re-enable on failure
 
-### 3. File Deletions
+### 3. File Changes
 
 **Removed**: `drivers/frank-energie-battery/pair/select-battery.html`
-- No longer needed with simplified flow
-- Battery selection is now automatic
+- No longer needed with simplified pairing flow
+- Battery selection is now automatic during first poll
 
 ## User Experience
 
@@ -98,19 +90,10 @@ await Homey.emit('list_devices', { email, password, batteryCount });
 2. Device is created automatically with all batteries
 3. Done! ✅
 
-## Device ID Change
+## Device ID
 
-**Important**: The device ID has changed from battery-specific to account-wide:
+The Frank Energie Battery device uses a fixed account-level ID:
 
-**Old**: Each device had unique ID from battery
-```javascript
-data: {
-  id: batteryId,  // e.g., "abc123def456"
-  batteryId: batteryId
-}
-```
-
-**New**: Single fixed ID per account
 ```javascript
 data: {
   id: 'frank-energie-batteries',
@@ -118,22 +101,22 @@ data: {
 }
 ```
 
-**Impact**: Users can only have ONE Frank Energie battery device per account, which makes sense because:
-- One device aggregates ALL batteries
+**Design**: Users can only have ONE Frank Energie Battery device per account because:
+- One device aggregates ALL batteries from that account
 - Multiple devices would create duplicate data
-- Settings are account-level, not battery-level
+- Credentials and settings are account-level
 
-## Migration Notes
+## Backward Compatibility
 
-**Existing Users**: No migration needed
-- Existing devices keep their original IDs
-- Will continue to work normally
-- Can be removed and re-paired with new flow if desired
+**Existing Users**: Works as-is
+- Old devices continue functioning with original device IDs
+- New pairing uses simplified flow
+- Can remove and re-pair if desired
 
-**New Users**: Will get the simplified experience
+**New Users**: Get simplified experience
 - Single pairing step
 - Automatic battery discovery
-- All batteries managed by one device
+- All batteries immediately available
 
 ## Testing Checklist
 

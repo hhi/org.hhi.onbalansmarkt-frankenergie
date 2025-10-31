@@ -5,26 +5,28 @@ Uitgebreide documentatie over alle sensor data (capabilities) die de Frank Energ
 ## Inhoudsopgave
 
 1. [Overzicht](#overzicht)
-2. [Smart Battery Driver](#smart-battery-driver-16-sensors)
-3. [EV Charger Driver](#ev-charger-driver-6-sensors)
-4. [Site Energy Meter Driver](#site-energy-meter-driver-12-sensors)
-5. [Smart PV System Driver](#smart-pv-system-driver-7-sensors)
-6. [Data Bronnen](#data-bronnen)
-7. [Update Frequenties](#update-frequenties)
-8. [Praktische Voorbeelden](#praktische-voorbeelden)
+2. [Frank Energie Battery Driver](#frank-energie-battery-driver-14-capabilities)
+3. [Frank Energie EV Charger Driver](#frank-energie-ev-charger-driver-5-capabilities)
+4. [Frank Energie Energy Meter Driver](#frank-energie-energy-meter-driver-11-capabilities)
+5. [Frank Energie PV System Driver](#frank-energie-pv-system-driver-6-capabilities)
+6. [Zonneplan Battery Driver](#zonneplan-battery-driver-8-capabilities)
+7. [Data Bronnen](#data-bronnen)
+8. [Update Frequenties](#update-frequenties)
+9. [Praktische Voorbeelden](#praktische-voorbeelden)
 
 ---
 
 ## Overzicht
 
-De Frank Energie app biedt **40 totaal unieke sensors** verdeeld over 4 driver types:
+De Frank Energie app biedt **44 totaal unieke capabilities** verdeeld over 5 driver types:
 
-| Driver | Aantal Sensors | Primaire Focus |
-|--------|---------------|----------------|
-| **Smart Battery** | 15 | Trading results, battery state, rankings, externe batterijen |
-| **EV Charger** | 6 | Laadstatus, bonus, rankings |
-| **Site Energy Meter** | 12 | Marktprijzen, verbruik, kosten |
-| **Smart PV System** | 7 | PV opwek, status, bonus, rankings |
+| Driver | Aantal Capabilities | Primaire Focus |
+|--------|------|----------------|
+| **Frank Energie Battery** | 14 | Trading results, rankings, externe batterijen |
+| **Frank Energie EV Charger** | 5 | Laadstatus, bonus, rankings |
+| **Frank Energie Energy Meter** | 11 | Marktprijzen, verbruik, kosten |
+| **Frank Energie PV System** | 6 | PV opwek, status, bonus, rankings |
+| **Zonneplan Battery** | 8 | Zonneplan batterij data en earnings |
 
 ### Data Update Frequentie
 
@@ -38,90 +40,11 @@ Alle sensors worden bijgewerkt volgens de **poll interval** instelling (configur
 
 ---
 
-## Smart Battery Driver (15 sensors)
+## Frank Energie Battery Driver (14 capabilities)
 
-### Batterij Status Sensors (3)
+### Trading Results (5)
 
-#### 1. `battery_charging_state`
-**Type**: String (Homey standaard capability)
-**Waarden**: `charging` | `discharging` | `idle`
-**Beschrijving**: Huidige laadstatus van de batterij
-**Bron**: Frank Energie GraphQL - `getSmartBattery().lastActiveSession.action`
-**Gebruik**: Visualisatie van batterij activiteit in Homey UI
-
-**Voorbeeld**:
-```
-charging    → Batterij wordt opgeladen
-discharging → Batterij ontlaadt (levert stroom)
-idle        → Batterij is inactief
-```
-
----
-
-#### 2. `frank_energie_battery_charge`
-**Type**: Number (Percentage)
-**Unit**: %
-**Range**: 0 - 100%
-**Beschrijving**: Laadpercentage van de batterij
-**Bron**: Frank Energie GraphQL - `getSmartBattery().lastActiveSession.charge`
-**Update**: Elke poll interval
-
-**Voorbeeld**:
-```
-76%  → Batterij is voor 76% vol
-25%  → Batterij bijna leeg
-100% → Batterij volledig opgeladen
-```
-
-**Flow Card Gebruik**:
-```
-IF frank_energie_battery_charge < 20
-THEN "Batterij bijna leeg - check handelsresultaten"
-```
-
----
-
-#### 3. `frank_energie_battery_mode`
-**Type**: String
-**Waarden**:
-- `imbalance` - Onbalansmarkt (standaard)
-- `imbalance_aggressive` - Onbalansmarkt agressief
-- `self_consumption_plus` - Zelfconsumptie+
-- `manual` - Handmatig
-
-**Beschrijving**: Huidige trading mode van de batterij
-**Bron**: Frank Energie GraphQL - gedetecteerd uit `batterySettings`
-**Detectie**: Via `TradingModeDetector.detectTradingMode()`
-
-**Mode Mapping**:
-```typescript
-{
-  batteryMode: 'auto',
-  imbalanceTradingStrategy: 'default'
-} → 'imbalance'
-
-{
-  batteryMode: 'auto',
-  imbalanceTradingStrategy: 'aggressive'
-} → 'imbalance_aggressive'
-
-{
-  batteryMode: 'manual'
-} → 'manual'
-```
-
-**Flow Card Gebruik**:
-```
-WHEN frank_energie_battery_mode changes
-AND mode is 'imbalance_aggressive'
-THEN "Batterij staat nu in agressieve modus"
-```
-
----
-
-### Trading Results Sensors (5)
-
-#### 5. `frank_energie_trading_result`
+#### 1. `frank_energie_trading_result`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
@@ -146,7 +69,7 @@ THEN Send notification "Goed resultaat vandaag: €5+"
 
 ---
 
-#### 6. `frank_energie_frank_slim_bonus`
+#### 2. `frank_energie_frank_slim_bonus`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
@@ -161,666 +84,416 @@ THEN Send notification "Goed resultaat vandaag: €5+"
 €0.12  → 12 cent bonus
 ```
 
-**Achtergrond**: Frank Slim is een dynamisch contract met extra korting wanneer je stroom afneemt op gunstige momenten.
-
-**Flow Card Gebruik**:
-```
-WHEN frank_energie_frank_slim_bonus > 0
-THEN Log "Frank Slim bonus ontvangen: €{{bonus}}"
-```
-
 ---
 
-#### 7. `frank_energie_epex_result`
+#### 3. `frank_energie_epex_result`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
 **Beschrijving**: EPEX handelsresultaat vandaag
 **Bron**: Frank Energie GraphQL - `periodEpexResult`
 
-**Uitleg**: EPEX (European Power Exchange) is de day-ahead elektriciteitsmarkt. Dit resultaat toont de winst/verlies door te handelen op basis van EPEX prijzen.
+**Uitleg**: EPEX (European Power Exchange) is de day-ahead elektriciteitsmarkt.
 
 **Voorbeeld**:
 ```
 €0.25  → €0.25 verdiend op EPEX markt
 €-0.10 → €0.10 verlies op EPEX trading
-€0.00  → Geen EPEX trading vandaag
 ```
 
 ---
 
-#### 8. `frank_energie_trading_result_split`
-**Type**: Number (Euro)
-**Unit**: €
-**Decimalen**: 2
-**Beschrijving**: Trading resultaat component (zonder EPEX/Imbalance)
-**Bron**: Frank Energie GraphQL - `periodTradingResult`
-
-**Verschil met totaal resultaat**: Dit is alleen het "pure trading" gedeelte, exclusief EPEX en imbalance componenten.
-
-**Voorbeeld**:
-```
-€0.30  → €0.30 verdiend door slim handelen
-€0.00  → Geen trading winst
-```
-
----
-
-#### 9. `frank_energie_imbalance_result`
+#### 4. `frank_energie_imbalance_result`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
 **Beschrijving**: Imbalance trading resultaat vandaag
 **Bron**: Frank Energie GraphQL - `periodImbalanceResult`
 
-**Uitleg**: Imbalance trading houdt in dat de batterij helpt met het balanceren van het elektriciteitsnet. Dit resultaat toont de opbrengst daarvan.
+**Uitleg**: Imbalance trading houdt in dat de batterij helpt met het balanceren van het elektriciteitsnet.
 
 **Voorbeeld**:
 ```
 €0.30  → €0.30 verdiend aan imbalance trading
 €-0.05 → €0.05 kosten
-€0.00  → Geen imbalance trading
-```
-
-**Totaal resultaat breakdown**:
-```
-frank_energie_trading_result =
-  frank_energie_epex_result (€0.25) +
-  frank_energie_trading_result_split (€0.30) +
-  frank_energie_imbalance_result (€0.30) +
-  frank_energie_frank_slim_bonus (€0.06)
-  = €0.91
 ```
 
 ---
 
-### Ranking Sensors (2)
+#### 5. `frank_energie_lifetime_total`
+**Type**: Number (Euro)
+**Unit**: €
+**Decimalen**: 2
+**Beschrijving**: Totaal verdiend sinds account aanmaak
+**Bron**: Frank Energie GraphQL - cumulatief totaal
 
-#### 10. `frank_energie_overall_rank`
+---
+
+### Settings & Status (4)
+
+#### 6. `frank_energie_battery_mode`
+**Type**: String
+**Waarden**: `imbalance` | `imbalance_aggressive` | `self_consumption_plus` | `manual` | `day_ahead`
+**Beschrijving**: Huidige trading mode van de batterij
+**Bron**: Frank Energie GraphQL - gedetecteerd uit `batterySettings`
+
+**Mode Mapping**:
+```typescript
+{
+  batteryMode: 'auto',
+  imbalanceTradingStrategy: 'default'
+} → 'imbalance'
+
+{
+  batteryMode: 'auto',
+  imbalanceTradingStrategy: 'aggressive'
+} → 'imbalance_aggressive'
+
+{
+  batteryMode: 'manual'
+} → 'manual'
+```
+
+---
+
+#### 7. `frank_energie_last_upload`
+**Type**: String (ISO 8601 timestamp)
+**Format**: `YYYY-MM-DDTHH:mm:ss.sssZ`
+**Beschrijving**: Timestamp van laatste succesvolle upload naar Onbalansmarkt.com
+**Update**: Direct na succesvolle upload
+
+---
+
+#### 8. `frank_energie_next_poll_minutes`
+**Type**: Number (Minuten)
+**Unit**: minuten
+**Beschrijving**: Tijd tot volgende data poll
+**Bron**: App timer berekening
+
+---
+
+#### 9. `frank_energie_overall_rank`
 **Type**: Number (Positie)
 **Unit**: - (positie nummer)
 **Range**: 1 - ∞
 **Beschrijving**: Overall ranking positie op Onbalansmarkt.com
 **Bron**: Onbalansmarkt.com REST API - `GET /api/me`
-**Voorwaarde**: Onbalansmarkt API key moet ingesteld zijn
-
-**Voorbeeld**:
-```
-5    → Je staat op plaats 5 van alle gebruikers
-142  → Je staat op plaats 142
-1    → Je bent #1! Top performer
-null → Geen ranking data (geen API key of geen data)
-```
-
-**Flow Card Gebruik**:
-```
-WHEN frank_energie_overall_rank < 10
-THEN "Je staat in de top 10!"
-```
 
 ---
 
-#### 11. `frank_energie_provider_rank`
+#### 10. `frank_energie_provider_rank`
 **Type**: Number (Positie)
 **Unit**: - (positie nummer)
 **Range**: 1 - ∞
-**Beschrijving**: Ranking binnen je energieprovider groep
+**Beschrijving**: Ranking binnen Frank Energie groep op Onbalansmarkt.com
 **Bron**: Onbalansmarkt.com REST API - `GET /api/me`
-**Voorwaarde**: Onbalansmarkt API key moet ingesteld zijn
-
-**Voorbeeld**:
-```
-3    → Je staat 3e bij jouw provider (Frank Energie)
-25   → Je staat 25e binnen Frank Energie gebruikers
-1    → Je bent beste van jouw provider!
-null → Geen ranking data
-```
-
-**Verschil met overall rank**: Provider rank vergelijkt je alleen met andere Frank Energie klanten, terwijl overall rank je vergelijkt met alle Onbalansmarkt gebruikers (alle providers).
 
 ---
 
-### Upload Tracking (1)
+### Externe Batterij Metrics (4)
 
-#### 12. `frank_energie_last_upload`
-**Type**: String (ISO 8601 timestamp)
-**Format**: `YYYY-MM-DDTHH:mm:ss.sssZ`
-**Beschrijving**: Timestamp van laatste succesvolle upload naar Onbalansmarkt.com
-**Update**: Direct na succesvolle upload
-**Voorwaarde**: `send_measurements` moet enabled zijn
+Deze capabilities tracken externe batterijen (bijv. Sessy, Tesla Powerwall) die via flow actions hun data delen.
 
-**Voorbeeld**:
-```
-"2025-10-26T14:30:00.000Z"  → Upload op 26 okt 2025, 14:30 UTC
-"2025-10-26T09:15:00.000Z"  → Upload vanochtend om 09:15
-null                        → Nog geen upload gedaan
-```
-
-**Homey Weergave**: Homey formatteert dit automatisch naar leesbare tijd:
-```
-"14:30"
-"2 minuten geleden"
-"Vandaag om 09:15"
-```
-
-**Flow Card Gebruik**:
-```
-WHEN frank_energie_last_upload changes
-THEN "Nieuwe meting verstuurd naar Onbalansmarkt.com"
-```
-
----
-
-### Externe Batterij Sensors (4)
-
-Deze sensors tracken externe batterijen die via flow actions hun data delen.
-
-#### 13. `external_battery_count`
+#### 11. `external_battery_count`
 **Type**: Number (Aantal)
 **Unit**: - (aantal batterijen)
-**Range**: 0 - ∞
 **Beschrijving**: Aantal externe batterijen dat metrics deelt
 **Bron**: `BatteryMetricsStore` - intern geheugen
-**Update**: Bij ontvangst van `receive_battery_metrics` flow action
-
-**Voorbeeld**:
-```
-2  → 2 externe batterijen delen hun data
-0  → Geen externe batterijen
-5  → 5 externe batterijen actief
-```
-
-**Use Case**: Wanneer je meerdere battery systemen hebt (bijv. Frank Energie + Tesla Powerwall) en hun gecombineerde stats wilt zien.
 
 ---
 
-#### 14. `external_battery_percentage`
+#### 12. `external_battery_percentage`
 **Type**: Number (Percentage)
 **Unit**: %
 **Range**: 0 - 100%
 **Beschrijving**: Gemiddelde lading van alle externe batterijen
 **Berekening**: `(battery1.charge + battery2.charge + ...) / count`
 
-**Voorbeeld**:
-```
-Battery A: 80%, Battery B: 60%
-→ external_battery_percentage = (80 + 60) / 2 = 70%
-```
-
 ---
 
-#### 15. `external_battery_daily_charged`
+#### 13. `external_battery_daily_charged`
 **Type**: Number (Energie)
 **Unit**: kWh
 **Decimalen**: 2
 **Beschrijving**: Totaal opgeladen energie vandaag (alle externe batterijen)
-**Berekening**: Som van alle `chargedToday` values
-
-**Voorbeeld**:
-```
-Battery A charged: 12.5 kWh, Battery B charged: 8.3 kWh
-→ external_battery_daily_charged = 20.8 kWh
-```
 
 ---
 
-#### 16. `external_battery_daily_discharged`
+#### 14. `external_battery_daily_discharged`
 **Type**: Number (Energie)
 **Unit**: kWh
 **Decimalen**: 2
 **Beschrijving**: Totaal ontladen energie vandaag (alle externe batterijen)
-**Berekening**: Som van alle `dischargedToday` values
-
-**Voorbeeld**:
-```
-Battery A discharged: 10.2 kWh, Battery B discharged: 7.8 kWh
-→ external_battery_daily_discharged = 18.0 kWh
-```
-
-**Flow Action Voorbeeld**:
-```
-Action: Receive Battery Metrics
-  batteryId: "tesla-powerwall-1"
-  chargedToday: 12.5
-  dischargedToday: 10.2
-  percentage: 80
-
-→ Updates external_battery_* capabilities
-```
 
 ---
 
-## EV Charger Driver (6 sensors)
-
-### Laadstatus Sensors (2)
+## Frank Energie EV Charger Driver (5 capabilities)
 
 #### 1. `onoff`
 **Type**: Boolean (Homey standaard capability)
 **Waarden**: `true` | `false`
 **Beschrijving**: EV laadpaal aan/uit status
 **Bron**: Frank Energie GraphQL - `getSmartCharger().steeringStatus`
-**Mapping**:
-```
-steeringStatus: 'active'   → true (aan)
-steeringStatus: 'inactive' → false (uit)
-```
-
-**Flow Card Gebruik**:
-```
-WHEN onoff turns on
-THEN "EV laadpaal is gestart"
-```
 
 ---
 
-#### 2. `meter_power`
-**Type**: Number (Watt)
-**Unit**: W
-**Range**: 0 - 22000 W (typisch)
-**Beschrijving**: Huidig laadvermogen van de EV
-**Bron**: Frank Energie GraphQL - `getSmartCharger().currentPower`
-
-**Voorbeeld**:
-```
-7400 W   → Laden met 7.4 kW (1-fase)
-11000 W  → Laden met 11 kW (3-fase)
-0 W      → Niet aan het laden
-```
-
----
-
-#### 3. `frank_energie_ev_charging_status`
+#### 2. `frank_energie_ev_charging_status`
 **Type**: String
 **Waarden**: `charging` | `idle` | `scheduled` | `completed`
 **Beschrijving**: Gedetailleerde laadstatus van de EV
 **Bron**: Frank Energie GraphQL - afgeleid van charger data
 
-**Voorbeeld**:
-```
-charging   → Auto laadt op dit moment
-idle       → Laadpaal inactief
-scheduled  → Laden gepland voor later (slim laden)
-completed  → Laden voltooid
-```
-
 ---
 
-### Bonus & Rankings (3)
-
-#### 4. `frank_energie_ev_bonus`
+#### 3. `frank_energie_ev_bonus`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
 **Beschrijving**: EV laadbonus verdiend vandaag
 **Bron**: Frank Energie GraphQL - slim laden bonus
 
-**Voorbeeld**:
-```
-€0.42  → €0.42 bonus verdiend door slim laden
-€0.00  → Geen bonus vandaag
-€1.25  → €1.25 bonus (veel smart charging)
-```
+---
 
-**Achtergrond**: Frank Energie geeft bonus wanneer je EV laadt op momenten met lage stroomprijzen.
+#### 4. `frank_energie_overall_rank`
+**Type**: Number (Positie)
+**Unit**: - (positie nummer)
+**Beschrijving**: Overall ranking op Onbalansmarkt.com
+**Bron**: Onbalansmarkt.com REST API
 
 ---
 
-#### 5. `frank_energie_overall_rank`
-Zie [Battery - Overall Rank](#10-frank_energie_overall_rank)
-
-#### 6. `frank_energie_provider_rank`
-Zie [Battery - Provider Rank](#11-frank_energie_provider_rank)
-
----
-
-## Site Energy Meter Driver (12 sensors)
-
-### Vermogen Sensors (2)
-
-#### 1. `measure_power`
-**Type**: Number (Watt)
-**Unit**: W
-**Range**: -50000 tot +50000 W
-**Beschrijving**: Huidig verbruik/productie van je huis
-**Bron**: Frank Energie GraphQL - site data
-**Conversie**:
-- Positief = verbruik (afname van net)
-- Negatief = productie (teruglevering aan net)
-
-**Voorbeeld**:
-```
-+2500 W  → Je gebruikt 2.5 kW
--1500 W  → Je levert 1.5 kW terug (PV productie > verbruik)
-0 W      → Verbruik = productie (netto nul)
-```
+#### 5. `frank_energie_provider_rank`
+**Type**: Number (Positie)
+**Unit**: - (positie nummer)
+**Beschrijving**: Ranking binnen Frank Energie groep op Onbalansmarkt.com
+**Bron**: Onbalansmarkt.com REST API
 
 ---
 
-#### 2. `meter_power`
-**Type**: Number (Watt)
-**Unit**: W
-**Beschrijving**: Cumulatief vermogen (vaak zelfde als measure_power)
-**Bron**: Frank Energie GraphQL
+## Frank Energie Energy Meter Driver (11 capabilities)
 
----
+### Marktprijs (5)
 
-### Marktprijs Sensors (5)
-
-#### 3. `frank_energie_current_market_price`
+#### 1. `frank_energie_current_market_price`
 **Type**: Number (Euro per kWh)
 **Unit**: €/kWh
 **Decimalen**: 4
 **Beschrijving**: Huidige marktprijs elektriciteit (dit uur)
-**Bron**: Frank Energie GraphQL - `marketPrices` voor huidige uur
-**Update**: Elk poll interval
-
-**Voorbeeld**:
-```
-€0.0842/kWh  → Marktprijs is 8.42 cent per kWh
-€0.0125/kWh  → Lage prijs (gunstig moment)
-€0.2500/kWh  → Hoge prijs (duur moment)
-€-0.0100/kWh → Negatieve prijs (je krijgt betaald!)
-```
-
-**Berekening**:
-```typescript
-const currentHour = new Date().getHours();
-const currentPrice = prices.electricityPrices.find(p =>
-  new Date(p.from).getHours() === currentHour
-)?.marketPrice;
-```
-
-**Flow Card Gebruik**:
-```
-WHEN frank_energie_current_market_price < 0.05
-THEN Turn on washing machine (goedkope stroom!)
-```
+**Bron**: Frank Energie GraphQL - `marketPrices`
 
 ---
 
-#### 4. `frank_energie_next_hour_market_price`
+#### 2. `frank_energie_next_hour_market_price`
 **Type**: Number (Euro per kWh)
 **Unit**: €/kWh
 **Decimalen**: 4
 **Beschrijving**: Marktprijs voor het volgende uur
-**Bron**: Frank Energie GraphQL - `marketPrices` voor volgend uur
-
-**Voorbeeld**:
-```
-Nu is 14:00, prijs is €0.0842/kWh
-→ frank_energie_next_hour_market_price = prijs voor 15:00 uur
-```
-
-**Use Case**: Beslissen of je iets nu of volgend uur moet inschakelen.
-
-**Flow Card Gebruik**:
-```
-IF frank_energie_next_hour_market_price < frank_energie_current_market_price
-THEN "Wacht met laden, volgend uur is goedkoper"
-```
+**Bron**: Frank Energie GraphQL - `marketPrices`
 
 ---
 
-#### 5. `frank_energie_min_market_price_today`
+#### 3. `frank_energie_min_market_price_today`
 **Type**: Number (Euro per kWh)
 **Unit**: €/kWh
 **Decimalen**: 4
-**Beschrijving**: Laagste marktprijs van vandaag (alle uren)
-**Bron**: Frank Energie GraphQL - minimum van alle `marketPrices` vandaag
-
-**Berekening**:
-```typescript
-const minPrice = Math.min(...prices.electricityPrices.map(p => p.marketPrice));
-```
-
-**Voorbeeld**:
-```
-€0.0125/kWh  → Goedkoopste uur vandaag is/was 1.25 cent
-€-0.0050/kWh → Negatieve prijs vandaag (beste moment!)
-```
-
-**Use Case**: Vergelijken of huidige prijs dicht bij dagminimum ligt.
+**Beschrijving**: Laagste marktprijs van vandaag
+**Bron**: Frank Energie GraphQL
 
 ---
 
-#### 6. `frank_energie_max_market_price_today`
+#### 4. `frank_energie_max_market_price_today`
 **Type**: Number (Euro per kWh)
 **Unit**: €/kWh
 **Decimalen**: 4
-**Beschrijving**: Hoogste marktprijs van vandaag (alle uren)
-**Bron**: Frank Energie GraphQL - maximum van alle `marketPrices` vandaag
-
-**Berekening**:
-```typescript
-const maxPrice = Math.max(...prices.electricityPrices.map(p => p.marketPrice));
-```
-
-**Voorbeeld**:
-```
-€0.2500/kWh  → Duurste uur vandaag is/was 25 cent
-€0.1800/kWh  → Piek prijs
-```
-
-**Use Case**: Identificeren van piekuren om groot verbruik te vermijden.
+**Beschrijving**: Hoogste marktprijs van vandaag
+**Bron**: Frank Energie GraphQL
 
 ---
 
-#### 7. `frank_energie_avg_market_price_today`
+#### 5. `frank_energie_avg_market_price_today`
 **Type**: Number (Euro per kWh)
 **Unit**: €/kWh
 **Decimalen**: 4
 **Beschrijving**: Gemiddelde marktprijs van vandaag
-**Bron**: Frank Energie GraphQL - `averageElectricityPrices.averageMarketPrice`
-
-**Voorbeeld**:
-```
-€0.0842/kWh  → Gemiddelde prijs vandaag is 8.42 cent
-```
-
-**Use Case**: Referentiepunt voor "is het nu duur of goedkoop?"
-
-**Flow Card Logic**:
-```
-IF frank_energie_current_market_price < frank_energie_avg_market_price_today
-THEN "Prijs is onder gemiddelde (gunstig)"
-ELSE "Prijs is boven gemiddelde (minder gunstig)"
-```
+**Bron**: Frank Energie GraphQL
 
 ---
 
-### Verbruik & Kosten Sensors (2)
+### Verbruik & Kosten (4)
 
-#### 8. `frank_energie_today_consumption`
+#### 6. `frank_energie_today_consumption`
 **Type**: Number (Energie)
 **Unit**: kWh
 **Decimalen**: 2
 **Beschrijving**: Totaal elektriciteitsverbruik vandaag
-**Bron**: Frank Energie GraphQL - `usage.electricity.items` voor vandaag
-
-**Berekening**:
-```typescript
-const today = new Date().toISOString().split('T')[0];
-const todayData = usage.electricity.items.find(item =>
-  item.from.startsWith(today)
-);
-const consumption = todayData?.usage || 0;
-```
-
-**Voorbeeld**:
-```
-12.5 kWh  → Je hebt vandaag 12.5 kWh gebruikt
-5.2 kWh   → Laag verbruik
-25.8 kWh  → Hoog verbruik (veel apparaten aan)
-```
-
-**Flow Card Gebruik**:
-```
-WHEN frank_energie_today_consumption > 20
-THEN "Hoog verbruik vandaag: {{consumption}} kWh"
-```
+**Bron**: Frank Energie GraphQL
 
 ---
 
-#### 9. `frank_energie_today_costs`
+#### 7. `frank_energie_today_costs`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
 **Beschrijving**: Totale elektriciteitskosten vandaag
-**Bron**: Frank Energie GraphQL - `usage.electricity.items` voor vandaag
-
-**Berekening**:
-```typescript
-const todayCosts = todayData?.costs || 0;
-```
-
-**Voorbeeld**:
-```
-€2.45  → Je hebt vandaag €2.45 aan elektriciteit besteed
-€0.50  → Lage kosten
-€8.20  → Hoge kosten (veel verbruik of hoge prijzen)
-€-1.20 → Negatieve kosten (teruggeleverd meer dan verbruikt)
-```
-
-**Relatie met consumption**:
-```
-Kosten ≈ Verbruik × Gemiddelde Prijs
-€2.45 ≈ 12.5 kWh × €0.196/kWh
-```
+**Bron**: Frank Energie GraphQL
 
 ---
 
-### Site Totalen (2)
-
-#### 10. `frank_energie_site_usage`
+#### 8. `frank_energie_site_usage`
 **Type**: Number (Energie)
 **Unit**: kWh
 **Decimalen**: 2
-**Beschrijving**: Totaal site verbruik (cumulatief of periode)
-**Bron**: Frank Energie GraphQL - site usage data
+**Beschrijving**: Totaal site verbruik
+**Bron**: Frank Energie GraphQL
 
 ---
 
-#### 11. `frank_energie_site_costs`
+#### 9. `frank_energie_site_costs`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
-**Beschrijving**: Totale site kosten (cumulatief of periode)
-**Bron**: Frank Energie GraphQL - site costs data
+**Beschrijving**: Totale site kosten
+**Bron**: Frank Energie GraphQL
 
 ---
 
 ### Rankings (2)
 
-#### 12. `frank_energie_overall_rank`
-Zie [Battery - Overall Rank](#10-frank_energie_overall_rank)
-
-#### 13. `frank_energie_provider_rank`
-Zie [Battery - Provider Rank](#11-frank_energie_provider_rank)
-
----
-
-## Smart PV System Driver (7 sensors)
-
-### PV Productie Sensors (3)
-
-#### 1. `meter_power`
-**Type**: Number (Watt)
-**Unit**: W
-**Range**: -10000 tot 0 W (typisch negatief voor productie)
-**Beschrijving**: Huidig PV vermogen
-**Bron**: Frank Energie GraphQL (momenteel placeholder)
+#### 10. `frank_energie_overall_rank`
+**Type**: Number (Positie)
+**Beschrijving**: Overall ranking op Onbalansmarkt.com
+**Bron**: Onbalansmarkt.com REST API
 
 ---
 
-#### 2. `frank_energie_pv_current_power`
+#### 11. `frank_energie_provider_rank`
+**Type**: Number (Positie)
+**Beschrijving**: Ranking binnen Frank Energie groep
+**Bron**: Onbalansmarkt.com REST API
+
+---
+
+## Frank Energie PV System Driver (6 capabilities)
+
+#### 1. `frank_energie_pv_current_power`
 **Type**: Number (Vermogen)
 **Unit**: kW
 **Decimalen**: 2
 **Beschrijving**: Huidig PV productievermogen
-**Bron**: Frank Energie GraphQL - momenteel **placeholder** (0 kW)
-**Status**: ⚠️ Wacht op API uitbreiding voor real-time data
-
-**Voorbeeld** (toekomstig):
-```
-2.5 kW   → PV produceert 2.5 kW
-0.0 kW   → Geen productie ('s nachts)
-5.8 kW   → Hoge productie (zonnige dag)
-```
-
-**Code**: [drivers/frank-energie-pv/device.ts:112](../drivers/frank-energie-pv/device.ts#L112)
-```typescript
-// TODO: Current power and today generation are not available in SmartPvSystemSummary API response
-const currentPower = 0; // Placeholder until proper query is found
-```
+**Bron**: Frank Energie GraphQL
+**Status**: ⚠️ Momenteel placeholder (0 kW) - wacht op API uitbreiding
 
 ---
 
-#### 3. `frank_energie_pv_today_generation`
+#### 2. `frank_energie_pv_today_generation`
 **Type**: Number (Energie)
 **Unit**: kWh
 **Decimalen**: 2
 **Beschrijving**: Totale PV productie vandaag
-**Bron**: Frank Energie GraphQL - momenteel **placeholder** (0 kWh)
-**Status**: ⚠️ Wacht op API uitbreiding voor dagdata
-
-**Voorbeeld** (toekomstig):
-```
-15.2 kWh  → PV heeft vandaag 15.2 kWh opgewekt
-0.0 kWh   → Geen productie vandaag
-28.5 kWh  → Zeer goede productiedag
-```
+**Bron**: Frank Energie GraphQL
+**Status**: ⚠️ Momenteel placeholder (0 kWh) - wacht op API uitbreiding
 
 ---
 
-### PV Status & Bonus (2)
-
-#### 4. `frank_energie_pv_status`
+#### 3. `frank_energie_pv_status`
 **Type**: String
 **Waarden**: `active` | `inactive` | `error` | `offline`
 **Beschrijving**: Operationele status van het PV systeem
-**Bron**: Frank Energie GraphQL - `getSmartPvSystem().operationalStatus`
-
-**Voorbeeld**:
-```
-active    → PV systeem werkt normaal
-inactive  → PV systeem tijdelijk uit
-error     → Fout gedetecteerd
-offline   → PV systeem niet bereikbaar
-```
-
-**Flow Card Gebruik**:
-```
-WHEN frank_energie_pv_status becomes 'error'
-THEN Send notification "PV systeem heeft een fout"
-```
+**Bron**: Frank Energie GraphQL
 
 ---
 
-#### 5. `frank_energie_pv_bonus`
+#### 4. `frank_energie_pv_bonus`
 **Type**: Number (Euro)
 **Unit**: €
 **Decimalen**: 2
-**Beschrijving**: PV bonus verdiend (lifetime of periode)
-**Bron**: Frank Energie GraphQL - `getSmartPvSystem().totalBonus`
-
-**Voorbeeld**:
-```
-€142.50  → Totaal €142.50 bonus verdiend
-€0.00    → Geen bonus
-€5.20    → €5.20 bonus
-```
-
-**Achtergrond**: Frank Energie kan bonussen geven voor slimme besturing van PV systemen.
+**Beschrijving**: PV bonus verdiend
+**Bron**: Frank Energie GraphQL
 
 ---
 
-### Rankings (2)
+#### 5. `frank_energie_overall_rank`
+**Type**: Number (Positie)
+**Beschrijving**: Overall ranking op Onbalansmarkt.com
+**Bron**: Onbalansmarkt.com REST API
 
-#### 6. `frank_energie_overall_rank`
-Zie [Battery - Overall Rank](#10-frank_energie_overall_rank)
+---
 
-#### 7. `frank_energie_provider_rank`
-Zie [Battery - Provider Rank](#11-frank_energie_provider_rank)
+#### 6. `frank_energie_provider_rank`
+**Type**: Number (Positie)
+**Beschrijving**: Ranking binnen Frank Energie groep
+**Bron**: Onbalansmarkt.com REST API
+
+---
+
+## Zonneplan Battery Driver (8 capabilities)
+
+Dit is een aparte driver voor Zonneplan batterijen die via Homey flow cards hun data delen. De driver gebruikt **geen API-verbinding** naar Zonneplan - data wordt handmatig via flow actions geïnjecteerd.
+
+#### 1. `measure_battery`
+**Type**: Number (Percentage)
+**Unit**: %
+**Range**: 0 - 100%
+**Beschrijving**: Huidig batterij laadpercentage
+**Bron**: Flow action input
+
+---
+
+#### 2. `zonneplan_daily_earned`
+**Type**: Number (Euro)
+**Unit**: €
+**Decimalen**: 2
+**Beschrijving**: Dagelijks verdiend bedrag vandaag
+**Bron**: Flow action input
+
+---
+
+#### 3. `zonneplan_total_earned`
+**Type**: Number (Euro)
+**Unit**: €
+**Decimalen**: 2
+**Beschrijving**: Totaal verdiend sinds tracking gestart
+**Bron**: Flow action input (cumulatief)
+**Opmerking**: Kan handmatig worden gecorrigeerd via `total_earned_offset` instelling
+
+---
+
+#### 4. `zonneplan_daily_charged`
+**Type**: Number (Energie)
+**Unit**: kWh
+**Decimalen**: 2
+**Beschrijving**: Energie opgeladen vandaag
+**Bron**: Flow action input
+
+---
+
+#### 5. `zonneplan_daily_discharged`
+**Type**: Number (Energie)
+**Unit**: kWh
+**Decimalen**: 2
+**Beschrijving**: Energie ontladen vandaag
+**Bron**: Flow action input
+
+---
+
+#### 6. `zonneplan_cycle_count`
+**Type**: Number (Aantal)
+**Beschrijving**: Totaal aantal laad-ontlaadcycli
+**Bron**: Flow action input
+
+---
+
+#### 7. `zonneplan_load_balancing`
+**Type**: Boolean
+**Beschrijving**: Dynamische load balancing actief
+**Bron**: Flow action input
+
+---
+
+#### 8. `zonneplan_last_update`
+**Type**: String (ISO 8601 timestamp)
+**Beschrijving**: Tijdstip van laatste data update
+**Bron**: Automatisch opgesteld bij ontvangst van flow action
 
 ---
 
@@ -912,172 +585,81 @@ Sommige sensors worden ook bijgewerkt buiten polling om:
 
 ## Praktische Voorbeelden
 
-### Voorbeeld 1: Optimaal Laden van EV
+### Voorbeeld 1: Goede Battery Results Alert
 
-**Doel**: Laad EV wanneer stroomprijs het laagst is
+**Doel**: Ontvang notificatie wanneer batterij goed resultaat haalt
 
-**Sensors Gebruikt**:
-- `frank_energie_current_market_price` (Meter)
-- `frank_energie_min_market_price_today` (Meter)
-- `frank_energie_ev_charging_status` (EV Charger)
-
-**Flow**:
-```
-WHEN frank_energie_current_market_price equals frank_energie_min_market_price_today
-AND frank_energie_ev_charging_status is 'idle'
-THEN Start EV charging
-```
-
-**Resultaat**: EV laadt op het goedkoopste moment van de dag
-
----
-
-### Voorbeeld 2: Battery Trading Performance Tracking
-
-**Doel**: Track dagelijkse battery performance en krijg notificatie bij goede resultaten
-
-**Sensors Gebruikt**:
+**Capabilities Gebruikt**:
 - `frank_energie_trading_result` (Battery)
-- `frank_energie_epex_result` (Battery)
-- `frank_energie_imbalance_result` (Battery)
 - `frank_energie_overall_rank` (Battery)
 
 **Flow**:
 ```
-WHEN frank_energie_trading_result > 5
-THEN Send notification
-  "Excellent battery result today: €{{result}}
-   EPEX: €{{epex}}, Imbalance: €{{imbalance}}
-   Rank: #{{rank}}"
+WHEN frank_energie_trading_result > 2
+THEN Send notification "Goed resultaat vandaag! €{{result}}"
 ```
-
-**Resultaat**: Dagelijkse summary van performance
 
 ---
 
-### Voorbeeld 3: Slim Wasmachine Gebruik
+### Voorbeeld 2: Slim Wasmachine Gebruik
 
-**Doel**: Start wasmachine alleen wanneer prijs onder gemiddelde is
+**Doel**: Start wasmachine wanneer stroomprijs laag is
 
-**Sensors Gebruikt**:
+**Capabilities Gebruikt**:
 - `frank_energie_current_market_price` (Meter)
 - `frank_energie_avg_market_price_today` (Meter)
 
 **Flow**:
 ```
-WHEN user requests "start washing machine"
-AND frank_energie_current_market_price < frank_energie_avg_market_price_today
+WHEN frank_energie_current_market_price < frank_energie_avg_market_price_today
 THEN Turn on washing machine
-ELSE Send notification "Wait for cheaper electricity price"
 ```
-
-**Resultaat**: Automatische cost optimization
 
 ---
 
-### Voorbeeld 4: Multi-Battery Dashboard
+### Voorbeeld 3: Multi-Battery Monitoring
 
-**Doel**: Combineer Frank Energie batterij met Tesla Powerwall data
+**Doel**: Combineer Frank Energie batterij met externe batterijen
 
-**Sensors Gebruikt**:
-- `frank_energie_battery_charge` (Battery)
-- `frank_energie_trading_result` (Battery)
-- `external_battery_count` (Battery)
-- `external_battery_percentage` (Battery)
-- `external_battery_daily_charged` (Battery)
+**Capabilities Gebruikt**:
+- `frank_energie_trading_result` (Frank Energie Battery)
+- `external_battery_count` (Frank Energie Battery)
+- `external_battery_daily_discharged` (Frank Energie Battery)
 
-**Flow Action** (Tesla Powerwall app):
+**Flow Action** (bijv. Sessy app):
 ```
 Action: Receive Battery Metrics (Frank Energie Battery device)
-  batteryId: "tesla-powerwall-1"
-  chargedToday: {{tesla_charged}}
-  dischargedToday: {{tesla_discharged}}
-  percentage: {{tesla_charge}}
+  batteryId: "sessy-1"
+  totalChargedKwh: {{sessy_total_charged}}
+  totalDischargedKwh: {{sessy_total_discharged}}
+  batteryPercentage: {{sessy_percentage}}
 ```
 
-**Dashboard Cards**:
-```
-Frank Energie Battery: 76% (€0.61 today)
-External Batteries: 2 total, 70% avg
-Total Charged Today: 25.3 kWh
-Total Discharged Today: 22.1 kWh
-```
-
-**Resultaat**: Unified multi-battery monitoring
+**Resultaat**: Unified monitoring van alle batterijen
 
 ---
 
-### Voorbeeld 5: Price Alert System
-
-**Doel**: Ontvang notificatie bij extreme prijzen
-
-**Sensors Gebruikt**:
-- `frank_energie_current_market_price` (Meter)
-- `frank_energie_next_hour_market_price` (Meter)
-
-**Flow 1** (Negative prices):
-```
-WHEN frank_energie_current_market_price < 0
-THEN Send notification
-  "NEGATIVE PRICE ALERT!
-   You get paid to use electricity: €{{price}}/kWh
-   Turn on all devices!"
-```
-
-**Flow 2** (High prices):
-```
-WHEN frank_energie_current_market_price > 0.25
-THEN Send notification
-  "HIGH PRICE WARNING!
-   Current: €{{current}}/kWh
-   Reduce usage!"
-```
-
-**Resultaat**: Proactieve cost management
-
----
-
-### Voorbeeld 6: PV Production Monitoring (Toekomst)
-
-**Doel**: Monitor PV productie en status
-
-**Sensors Gebruikt** (zodra API beschikbaar):
-- `frank_energie_pv_current_power` (PV)
-- `frank_energie_pv_today_generation` (PV)
-- `frank_energie_pv_status` (PV)
-
-**Flow** (toekomstig):
-```
-WHEN frank_energie_pv_current_power < 0.5
-AND time is between 11:00 and 15:00
-AND frank_energie_pv_status is 'active'
-THEN Send notification
-  "Low PV production during peak hours - check panels"
-```
-
-**Resultaat**: Proactive maintenance alerts
-
----
-
-## Sensor Capabilities Samenvatting
+## Capabilities Samenvatting
 
 ### Per Driver Type
 
-| Driver | Totaal | Status | Trading | Prijzen | Verbruik | Rankings | Extern |
-|--------|--------|--------|---------|---------|----------|----------|--------|
-| **Battery** | 16 | 4 | 5 | - | - | 2 | 4 + 1 upload |
-| **EV Charger** | 6 | 3 | 1 (bonus) | - | - | 2 | - |
-| **Meter** | 12 | 2 | - | 5 | 4 | 2 | - |
-| **PV System** | 7 | 3 (+ 2 placeholder) | 1 (bonus) | - | - | 2 | - |
+| Driver | Totaal | Groepen | Focus |
+|--------|--------|---------|-------|
+| **Frank Energie Battery** | 14 | Trading (5), Settings (4), Rankings (2), Extern (3) | Trading results, rankings, external batteries |
+| **Frank Energie EV Charger** | 5 | Laadstatus (2), Bonus (1), Rankings (2) | EV charging, bonus, rankings |
+| **Frank Energie Energy Meter** | 11 | Marktprijzen (5), Verbruik (4), Rankings (2) | Electricity prices, consumption, rankings |
+| **Frank Energie PV System** | 6 | Productie (2), Status (2), Rankings (2) | PV generation, status, rankings |
+| **Zonneplan Battery** | 8 | Earnings (3), Energy (2), Status (3) | Manual flow-based data entry |
+| **TOTAAL** | **44** | - | - |
 
-### Unieke vs Gedeelde Capabilities
+### Gedeelde Capabilities (alle drivers)
 
-**Gedeelde capabilities** (meerdere drivers):
-- `meter_power` - EV, Meter, PV
-- `frank_energie_overall_rank` - Battery, EV, Meter, PV
-- `frank_energie_provider_rank` - Battery, EV, Meter, PV
+- `frank_energie_overall_rank` - Overall Onbalansmarkt ranking
+- `frank_energie_provider_rank` - Provider-specific ranking
 
-**Driver-specifieke capabilities**: 33 unieke sensors
+### Zonneplan Specifiek
+
+De Zonneplan driver is fundamenteel anders - het ontvangt data via Homey flow actions, niet via API-verbinding.
 
 ---
 

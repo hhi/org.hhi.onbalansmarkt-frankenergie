@@ -4,10 +4,10 @@
 
   <g transform="translate(500, 500)">
     <!-- Teal background circle -->
-    <circle cx="0" cy="0" r="400" fill="#00b8a9"/>
+    <circle cx="0" cy="0" r="400" fill="none"/>
 
-    <!-- White lightning bolt - classic zigzag style -->
-    <g fill="#ffffff" transform="scale(2, 1)">
+    <!-- White lightning bolt - larger version -->
+    <g fill="#ffffff" transform="scale(2, 2)">
       <!-- Single path lightning bolt -->
       <path d="M 40 -280 L -60 -40 L 20 -40 L 20 20 L -80 300 L 80 60 L 0 60 L 0 -20 L 100 -280 Z"/>
     </g>
