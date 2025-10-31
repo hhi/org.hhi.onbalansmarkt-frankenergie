@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -1459,7 +1459,8 @@
         "external_battery_daily_charged",
         "external_battery_daily_discharged",
         "external_battery_percentage",
-        "external_battery_count"
+        "external_battery_count",
+        "external_battery_selector"
       ],
       "platforms": [
         "local"
@@ -2658,6 +2659,30 @@
         "en": "Average battery charge percentage across all external batteries",
         "nl": "Gemiddeld batterij laadpercentage van alle externe batterijen"
       }
+    },
+    "external_battery_selector": {
+      "id": "external_battery_selector",
+      "type": "enum",
+      "title": {
+        "en": "External Battery Selector",
+        "nl": "Externe Batterij Selector"
+      },
+      "description": {
+        "en": "Select an external battery connected via flow cards",
+        "nl": "Selecteer een externe batterij verbonden via flow cards"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "values": [
+        {
+          "id": "none",
+          "title": {
+            "en": "— No batteries —",
+            "nl": "— Geen batterijen —"
+          }
+        }
+      ]
     },
     "frank_energie_avg_market_price_today": {
       "id": "frank_energie_avg_market_price_today",

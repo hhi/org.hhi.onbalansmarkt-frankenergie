@@ -5,10 +5,13 @@
     "en": "External Battery Selector",
     "nl": "Externe Batterij Selector"
   },
-  "desc": {
+  "description": {
     "en": "Select an external battery connected via flow cards",
     "nl": "Selecteer een externe batterij verbonden via flow cards"
   },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker",
   "values": [
     {
       "id": "none",
@@ -17,7 +20,5 @@
         "nl": "— Geen batterijen —"
       }
     }
-  ],
-  "getter": true,
-  "setter": true
+  ]
 }
