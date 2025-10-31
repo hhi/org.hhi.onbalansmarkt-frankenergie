@@ -1013,7 +1013,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
   /**
    * Handle manual reset external batteries action from settings dropdown
-   * Clears the list of registered external batteries so it can be rebuilt
+   * Clears the list of registered external batteries and all persisted metrics
+   * Starts with a clean slate - list will be rebuilt from flow cards
    */
   protected async handleManualResetExternalBatteries(): Promise<void> {
     const previousCount = this.externalBatteries.size;
@@ -1021,8 +1022,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Clear the in-memory Map
     this.externalBatteries.clear();
 
-    // Clear the persisted store
+    // Clear the persisted externalBatteries list
     await this.setStoreValue('externalBatteries', {});
+
+    // Clear all persisted ExternalBatteryMetrics data (storeKey: 'batteryMetrics')
+    if (this.externalBatteryMetrics) {
+      await this.externalBatteryMetrics.clear();
+      this.log('External battery metrics data cleared from store');
+    }
 
     // Update picker to show only "none" option
     await this.updateBatterySelectorCapability();
@@ -1045,7 +1052,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       this.error('Failed to reset external battery capabilities:', error);
     }
 
-    this.log(`External batteries list cleared: removed ${previousCount} batteries. List will be rebuilt from flow cards.`);
+    this.log(`External batteries list cleared: removed ${previousCount} batteries. Starting with clean slate - list will be rebuilt from flow cards.`);
   }
 
   // ===== Trigger Emission Methods =====
