@@ -10,7 +10,7 @@
     "nl": "Selecteer een externe batterij verbonden via flow cards"
   },
   "getable": true,
-  "setable": true,
+  "setable": false,
   "uiComponent": "picker",
   "values": [
     {

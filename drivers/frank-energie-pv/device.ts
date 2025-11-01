@@ -81,11 +81,6 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
       // Emit flow triggers
       await this.processPvFlowCardTriggers(pvSummary);
 
-      // Update rankings if available
-      if (this.onbalansmarktClient) {
-        await this.updateRankings();
-      }
-
       // Store last poll data
       await this.setStoreValue('lastPollTime', Date.now());
       await this.setStoreValue('lastPvStatus', pvSummary.operationalStatus);

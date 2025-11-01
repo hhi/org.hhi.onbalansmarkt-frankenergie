@@ -51,6 +51,7 @@ interface StoredMetrics {
     dailyDischarged: Record<string, number>;
     percentage: Record<string, number>;
   };
+  lastUpdated: Record<string, number>; // Timestamp per battery (ms since epoch)
   lastResetDate: string; // YYYY-MM-DD format
 }
 
@@ -104,6 +105,7 @@ export class BatteryMetricsStore {
           dailyDischarged: {},
           percentage: {},
         },
+        lastUpdated: {},
         lastResetDate: this.getCurrentDate(),
       };
       await this.device.setStoreValue(this.storeKey, initial);
@@ -117,6 +119,11 @@ export class BatteryMetricsStore {
         dailyDischarged: {},
         percentage: {},
       };
+    }
+
+    // Ensure lastUpdated exists (for backward compatibility)
+    if (!stored.lastUpdated) {
+      stored.lastUpdated = {};
     }
 
     return stored;
@@ -191,6 +198,9 @@ export class BatteryMetricsStore {
     metrics.current.charged[metric.batteryId] = metric.totalChargedKwh;
     metrics.current.percentage[metric.batteryId] = metric.batteryPercentage;
 
+    // Update last invocation timestamp
+    metrics.lastUpdated[metric.batteryId] = Date.now();
+
     // Save updated metrics
     await this.saveMetrics(metrics);
 
@@ -217,6 +227,9 @@ export class BatteryMetricsStore {
     metrics.dailyOnly.dailyCharged[metric.batteryId] = metric.dailyChargedKwh;
     metrics.dailyOnly.dailyDischarged[metric.batteryId] = metric.dailyDischargedKwh;
     metrics.dailyOnly.percentage[metric.batteryId] = metric.batteryPercentage;
+
+    // Update last invocation timestamp
+    metrics.lastUpdated[metric.batteryId] = Date.now();
 
     // Save updated metrics
     await this.saveMetrics(metrics);
@@ -326,6 +339,7 @@ export class BatteryMetricsStore {
     delete metrics.current.percentage[batteryId];
     delete metrics.startOfDay.discharged[batteryId];
     delete metrics.startOfDay.charged[batteryId];
+    delete metrics.lastUpdated[batteryId];
 
     await this.saveMetrics(metrics);
     this.logger(`BatteryMetricsStore: Removed battery ${batteryId}`);
@@ -337,6 +351,16 @@ export class BatteryMetricsStore {
   async getTrackedBatteries(): Promise<string[]> {
     const metrics = await this.getStoredMetrics();
     return Object.keys(metrics.current.discharged);
+  }
+
+  /**
+   * Get last update timestamp for a specific battery
+   * @param batteryId Battery identifier
+   * @returns Timestamp in milliseconds since epoch, or undefined if battery not found
+   */
+  async getLastUpdateTime(batteryId: string): Promise<number | undefined> {
+    const metrics = await this.getStoredMetrics();
+    return metrics.lastUpdated[batteryId];
   }
 
   /**
@@ -380,14 +404,15 @@ export class BatteryMetricsStore {
 
   /**
    * Perform the actual reset at 00:00
-   * Sets startOfDay = current, ensuring delta calculation is correct for new day
+   * Sets startOfDay = current (last known values from previous day)
+   * Ensures delta calculation starts correctly for new day
    */
   private async performAutomaticReset(): Promise<void> {
     let metrics = await this.getStoredMetrics();
     const currentDate = this.getCurrentDate();
 
     if (metrics.lastResetDate !== currentDate) {
-      // Set startOfDay = current BEFORE polling brings new data
+      // Set startOfDay = current (captures last known values from previous day)
       metrics.startOfDay.discharged = { ...metrics.current.discharged };
       metrics.startOfDay.charged = { ...metrics.current.charged };
 
@@ -400,7 +425,7 @@ export class BatteryMetricsStore {
 
       this.logger(
         'BatteryMetricsStore: Automatic 00:00 reset executed.',
-        `startOfDay set to current values for new day.`,
+        `startOfDay set to current values for new day's delta calculation.`,
       );
 
       // Notify device about automatic reset

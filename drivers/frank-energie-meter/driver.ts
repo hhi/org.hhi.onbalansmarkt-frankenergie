@@ -17,6 +17,12 @@ export = class SiteMeterDriver extends Homey.Driver {
    * User provides credentials, device will validate on first init
    */
   async onPair(session: Homey.Driver.PairSession) {
+    // Session store for credentials
+    let pairingData: {
+      email: string;
+      password: string;
+    } | null = null;
+
     // Check if app-level credentials are already configured
     session.setHandler('check_credentials', async () => {
       // @ts-expect-error - Accessing app instance with specific methods
@@ -60,15 +66,22 @@ export = class SiteMeterDriver extends Homey.Driver {
       }
     });
 
+    // Store credentials from login view
+    session.setHandler('store_credentials', async (data: { email: string; password: string }) => {
+      pairingData = data;
+      this.log('Credentials stored for list_devices');
+      return true;
+    });
+
     // Create device with credentials and optional site reference
-    session.setHandler('list_devices', async (data?: { email?: string; password?: string; siteReference?: string }) => {
-      // Get credentials (may be from app settings or provided during pairing)
+    session.setHandler('list_devices', async () => {
+      // Get credentials from pairing data or app settings
       // @ts-expect-error - Accessing app instance with specific methods
       const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
 
-      const email = data?.email || appCreds?.email || '';
-      const password = data?.password || appCreds?.password || '';
-      const reference = data?.siteReference?.trim() || 'default-site';
+      const email = pairingData?.email || appCreds?.email || '';
+      const password = pairingData?.password || appCreds?.password || '';
+      const reference = 'default-site';
 
       return [
         {

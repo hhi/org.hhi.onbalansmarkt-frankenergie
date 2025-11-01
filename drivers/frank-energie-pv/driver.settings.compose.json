@@ -59,6 +59,28 @@
   {
     "type": "group",
     "label": {
+      "en": "PV System Configuration",
+      "nl": "PV Systeem Configuratie"
+    },
+    "children": [
+      {
+        "id": "pv_system_id",
+        "type": "text",
+        "label": {
+          "en": "PV System ID",
+          "nl": "PV Systeem ID"
+        },
+        "value": "",
+        "hint": {
+          "en": "Configured during pairing (read-only)",
+          "nl": "Geconfigureerd tijdens koppeling (alleen-lezen)"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
       "en": "Data Polling Settings",
       "nl": "Gegevensopvraag Instellingen"
     },
@@ -104,19 +126,6 @@
         "hint": {
           "en": "How often to fetch data from Frank Energie",
           "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
-        }
-      },
-      {
-        "id": "send_measurements",
-        "type": "checkbox",
-        "label": {
-          "en": "Send measurements to Onbalansmarkt",
-          "nl": "Metingen versturen naar Onbalansmarkt"
-        },
-        "value": true,
-        "hint": {
-          "en": "Automatically send PV generation data to Onbalansmarkt.com (requires API key)",
-          "nl": "Automatisch PV-productiegegevens versturen naar Onbalansmarkt.com (vereist API-sleutel)"
         }
       }
     ]

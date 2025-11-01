@@ -6,8 +6,8 @@
     "nl": "Dagelijks geleverd"
   },
   "units": {
-    "en": "W",
-    "nl": "W"
+    "en": "kWh",
+    "nl": "kWh"
   },
   "decimals": 2,
   "insights": true,

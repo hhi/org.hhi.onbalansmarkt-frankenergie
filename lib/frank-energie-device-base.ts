@@ -334,7 +334,7 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
         // Update overall rank
         if (profile.resultToday.overallRank !== null) {
           updatePromises.push(
-            this.setCapabilityValue('frank_energie_overall_rank', profile.resultToday.overallRank)
+            this.setCapabilityValue('onbalansmarkt_overall_rank', profile.resultToday.overallRank)
               .catch((error) => this.error('Failed to update overall rank:', error)),
           );
         }
@@ -342,7 +342,7 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
         // Update provider rank
         if (profile.resultToday.providerRank !== null) {
           updatePromises.push(
-            this.setCapabilityValue('frank_energie_provider_rank', profile.resultToday.providerRank)
+            this.setCapabilityValue('onbalansmarkt_provider_rank', profile.resultToday.providerRank)
               .catch((error) => this.error('Failed to update provider rank:', error)),
           );
         }
@@ -382,15 +382,15 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   protected async condRankInTopX(args: RankInTopXArgs) {
     if (args.device !== this) return false;
     const rank = args.rankType === 'overall'
-      ? await this.getCapabilityValue('frank_energie_overall_rank')
-      : await this.getCapabilityValue('frank_energie_provider_rank');
+      ? await this.getCapabilityValue('onbalansmarkt_overall_rank')
+      : await this.getCapabilityValue('onbalansmarkt_provider_rank');
     return (rank as number) <= args.threshold;
   }
 
   protected async condProviderRankBetter(args: ConditionOnlyDeviceArgs) {
     if (args.device !== this) return false;
-    const overallRank = await this.getCapabilityValue('frank_energie_overall_rank') as number;
-    const providerRank = await this.getCapabilityValue('frank_energie_provider_rank') as number;
+    const overallRank = await this.getCapabilityValue('onbalansmarkt_overall_rank') as number;
+    const providerRank = await this.getCapabilityValue('onbalansmarkt_provider_rank') as number;
     return providerRank < overallRank;
   }
 

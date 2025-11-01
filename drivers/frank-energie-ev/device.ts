@@ -27,6 +27,16 @@ export = class EvChargerDevice extends FrankEnergieDeviceBase {
       throw new Error('FrankEnergieClient not initialized');
     }
 
+    // Ensure measure_battery capability exists (for older devices)
+    if (!this.hasCapability('measure_battery')) {
+      try {
+        await this.addCapability('measure_battery');
+        this.log('Added missing capability: measure_battery');
+      } catch (error) {
+        this.error('Failed to add measure_battery capability:', error);
+      }
+    }
+
     // Get configured location ID
     this.enodeLocationId = this.getSetting('enode_location_id') as string;
     if (!this.enodeLocationId) {

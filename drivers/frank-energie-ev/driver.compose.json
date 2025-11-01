@@ -6,15 +6,19 @@
   "class": "service",
   "capabilities": [
     "onoff",
+    "measure_battery",
     "frank_energie_ev_charging_status",
-    "frank_energie_ev_bonus",
-    "frank_energie_overall_rank",
-    "frank_energie_provider_rank"
+    "frank_energie_ev_bonus"
   ],
   "platforms": [
     "local"
   ],
   "connectivity": [],
+  "energy": {
+    "batteries": [
+      "INTERNAL"
+    ]
+  },
   "images": {
     "small": "{{driverAssetsPath}}/images/small.png",
     "large": "{{driverAssetsPath}}/images/large.png"

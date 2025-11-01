@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.27",
+  "version": "0.0.29",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -1447,15 +1447,15 @@
       "class": "battery",
       "capabilities": [
         "frank_energie_battery_mode",
-        "frank_energie_overall_rank",
-        "frank_energie_provider_rank",
+        "onbalansmarkt_overall_rank",
+        "onbalansmarkt_provider_rank",
         "frank_energie_trading_result",
         "frank_energie_lifetime_total",
         "frank_energie_frank_slim_bonus",
         "frank_energie_epex_result",
         "frank_energie_imbalance_result",
         "frank_energie_last_upload",
-        "frank_energie_last_baseline_reset",
+        "frank_energie_recovery_state",
         "frank_energie_next_poll_minutes",
         "external_battery_daily_charged",
         "external_battery_daily_discharged",
@@ -1560,8 +1560,22 @@
                 "en": "Polling Interval",
                 "nl": "Opvraaginterval"
               },
-              "value": "15",
+              "value": "5",
               "values": [
+                {
+                  "id": "5",
+                  "label": {
+                    "en": "5 minutes",
+                    "nl": "5 minuten"
+                  }
+                },
+                {
+                  "id": "10",
+                  "label": {
+                    "en": "10 minutes",
+                    "nl": "10 minuten"
+                  }
+                },
                 {
                   "id": "15",
                   "label": {
@@ -1666,8 +1680,8 @@
                 {
                   "id": "reset_baseline",
                   "label": {
-                    "en": "Reset daily baseline (recovery)",
-                    "nl": "Dagelijkse baseline herstellen (herstel)"
+                    "en": "Recover delta for Start of Day",
+                    "nl": "Herstel delta voor Start van Dag"
                   }
                 },
                 {
@@ -1695,15 +1709,19 @@
       "class": "service",
       "capabilities": [
         "onoff",
+        "measure_battery",
         "frank_energie_ev_charging_status",
-        "frank_energie_ev_bonus",
-        "frank_energie_overall_rank",
-        "frank_energie_provider_rank"
+        "frank_energie_ev_bonus"
       ],
       "platforms": [
         "local"
       ],
       "connectivity": [],
+      "energy": {
+        "batteries": [
+          "INTERNAL"
+        ]
+      },
       "images": {
         "small": "/drivers/frank-energie-ev/assets/images/small.png",
         "large": "/drivers/frank-energie-ev/assets/images/large.png"
@@ -1869,19 +1887,6 @@
                 "en": "How often to fetch data from Frank Energie",
                 "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
               }
-            },
-            {
-              "id": "send_measurements",
-              "type": "checkbox",
-              "label": {
-                "en": "Send measurements to Onbalansmarkt",
-                "nl": "Metingen versturen naar Onbalansmarkt"
-              },
-              "value": true,
-              "hint": {
-                "en": "Automatically send EV charging data to Onbalansmarkt.com (requires API key)",
-                "nl": "Automatisch laadgegevens versturen naar Onbalansmarkt.com (vereist API-sleutel)"
-              }
             }
           ]
         }
@@ -1902,9 +1907,7 @@
         "frank_energie_max_market_price_today",
         "frank_energie_avg_market_price_today",
         "frank_energie_site_usage",
-        "frank_energie_site_costs",
-        "frank_energie_overall_rank",
-        "frank_energie_provider_rank"
+        "frank_energie_site_costs"
       ],
       "platforms": [
         "local"
@@ -2039,19 +2042,6 @@
                 "en": "How often to fetch data from Frank Energie",
                 "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
               }
-            },
-            {
-              "id": "send_measurements",
-              "type": "checkbox",
-              "label": {
-                "en": "Send measurements to Onbalansmarkt",
-                "nl": "Metingen versturen naar Onbalansmarkt"
-              },
-              "value": true,
-              "hint": {
-                "en": "Automatically send energy usage data to Onbalansmarkt.com (requires API key)",
-                "nl": "Automatisch energiegebruiksgegevens versturen naar Onbalansmarkt.com (vereist API-sleutel)"
-              }
             }
           ]
         }
@@ -2064,12 +2054,11 @@
       },
       "class": "service",
       "capabilities": [
+        "onoff",
         "frank_energie_pv_current_power",
         "frank_energie_pv_today_generation",
         "frank_energie_pv_status",
-        "frank_energie_pv_bonus",
-        "frank_energie_overall_rank",
-        "frank_energie_provider_rank"
+        "frank_energie_pv_bonus"
       ],
       "platforms": [
         "local"
@@ -2157,6 +2146,28 @@
         {
           "type": "group",
           "label": {
+            "en": "PV System Configuration",
+            "nl": "PV Systeem Configuratie"
+          },
+          "children": [
+            {
+              "id": "pv_system_id",
+              "type": "text",
+              "label": {
+                "en": "PV System ID",
+                "nl": "PV Systeem ID"
+              },
+              "value": "",
+              "hint": {
+                "en": "Configured during pairing (read-only)",
+                "nl": "Geconfigureerd tijdens koppeling (alleen-lezen)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
             "en": "Data Polling Settings",
             "nl": "Gegevensopvraag Instellingen"
           },
@@ -2202,19 +2213,6 @@
               "hint": {
                 "en": "How often to fetch data from Frank Energie",
                 "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
-              }
-            },
-            {
-              "id": "send_measurements",
-              "type": "checkbox",
-              "label": {
-                "en": "Send measurements to Onbalansmarkt",
-                "nl": "Metingen versturen naar Onbalansmarkt"
-              },
-              "value": true,
-              "hint": {
-                "en": "Automatically send PV generation data to Onbalansmarkt.com (requires API key)",
-                "nl": "Automatisch PV-productiegegevens versturen naar Onbalansmarkt.com (vereist API-sleutel)"
               }
             }
           ]
@@ -2605,8 +2603,8 @@
         "nl": "Dagelijks geladen"
       },
       "units": {
-        "en": "W",
-        "nl": "W"
+        "en": "kWh",
+        "nl": "kWh"
       },
       "decimals": 2,
       "insights": true,
@@ -2628,8 +2626,8 @@
         "nl": "Dagelijks geleverd"
       },
       "units": {
-        "en": "W",
-        "nl": "W"
+        "en": "kWh",
+        "nl": "kWh"
       },
       "decimals": 2,
       "insights": true,
@@ -2680,7 +2678,7 @@
         "nl": "Selecteer een externe batterij verbonden via flow cards"
       },
       "getable": true,
-      "setable": true,
+      "setable": false,
       "uiComponent": "picker",
       "values": [
         {
@@ -2732,8 +2730,8 @@
     "frank_energie_battery_mode": {
       "id": "frank_energie_battery_mode",
       "title": {
-        "en": "Battery Mode",
-        "nl": "Handels handelsmodus"
+        "en": "Battery Trading Mode",
+        "nl": "Batterij handelsmodus"
       },
       "description": {
         "en": "Current battery trading mode",
@@ -2923,23 +2921,6 @@
       "uiComponent": "sensor",
       "icon": "/assets/capabilities/frank_energie_imbalance_result.svg"
     },
-    "frank_energie_last_baseline_reset": {
-      "id": "frank_energie_last_baseline_reset",
-      "type": "string",
-      "title": {
-        "en": "Last Baseline Reset",
-        "nl": "Laatste Baseline Reset"
-      },
-      "getable": true,
-      "setable": false,
-      "uiComponent": "sensor",
-      "uiQuickAction": false,
-      "icon": "/assets/capabilities/frank_energie_last_baseline_reset.svg",
-      "description": {
-        "en": "Last time the baseline was reset (automatic or manual)",
-        "nl": "Laatst moment dat de baseline is gereset (automatisch of handmatig)"
-      }
-    },
     "frank_energie_last_upload": {
       "id": "frank_energie_last_upload",
       "type": "string",
@@ -3049,44 +3030,6 @@
       "uiComponent": "sensor",
       "icon": "/assets/capabilities/frank_energie_next_poll_minutes.svg"
     },
-    "frank_energie_overall_rank": {
-      "id": "frank_energie_overall_rank",
-      "title": {
-        "en": "Overall Ranking",
-        "nl": "Totale Ranglijst"
-      },
-      "description": {
-        "en": "Your position in the overall Onbalansmarkt ranking",
-        "nl": "Je positie in de totale Onbalansmarkt ranglijst"
-      },
-      "type": "number",
-      "insights": true,
-      "getable": true,
-      "setable": false,
-      "min": 1,
-      "chartType": "spline",
-      "uiComponent": "sensor",
-      "icon": "/assets/capabilities/frank_energie_overall_rank.svg"
-    },
-    "frank_energie_provider_rank": {
-      "id": "frank_energie_provider_rank",
-      "title": {
-        "en": "Provider Ranking",
-        "nl": "Provider Ranglijst"
-      },
-      "description": {
-        "en": "Your ranking among same provider users",
-        "nl": "Je ranglijst onder dezelfde provider gebruikers"
-      },
-      "type": "number",
-      "insights": true,
-      "getable": true,
-      "setable": false,
-      "min": 1,
-      "chartType": "spline",
-      "uiComponent": "sensor",
-      "icon": "/assets/capabilities/frank_energie_provider_rank.svg"
-    },
     "frank_energie_pv_bonus": {
       "id": "frank_energie_pv_bonus",
       "title": {
@@ -3139,14 +3082,14 @@
       "setable": false,
       "values": [
         {
-          "id": "operational",
+          "id": "on",
           "title": {
             "en": "Operational",
             "nl": "Operationeel"
           }
         },
         {
-          "id": "offline",
+          "id": "off",
           "title": {
             "en": "Offline",
             "nl": "Offline"
@@ -3179,6 +3122,23 @@
       "setable": false,
       "uiComponent": "sensor",
       "icon": "/assets/capabilities/frank_energie_pv_today_generation.svg"
+    },
+    "frank_energie_recovery_state": {
+      "id": "frank_energie_recovery_state",
+      "type": "string",
+      "title": {
+        "en": "Recovery State",
+        "nl": "Herstel Status"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "uiQuickAction": false,
+      "icon": "/assets/capabilities/frank_energie_recovery_state.svg",
+      "description": {
+        "en": "Status of manual Start of Day recovery (scheduled for 23:59 or not scheduled)",
+        "nl": "Status van handmatig Start van Dag herstel (gepland voor 23:59 of niet gepland)"
+      }
     },
     "frank_energie_site_costs": {
       "id": "frank_energie_site_costs",
@@ -3270,6 +3230,44 @@
       "chartType": "stepLine",
       "uiComponent": "sensor",
       "icon": "/assets/capabilities/frank_energie_trading_result.svg"
+    },
+    "onbalansmarkt_overall_rank": {
+      "id": "onbalansmarkt_overall_rank",
+      "title": {
+        "en": "Overall Ranking",
+        "nl": "Totale Ranglijst"
+      },
+      "description": {
+        "en": "Your position in the overall Onbalansmarkt ranking",
+        "nl": "Je positie in de totale Onbalansmarkt ranglijst"
+      },
+      "type": "number",
+      "insights": true,
+      "getable": true,
+      "setable": false,
+      "min": 1,
+      "chartType": "spline",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/onbalansmarkt_overall_rank.svg"
+    },
+    "onbalansmarkt_provider_rank": {
+      "id": "onbalansmarkt_provider_rank",
+      "title": {
+        "en": "Provider Ranking",
+        "nl": "Provider Ranglijst"
+      },
+      "description": {
+        "en": "Your ranking among same provider users",
+        "nl": "Je ranglijst onder dezelfde provider gebruikers"
+      },
+      "type": "number",
+      "insights": true,
+      "getable": true,
+      "setable": false,
+      "min": 1,
+      "chartType": "spline",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/onbalansmarkt_provider_rank.svg"
     },
     "zonneplan_cycle_count": {
       "id": "zonneplan_cycle_count",

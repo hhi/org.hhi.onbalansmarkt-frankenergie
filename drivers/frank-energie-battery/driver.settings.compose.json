@@ -70,8 +70,22 @@
           "en": "Polling Interval",
           "nl": "Opvraaginterval"
         },
-        "value": "15",
+        "value": "5",
         "values": [
+          {
+            "id": "5",
+            "label": {
+              "en": "5 minutes",
+              "nl": "5 minuten"
+            }
+          },
+          {
+            "id": "10",
+            "label": {
+              "en": "10 minutes",
+              "nl": "10 minuten"
+            }
+          },
           {
             "id": "15",
             "label": {
@@ -176,8 +190,8 @@
           {
             "id": "reset_baseline",
             "label": {
-              "en": "Reset daily baseline (recovery)",
-              "nl": "Dagelijkse baseline herstellen (herstel)"
+              "en": "Recover delta for Start of Day",
+              "nl": "Herstel delta voor Start van Dag"
             }
           },
           {

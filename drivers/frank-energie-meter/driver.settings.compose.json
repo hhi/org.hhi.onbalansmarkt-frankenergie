@@ -105,19 +105,6 @@
           "en": "How often to fetch data from Frank Energie",
           "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie"
         }
-      },
-      {
-        "id": "send_measurements",
-        "type": "checkbox",
-        "label": {
-          "en": "Send measurements to Onbalansmarkt",
-          "nl": "Metingen versturen naar Onbalansmarkt"
-        },
-        "value": true,
-        "hint": {
-          "en": "Automatically send energy usage data to Onbalansmarkt.com (requires API key)",
-          "nl": "Automatisch energiegebruiksgegevens versturen naar Onbalansmarkt.com (vereist API-sleutel)"
-        }
       }
     ]
   }

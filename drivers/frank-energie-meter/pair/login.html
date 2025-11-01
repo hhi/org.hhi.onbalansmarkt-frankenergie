@@ -105,7 +105,11 @@
         });
 
         if (result && result.success) {
-          // Credentials verified, proceed to next view
+          // Credentials verified, store them and proceed to next view
+          await Homey.emit('store_credentials', {
+            email,
+            password,
+          });
           Homey.nextView();
         } else {
           throw new Error('Verification failed');

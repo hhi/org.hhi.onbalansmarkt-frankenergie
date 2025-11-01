@@ -14,14 +14,14 @@
   "setable": false,
   "values": [
     {
-      "id": "operational",
+      "id": "on",
       "title": {
         "en": "Operational",
         "nl": "Operationeel"
       }
     },
     {
-      "id": "offline",
+      "id": "off",
       "title": {
         "en": "Offline",
         "nl": "Offline"

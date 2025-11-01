@@ -1,5 +1,5 @@
 {
-  "id": "frank_energie_provider_rank",
+  "id": "onbalansmarkt_provider_rank",
   "title": {
     "en": "Provider Ranking",
     "nl": "Provider Ranglijst"
@@ -15,5 +15,5 @@
   "min": 1,
   "chartType": "spline",
   "uiComponent": "sensor",
-  "icon": "/assets/capabilities/frank_energie_provider_rank.svg"
+  "icon": "/assets/capabilities/onbalansmarkt_provider_rank.svg"
 }

@@ -36,7 +36,11 @@
       "password": "Password",
       "password.hint": "Your Frank Energie account password",
       "apiKey": "Onbalansmarkt API Key",
-      "apiKey.hint": "Your Onbalansmarkt.com API key (required for battery device)"
+      "apiKey.hint": "Your Onbalansmarkt.com API key (required for battery device)",
+      "checking": "Checking credentials...",
+      "using_existing": "Using existing credentials...",
+      "credentials_invalid_title": "Credentials Invalid",
+      "credentials_invalid_body": "Existing credentials are invalid. Please sign in again."
     },
     "buttons": {
       "next": "Next",
@@ -80,5 +84,10 @@
       "title": "Login Failed",
       "body": "Failed to verify Frank Energie credentials. Please check your email and password."
     }
+  },
+  "recovery_state": {
+    "not_scheduled": "Not scheduled",
+    "scheduled_today": "Scheduled for today 23:59",
+    "scheduled_tomorrow": "Scheduled for tomorrow 23:59"
   }
 }

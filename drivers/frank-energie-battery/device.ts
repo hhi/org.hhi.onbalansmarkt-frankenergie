@@ -41,6 +41,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   private previousBatteryCount: number = 0;
   private previousTotalResult: number = 0;
 
+  // Manual baseline reset timer (scheduled for 23:59)
+  private manualResetTimeout: NodeJS.Timeout | null = null;
+
   /**
    * Initialize battery-specific clients
    */
@@ -88,6 +91,17 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     // Load external batteries from store
     await this.loadExternalBatteries();
+
+    // Initialize recovery state to not scheduled
+    try {
+      await this.setCapabilityValue(
+        'frank_energie_recovery_state',
+        this.homey.__('recovery_state.not_scheduled'),
+      );
+      this.log('Recovery state initialized to not scheduled');
+    } catch (error) {
+      this.error('Failed to initialize recovery state:', error);
+    }
   }
 
   /**
@@ -481,8 +495,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       const today = now.toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' });
 
       // Get current rankings
-      const overallRank = await this.getCapabilityValue('frank_energie_overall_rank') as number | null;
-      const providerRank = await this.getCapabilityValue('frank_energie_provider_rank') as number | null;
+      const overallRank = await this.getCapabilityValue('onbalansmarkt_overall_rank') as number | null;
+      const providerRank = await this.getCapabilityValue('onbalansmarkt_provider_rank') as number | null;
 
       // Emit: Daily Results Available
       await this.emitDailyResultsAvailable(
@@ -659,7 +673,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     if (args.includeMetrics) {
       const result = await this.getStoreValue('lastBatteryResult') as number || 0;
-      const rank = await this.getCapabilityValue('frank_energie_overall_rank') as number;
+      const rank = await this.getCapabilityValue('onbalansmarkt_overall_rank') as number;
       const mode = await this.getStoreValue('lastTradingMode') as string;
       message += `\n\nResult: €${result.toFixed(2)}\nRank: #${rank}\nMode: ${mode}`;
     }
@@ -673,8 +687,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     const batteryResult = await this.getStoreValue('lastBatteryResult') as number || 0;
     const totalResult = await this.getStoreValue('lastBatteryResultTotal') as number || 0;
-    const overallRank = await this.getCapabilityValue('frank_energie_overall_rank') as number;
-    const providerRank = await this.getCapabilityValue('frank_energie_provider_rank') as number;
+    const overallRank = await this.getCapabilityValue('onbalansmarkt_overall_rank') as number;
+    const providerRank = await this.getCapabilityValue('onbalansmarkt_provider_rank') as number;
     const mode = await this.getStoreValue('lastTradingMode') as string;
 
     let message = '';
@@ -975,20 +989,16 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
   /**
    * Handle automatic baseline reset (called at 00:00)
-   * Updates the last baseline reset timestamp
+   * Callback from BatteryMetricsStore when automatic daily reset occurs
    */
   private async handleAutomaticBaselineReset(): Promise<void> {
-    const resetTimestamp = new Date().toISOString();
-    try {
-      await this.setCapabilityValue('frank_energie_last_baseline_reset', resetTimestamp);
-      this.log(`Automatic baseline reset timestamp updated: ${resetTimestamp}`);
-    } catch (error) {
-      this.error('Failed to update automatic baseline reset timestamp:', error);
-    }
+    this.log('Automatic baseline reset executed at 00:00');
+    // No UI state update needed - this is normal daily operation
   }
 
   /**
    * Handle manual reset baseline action from settings dropdown
+   * Schedules a one-time reset at 23:59 to capture most recent daily values
    * Overrides base class to implement baseline reset
    */
   protected async handleManualResetBaseline(): Promise<void> {
@@ -997,18 +1007,60 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('External battery metrics store not initialized');
     }
 
-    this.log('Reset baseline action triggered by user (settings)');
-    await this.externalBatteryMetrics.emergencyResetBaseline();
-
-    // Update the last baseline reset timestamp
-    const resetTimestamp = new Date().toISOString();
-    try {
-      await this.setCapabilityValue('frank_energie_last_baseline_reset', resetTimestamp);
-    } catch (error) {
-      this.error('Failed to update last baseline reset timestamp:', error);
+    // Cancel any existing manual reset timer
+    if (this.manualResetTimeout) {
+      this.homey.clearTimeout(this.manualResetTimeout);
+      this.manualResetTimeout = null;
+      this.log('Cancelled previous manual baseline reset timer');
     }
 
-    this.log('Baseline reset completed successfully');
+    // Calculate milliseconds until next 23:59
+    const now = new Date();
+    const next2359 = new Date(now);
+    next2359.setHours(23, 59, 0, 0); // 23:59:00 today
+
+    // Determine if scheduling for today or tomorrow
+    const isToday = now.getTime() < next2359.getTime();
+    if (!isToday) {
+      next2359.setDate(next2359.getDate() + 1);
+    }
+
+    const msUntilReset = next2359.getTime() - now.getTime();
+    const minutesUntilReset = Math.floor(msUntilReset / 1000 / 60);
+
+    // Update recovery state to show scheduled time
+    const stateValue = isToday
+      ? this.homey.__('recovery_state.scheduled_today')
+      : this.homey.__('recovery_state.scheduled_tomorrow');
+
+    try {
+      await this.setCapabilityValue('frank_energie_recovery_state', stateValue);
+      this.log(`Recovery state updated: ${stateValue}`);
+    } catch (error) {
+      this.error('Failed to update recovery state:', error);
+    }
+
+    // Schedule one-time reset at 23:59
+    this.manualResetTimeout = this.homey.setTimeout(async () => {
+      this.log('Executing scheduled manual baseline reset at 23:59');
+
+      await this.externalBatteryMetrics!.emergencyResetBaseline();
+
+      // Update recovery state to not scheduled
+      try {
+        await this.setCapabilityValue(
+          'frank_energie_recovery_state',
+          this.homey.__('recovery_state.not_scheduled'),
+        );
+        this.log('Manual baseline reset completed successfully at 23:59');
+      } catch (error) {
+        this.error('Failed to update recovery state after reset:', error);
+      }
+
+      this.manualResetTimeout = null;
+    }, msUntilReset);
+
+    this.log(`Manual baseline reset scheduled for 23:59 (${minutesUntilReset} minutes from now)`);
   }
 
   /**
@@ -1231,14 +1283,27 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     // Add all registered batteries
     for (const [batteryId, type] of this.externalBatteries.entries()) {
+      // Get last update time for this battery
+      let timeString = '';
+      if (this.externalBatteryMetrics) {
+        const lastUpdate = await this.externalBatteryMetrics.getLastUpdateTime(batteryId);
+        if (lastUpdate) {
+          const date = new Date(lastUpdate);
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          const seconds = String(date.getSeconds()).padStart(2, '0');
+          timeString = `; ${hours}:${minutes}:${seconds}`;
+        }
+      }
+
       batteryValues.push({
         id: batteryId,
         title: {
-          en: `${batteryId} (${type})`,
-          nl: `${batteryId} (${type})`,
+          en: `${batteryId} (${type}${timeString})`,
+          nl: `${batteryId} (${type}${timeString})`,
         },
       });
-      this.log(`  Adding to picker: ${batteryId} (${type})`);
+      this.log(`  Adding to picker: ${batteryId} (${type}${timeString})`);
     }
 
     // Always add "none" option first
@@ -1291,6 +1356,26 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
    */
   async onUninit() {
     this.log('Smart Battery Device uninitializing...');
+
+    // Cancel manual baseline reset timer if scheduled
+    if (this.manualResetTimeout) {
+      this.homey.clearTimeout(this.manualResetTimeout);
+      this.manualResetTimeout = null;
+
+      // Reset recovery state to not scheduled
+      try {
+        await this.setCapabilityValue(
+          'frank_energie_recovery_state',
+          this.homey.__('recovery_state.not_scheduled'),
+        );
+        this.log('Recovery state reset to not scheduled');
+      } catch (error) {
+        this.error('Failed to reset recovery state:', error);
+      }
+
+      this.log('Cancelled manual baseline reset timer');
+    }
+
     if (this.externalBatteryMetrics) {
       this.externalBatteryMetrics.destroy();
     }

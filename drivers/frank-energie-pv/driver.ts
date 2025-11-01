@@ -100,6 +100,7 @@ export = class SmartPvSystemDriver extends Homey.Driver {
             frank_energie_email: email,
             frank_energie_password: password,
             poll_interval: 5,
+            pv_system_id: firstPv.id, // PV system ID for device initialization
           },
         },
       ];

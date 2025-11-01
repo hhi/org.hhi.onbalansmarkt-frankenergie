@@ -13,9 +13,7 @@
     "frank_energie_max_market_price_today",
     "frank_energie_avg_market_price_today",
     "frank_energie_site_usage",
-    "frank_energie_site_costs",
-    "frank_energie_overall_rank",
-    "frank_energie_provider_rank"
+    "frank_energie_site_costs"
   ],
   "platforms": [
     "local"

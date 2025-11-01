@@ -36,7 +36,11 @@
       "password": "Wachtwoord",
       "password.hint": "Uw Frank Energie account wachtwoord",
       "apiKey": "Onbalansmarkt API Key",
-      "apiKey.hint": "Uw Onbalansmarkt.com API sleutel (verplicht voor batterij device)"
+      "apiKey.hint": "Uw Onbalansmarkt.com API sleutel (verplicht voor batterij device)",
+      "checking": "Inloggegevens controleren...",
+      "using_existing": "Bestaande inloggegevens gebruiken...",
+      "credentials_invalid_title": "Inloggegevens Ongeldig",
+      "credentials_invalid_body": "Bestaande inloggegevens zijn ongeldig. Log opnieuw in."
     },
     "buttons": {
       "next": "Volgende",
@@ -80,5 +84,10 @@
       "title": "Inloggen Mislukt",
       "body": "Kon Frank Energie inloggegevens niet verifiëren. Controleer uw e-mailadres en wachtwoord."
     }
+  },
+  "recovery_state": {
+    "not_scheduled": "Niet gepland",
+    "scheduled_today": "Gepland voor vandaag 23:59",
+    "scheduled_tomorrow": "Gepland voor morgen 23:59"
   }
 }

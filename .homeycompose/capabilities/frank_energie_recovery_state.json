@@ -1,0 +1,17 @@
+{
+  "id": "frank_energie_recovery_state",
+  "type": "string",
+  "title": {
+    "en": "Recovery State",
+    "nl": "Herstel Status"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": null,
+  "uiQuickAction": false,
+  "icon": "/assets/capabilities/frank_energie_recovery_state.svg",
+  "description": {
+    "en": "Status of manual Start of Day recovery (scheduled for 23:59 or not scheduled)",
+    "nl": "Status van handmatig Start van Dag herstel (gepland voor 23:59 of niet gepland)"
+  }
+}
