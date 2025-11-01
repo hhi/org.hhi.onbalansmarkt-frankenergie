@@ -1,4 +1,9 @@
 {
+  "0.0.31": {
+    "en": "Pickers and capability controls now display correctly after device pairing. Added current total charged and discharged sensors showing lifetime cumulative battery values.",
+    "nl": "Pickers en capability bedieningen worden nu correct weergegeven na het koppelen van apparaten. Huidige totaal geladen en geleverd sensoren toegevoegd die lifetime cumulatieve batterijwaarden tonen."
+  },
+
   "0.0.26": {
     "en": "Added automatic daily baseline reset at 00:00 for accurate delta calculations. Added emergency reset flow card for recovery when metrics are incorrect.",
     "nl": "Automatische dagelijkse baseline reset toegevoegd om 00:00 voor nauwkeurige delta berekeningen. Nood reset flow card toegevoegd voor herstel wanneer metrieken onjuist zijn."

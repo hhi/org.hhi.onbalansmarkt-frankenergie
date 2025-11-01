@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_frank_slim_bonus",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Frank Slim Bonus",

@@ -1,5 +1,6 @@
 {
   "id": "onbalansmarkt_provider_rank",
+  "uiQuickAction": false,
   "title": {
     "en": "Provider Ranking",
     "nl": "Provider Ranglijst"

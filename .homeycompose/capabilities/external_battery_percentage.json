@@ -1,5 +1,6 @@
 {
   "id": "external_battery_percentage",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Average battery percentage",

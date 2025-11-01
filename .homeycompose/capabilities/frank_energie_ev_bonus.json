@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_ev_bonus",
+  "uiQuickAction": false,
   "title": {
     "en": "EV Charging Bonus",
     "nl": "EV Laad Bonus"

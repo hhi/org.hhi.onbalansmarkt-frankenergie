@@ -40,38 +40,28 @@
     const passwordInput = document.getElementById('password');
     const submitButton = form.querySelector('button[type="submit"]');
 
-    // Check if credentials already exist on app level
-    async function checkCredentials() {
+    // Check for existing credentials and pre-fill form
+    async function checkAndPreFillCredentials() {
       try {
-        const result = await Homey.emit('check_credentials', {});
+        const credsResult = await Homey.emit('get_credentials', {});
 
-        if (result && result.hasCredentials) {
-          // Credentials exist, skip login and verify directly
-          checkingDiv.textContent = Homey.__('pair.login.using_existing') || 'Using existing credentials...';
+        if (credsResult && credsResult.email && credsResult.password) {
+          // Pre-fill credentials
+          emailInput.value = credsResult.email;
+          passwordInput.value = credsResult.password;
 
-          try {
-            await Homey.emit('verify_meter', {});
-            // Verification successful, proceed to next view
-            Homey.nextView();
-          } catch (error) {
-            // Verification failed, show login form
-            checkingDiv.style.display = 'none';
-            form.style.display = 'block';
-            emailInput.focus();
-
-            Homey.showDialog('warning', {
-              title: Homey.__('pair.login.credentials_invalid_title') || 'Credentials Invalid',
-              body: Homey.__('pair.login.credentials_invalid_body') || 'Existing credentials are invalid. Please sign in again.',
-            });
-          }
+          // Show form with pre-filled credentials
+          checkingDiv.style.display = 'none';
+          form.style.display = 'block';
+          emailInput.focus();
         } else {
-          // No credentials, show login form
+          // No existing credentials, show empty form
           checkingDiv.style.display = 'none';
           form.style.display = 'block';
           emailInput.focus();
         }
       } catch (error) {
-        // Handler not available or error, show login form
+        // Error checking credentials, show empty form
         checkingDiv.style.display = 'none';
         form.style.display = 'block';
         emailInput.focus();
@@ -125,7 +115,7 @@
     });
 
     // Start credential check on page load
-    checkCredentials();
+    checkAndPreFillCredentials();
   </script>
 </body>
 </html>

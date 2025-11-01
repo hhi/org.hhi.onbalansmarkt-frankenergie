@@ -1,5 +1,6 @@
 {
   "id": "zonneplan_last_update",
+  "uiQuickAction": false,
   "title": {
     "en": "Last Update",
     "nl": "Laatste Update"

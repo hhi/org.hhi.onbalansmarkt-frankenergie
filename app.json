@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -1782,28 +1782,6 @@
         {
           "type": "group",
           "label": {
-            "en": "Onbalansmarkt Integration",
-            "nl": "Onbalansmarkt Integratie"
-          },
-          "children": [
-            {
-              "id": "onbalansmarkt_api_key",
-              "type": "password",
-              "label": {
-                "en": "API Key",
-                "nl": "API-sleutel"
-              },
-              "value": "",
-              "hint": {
-                "en": "Your Onbalansmarkt.com API key (optional). Get one at https://onbalansmarkt.com",
-                "nl": "Uw Onbalansmarkt.com API-sleutel (optioneel). Verkrijg er een op https://onbalansmarkt.com"
-              }
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
             "en": "EV Charger Settings",
             "nl": "Laadpaal Instellingen"
           },
@@ -1852,8 +1830,22 @@
                 "en": "Polling Interval",
                 "nl": "Opvraaginterval"
               },
-              "value": "15",
+              "value": "5",
               "values": [
+                {
+                  "id": "5",
+                  "label": {
+                    "en": "5 minutes",
+                    "nl": "5 minuten"
+                  }
+                },
+                {
+                  "id": "10",
+                  "label": {
+                    "en": "10 minutes",
+                    "nl": "10 minuten"
+                  }
+                },
                 {
                   "id": "15",
                   "label": {
@@ -1919,8 +1911,7 @@
       },
       "pair": [
         {
-          "id": "login",
-          "template": "login"
+          "id": "login"
         },
         {
           "id": "list_devices",
@@ -1974,28 +1965,6 @@
         {
           "type": "group",
           "label": {
-            "en": "Onbalansmarkt Integration",
-            "nl": "Onbalansmarkt Integratie"
-          },
-          "children": [
-            {
-              "id": "onbalansmarkt_api_key",
-              "type": "password",
-              "label": {
-                "en": "API Key",
-                "nl": "API-sleutel"
-              },
-              "value": "",
-              "hint": {
-                "en": "Your Onbalansmarkt.com API key (optional). Get one at https://onbalansmarkt.com",
-                "nl": "Uw Onbalansmarkt.com API-sleutel (optioneel). Verkrijg er een op https://onbalansmarkt.com"
-              }
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
             "en": "Data Polling Settings",
             "nl": "Gegevensopvraag Instellingen"
           },
@@ -2007,8 +1976,22 @@
                 "en": "Polling Interval",
                 "nl": "Opvraaginterval"
               },
-              "value": "15",
+              "value": "5",
               "values": [
+                {
+                  "id": "5",
+                  "label": {
+                    "en": "5 minutes",
+                    "nl": "5 minuten"
+                  }
+                },
+                {
+                  "id": "10",
+                  "label": {
+                    "en": "10 minutes",
+                    "nl": "10 minuten"
+                  }
+                },
                 {
                   "id": "15",
                   "label": {
@@ -2124,28 +2107,6 @@
         {
           "type": "group",
           "label": {
-            "en": "Onbalansmarkt Integration",
-            "nl": "Onbalansmarkt Integratie"
-          },
-          "children": [
-            {
-              "id": "onbalansmarkt_api_key",
-              "type": "password",
-              "label": {
-                "en": "API Key",
-                "nl": "API-sleutel"
-              },
-              "value": "",
-              "hint": {
-                "en": "Your Onbalansmarkt.com API key (optional). Get one at https://onbalansmarkt.com",
-                "nl": "Uw Onbalansmarkt.com API-sleutel (optioneel). Verkrijg er een op https://onbalansmarkt.com"
-              }
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
             "en": "PV System Configuration",
             "nl": "PV Systeem Configuratie"
           },
@@ -2179,8 +2140,22 @@
                 "en": "Polling Interval",
                 "nl": "Opvraaginterval"
               },
-              "value": "15",
+              "value": "5",
               "values": [
+                {
+                  "id": "5",
+                  "label": {
+                    "en": "5 minutes",
+                    "nl": "5 minuten"
+                  }
+                },
+                {
+                  "id": "10",
+                  "label": {
+                    "en": "10 minutes",
+                    "nl": "10 minuten"
+                  }
+                },
                 {
                   "id": "15",
                   "label": {
@@ -2404,6 +2379,7 @@
   "capabilities": {
     "battery_1_total": {
       "id": "battery_1_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 1 Total",
@@ -2421,6 +2397,7 @@
     },
     "battery_10_total": {
       "id": "battery_10_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 10 Total",
@@ -2438,6 +2415,7 @@
     },
     "battery_2_total": {
       "id": "battery_2_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 2 Total",
@@ -2455,6 +2433,7 @@
     },
     "battery_3_total": {
       "id": "battery_3_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 3 Total",
@@ -2472,6 +2451,7 @@
     },
     "battery_4_total": {
       "id": "battery_4_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 4 Total",
@@ -2489,6 +2469,7 @@
     },
     "battery_5_total": {
       "id": "battery_5_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 5 Total",
@@ -2506,6 +2487,7 @@
     },
     "battery_6_total": {
       "id": "battery_6_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 6 Total",
@@ -2523,6 +2505,7 @@
     },
     "battery_7_total": {
       "id": "battery_7_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 7 Total",
@@ -2540,6 +2523,7 @@
     },
     "battery_8_total": {
       "id": "battery_8_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 8 Total",
@@ -2557,6 +2541,7 @@
     },
     "battery_9_total": {
       "id": "battery_9_total",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery 9 Total",
@@ -2574,6 +2559,7 @@
     },
     "external_battery_count": {
       "id": "external_battery_count",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Battery # flow metrics",
@@ -2595,8 +2581,57 @@
         "nl": "Aantal externe batterijen die metrieken leveren"
       }
     },
+    "external_battery_current_charged": {
+      "id": "external_battery_current_charged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Current total charged",
+        "nl": "Huidig totaal geladen"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_current_charged.svg",
+      "description": {
+        "en": "Current cumulative total charged from external batteries (lifetime)",
+        "nl": "Huidige cumulatieve totaal geladen van externe batterijen (lifetime)"
+      }
+    },
+    "external_battery_current_discharged": {
+      "id": "external_battery_current_discharged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Current total discharged",
+        "nl": "Huidig totaal geleverd"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_current_discharged.svg",
+      "description": {
+        "en": "Current cumulative total discharged from external batteries (lifetime)",
+        "nl": "Huidige cumulatieve totaal geleverd van externe batterijen (lifetime)"
+      }
+    },
     "external_battery_daily_charged": {
       "id": "external_battery_daily_charged",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Daily charged",
@@ -2620,6 +2655,7 @@
     },
     "external_battery_daily_discharged": {
       "id": "external_battery_daily_discharged",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Daily discharged",
@@ -2643,6 +2679,7 @@
     },
     "external_battery_percentage": {
       "id": "external_battery_percentage",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Average battery percentage",
@@ -2668,6 +2705,7 @@
     },
     "external_battery_selector": {
       "id": "external_battery_selector",
+      "uiQuickAction": false,
       "type": "enum",
       "title": {
         "en": "External Battery Selector",
@@ -2692,6 +2730,7 @@
     },
     "frank_energie_avg_market_price_today": {
       "id": "frank_energie_avg_market_price_today",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Average Market Price Today",
@@ -2709,6 +2748,7 @@
     },
     "frank_energie_battery_charge": {
       "id": "frank_energie_battery_charge",
+      "uiQuickAction": false,
       "title": {
         "en": "Battery Charge",
         "nl": "Batterijlading"
@@ -2729,6 +2769,7 @@
     },
     "frank_energie_battery_mode": {
       "id": "frank_energie_battery_mode",
+      "uiQuickAction": false,
       "title": {
         "en": "Battery Trading Mode",
         "nl": "Batterij handelsmodus"
@@ -2790,6 +2831,7 @@
     },
     "frank_energie_current_market_price": {
       "id": "frank_energie_current_market_price",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Current Market Price",
@@ -2807,6 +2849,7 @@
     },
     "frank_energie_epex_result": {
       "id": "frank_energie_epex_result",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "EPEX Result",
@@ -2826,6 +2869,7 @@
     },
     "frank_energie_ev_bonus": {
       "id": "frank_energie_ev_bonus",
+      "uiQuickAction": false,
       "title": {
         "en": "EV Charging Bonus",
         "nl": "EV Laad Bonus"
@@ -2845,6 +2889,7 @@
     },
     "frank_energie_ev_charging_status": {
       "id": "frank_energie_ev_charging_status",
+      "uiQuickAction": false,
       "title": {
         "en": "EV Charging Status",
         "nl": "EV Laadstatus"
@@ -2885,6 +2930,7 @@
     },
     "frank_energie_frank_slim_bonus": {
       "id": "frank_energie_frank_slim_bonus",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Frank Slim Bonus",
@@ -2904,6 +2950,7 @@
     },
     "frank_energie_imbalance_result": {
       "id": "frank_energie_imbalance_result",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Imbalance Result",
@@ -2964,6 +3011,7 @@
     },
     "frank_energie_max_market_price_today": {
       "id": "frank_energie_max_market_price_today",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Highest Market Price Today",
@@ -2981,6 +3029,7 @@
     },
     "frank_energie_min_market_price_today": {
       "id": "frank_energie_min_market_price_today",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Lowest Market Price Today",
@@ -2998,6 +3047,7 @@
     },
     "frank_energie_next_hour_market_price": {
       "id": "frank_energie_next_hour_market_price",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Next Hour Market Price",
@@ -3015,6 +3065,7 @@
     },
     "frank_energie_next_poll_minutes": {
       "id": "frank_energie_next_poll_minutes",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Next Poll In",
@@ -3032,6 +3083,7 @@
     },
     "frank_energie_pv_bonus": {
       "id": "frank_energie_pv_bonus",
+      "uiQuickAction": false,
       "title": {
         "en": "PV Bonus",
         "nl": "PV Bonus"
@@ -3051,6 +3103,7 @@
     },
     "frank_energie_pv_current_power": {
       "id": "frank_energie_pv_current_power",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Current Power",
@@ -3068,6 +3121,7 @@
     },
     "frank_energie_pv_status": {
       "id": "frank_energie_pv_status",
+      "uiQuickAction": false,
       "title": {
         "en": "PV System Status",
         "nl": "PV Systeem Status"
@@ -3108,6 +3162,7 @@
     },
     "frank_energie_pv_today_generation": {
       "id": "frank_energie_pv_today_generation",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Generation Today",
@@ -3142,6 +3197,7 @@
     },
     "frank_energie_site_costs": {
       "id": "frank_energie_site_costs",
+      "uiQuickAction": false,
       "title": {
         "en": "Site Costs",
         "nl": "Locatie Kosten"
@@ -3161,6 +3217,7 @@
     },
     "frank_energie_site_usage": {
       "id": "frank_energie_site_usage",
+      "uiQuickAction": false,
       "title": {
         "en": "Site Usage",
         "nl": "Locatie Verbruik"
@@ -3179,6 +3236,7 @@
     },
     "frank_energie_today_consumption": {
       "id": "frank_energie_today_consumption",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Consumption Today",
@@ -3196,6 +3254,7 @@
     },
     "frank_energie_today_costs": {
       "id": "frank_energie_today_costs",
+      "uiQuickAction": false,
       "type": "number",
       "title": {
         "en": "Costs Today",
@@ -3213,6 +3272,7 @@
     },
     "frank_energie_trading_result": {
       "id": "frank_energie_trading_result",
+      "uiQuickAction": false,
       "title": {
         "en": "Trading Result",
         "nl": "Handelsresultaat"
@@ -3233,6 +3293,7 @@
     },
     "onbalansmarkt_overall_rank": {
       "id": "onbalansmarkt_overall_rank",
+      "uiQuickAction": false,
       "title": {
         "en": "Overall Ranking",
         "nl": "Totale Ranglijst"
@@ -3252,6 +3313,7 @@
     },
     "onbalansmarkt_provider_rank": {
       "id": "onbalansmarkt_provider_rank",
+      "uiQuickAction": false,
       "title": {
         "en": "Provider Ranking",
         "nl": "Provider Ranglijst"
@@ -3271,6 +3333,7 @@
     },
     "zonneplan_cycle_count": {
       "id": "zonneplan_cycle_count",
+      "uiQuickAction": false,
       "title": {
         "en": "Cycle Count",
         "nl": "Aantal Cycli"
@@ -3290,6 +3353,7 @@
     },
     "zonneplan_daily_charged": {
       "id": "zonneplan_daily_charged",
+      "uiQuickAction": false,
       "title": {
         "en": "Daily Charged",
         "nl": "Dagelijks Geladen"
@@ -3310,6 +3374,7 @@
     },
     "zonneplan_daily_discharged": {
       "id": "zonneplan_daily_discharged",
+      "uiQuickAction": false,
       "title": {
         "en": "Daily Discharged",
         "nl": "Dagelijks Geleverd"
@@ -3330,6 +3395,7 @@
     },
     "zonneplan_daily_earned": {
       "id": "zonneplan_daily_earned",
+      "uiQuickAction": false,
       "title": {
         "en": "Daily Earned",
         "nl": "Dagelijkse Opbrengst"
@@ -3350,6 +3416,7 @@
     },
     "zonneplan_last_update": {
       "id": "zonneplan_last_update",
+      "uiQuickAction": false,
       "title": {
         "en": "Last Update",
         "nl": "Laatste Update"
@@ -3367,6 +3434,7 @@
     },
     "zonneplan_load_balancing": {
       "id": "zonneplan_load_balancing",
+      "uiQuickAction": false,
       "title": {
         "en": "Load Balancing Active",
         "nl": "Load Balancing Actief"
@@ -3384,6 +3452,7 @@
     },
     "zonneplan_total_earned": {
       "id": "zonneplan_total_earned",
+      "uiQuickAction": false,
       "title": {
         "en": "Total Earned",
         "nl": "Totaal Verdiend"

@@ -24,12 +24,16 @@ export interface BatteryDailyMetric {
 export interface ExternalBatteryMetrics {
   dailyChargedKwh: number;
   dailyDischargedKwh: number;
+  currentChargedKwh: number;
+  currentDischargedKwh: number;
   averageBatteryPercentage: number;
   batteryCount: number;
   batteries: Array<{
     id: string;
     dailyChargedKwh: number;
     dailyDischargedKwh: number;
+    currentChargedKwh: number;
+    currentDischargedKwh: number;
     percentage: number;
   }>;
   lastUpdated: number;
@@ -261,6 +265,8 @@ export class BatteryMetricsStore {
 
     let totalDailyCharged = 0;
     let totalDailyDischarged = 0;
+    let totalCurrentCharged = 0;
+    let totalCurrentDischarged = 0;
     let totalPercentage = 0;
     let batteryCount = 0;
 
@@ -281,11 +287,15 @@ export class BatteryMetricsStore {
         id: batteryId,
         dailyChargedKwh: dailyCharged,
         dailyDischargedKwh: dailyDischarged,
+        currentChargedKwh: currentCharged,
+        currentDischargedKwh: currentDischarged,
         percentage,
       });
 
       totalDailyDischarged += dailyDischarged;
       totalDailyCharged += dailyCharged;
+      totalCurrentCharged += currentCharged;
+      totalCurrentDischarged += currentDischarged;
       totalPercentage += percentage;
       batteryCount++;
     }
@@ -301,11 +311,14 @@ export class BatteryMetricsStore {
         id: batteryId,
         dailyChargedKwh: dailyCharged,
         dailyDischargedKwh: dailyDischarged,
+        currentChargedKwh: 0, // Daily-only batteries don't track cumulative values
+        currentDischargedKwh: 0,
         percentage,
       });
 
       totalDailyDischarged += dailyDischarged;
       totalDailyCharged += dailyCharged;
+      // Don't add to current totals for daily-only batteries
       totalPercentage += percentage;
       batteryCount++;
     }
@@ -313,6 +326,8 @@ export class BatteryMetricsStore {
     const aggregated: ExternalBatteryMetrics = {
       dailyChargedKwh: totalDailyCharged,
       dailyDischargedKwh: totalDailyDischarged,
+      currentChargedKwh: totalCurrentCharged,
+      currentDischargedKwh: totalCurrentDischarged,
       averageBatteryPercentage: batteryCount > 0 ? totalPercentage / batteryCount : 0,
       batteryCount,
       batteries,
@@ -322,6 +337,8 @@ export class BatteryMetricsStore {
     this.logger(
       `BatteryMetricsStore: Aggregated metrics - Daily charged: ${aggregated.dailyChargedKwh.toFixed(2)} kWh,`,
       `Daily discharged: ${aggregated.dailyDischargedKwh.toFixed(2)} kWh,`,
+      `Current total charged: ${aggregated.currentChargedKwh.toFixed(2)} kWh,`,
+      `Current total discharged: ${aggregated.currentDischargedKwh.toFixed(2)} kWh,`,
       `Avg percentage: ${aggregated.averageBatteryPercentage.toFixed(1)}%, Batteries: ${batteryCount}`,
     );
 

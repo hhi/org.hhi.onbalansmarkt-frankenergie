@@ -1,5 +1,6 @@
 {
   "id": "zonneplan_daily_discharged",
+  "uiQuickAction": false,
   "title": {
     "en": "Daily Discharged",
     "nl": "Dagelijks Geleverd"

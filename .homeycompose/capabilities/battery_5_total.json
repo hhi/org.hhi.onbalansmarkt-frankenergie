@@ -1,5 +1,6 @@
 {
   "id": "battery_5_total",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Battery 5 Total",

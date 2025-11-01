@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_trading_result",
+  "uiQuickAction": false,
   "title": {
     "en": "Trading Result",
     "nl": "Handelsresultaat"

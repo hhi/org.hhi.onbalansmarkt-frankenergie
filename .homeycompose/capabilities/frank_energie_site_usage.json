@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_site_usage",
+  "uiQuickAction": false,
   "title": {
     "en": "Site Usage",
     "nl": "Locatie Verbruik"

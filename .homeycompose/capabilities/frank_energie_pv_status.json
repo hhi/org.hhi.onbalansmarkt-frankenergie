@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_pv_status",
+  "uiQuickAction": false,
   "title": {
     "en": "PV System Status",
     "nl": "PV Systeem Status"

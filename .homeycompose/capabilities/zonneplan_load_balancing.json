@@ -1,5 +1,6 @@
 {
   "id": "zonneplan_load_balancing",
+  "uiQuickAction": false,
   "title": {
     "en": "Load Balancing Active",
     "nl": "Load Balancing Actief"

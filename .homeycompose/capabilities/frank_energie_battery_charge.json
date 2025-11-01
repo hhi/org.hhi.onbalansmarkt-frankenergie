@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_battery_charge",
+  "uiQuickAction": false,
   "title": {
     "en": "Battery Charge",
     "nl": "Batterijlading"

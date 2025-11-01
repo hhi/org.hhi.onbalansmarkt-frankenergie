@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_next_poll_minutes",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Next Poll In",

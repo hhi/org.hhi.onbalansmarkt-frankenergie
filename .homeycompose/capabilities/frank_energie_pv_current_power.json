@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_pv_current_power",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Current Power",

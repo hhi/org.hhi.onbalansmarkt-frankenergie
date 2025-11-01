@@ -1,5 +1,6 @@
 {
   "id": "external_battery_daily_charged",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Daily charged",

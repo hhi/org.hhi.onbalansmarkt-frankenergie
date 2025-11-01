@@ -93,4 +93,6 @@ export {
   type MonthInsightsData,
   type PeriodUsageAndCostsData,
   type CostsDeltaData,
+  type Connection,
+  type MeData,
 } from './frank-energie-client';

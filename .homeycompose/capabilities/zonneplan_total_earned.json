@@ -1,5 +1,6 @@
 {
   "id": "zonneplan_total_earned",
+  "uiQuickAction": false,
   "title": {
     "en": "Total Earned",
     "nl": "Totaal Verdiend"

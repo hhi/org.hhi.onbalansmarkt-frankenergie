@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_battery_mode",
+  "uiQuickAction": false,
   "title": {
     "en": "Battery Trading Mode",
     "nl": "Batterij handelsmodus"

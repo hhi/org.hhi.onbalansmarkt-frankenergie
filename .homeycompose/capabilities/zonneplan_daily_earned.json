@@ -1,5 +1,6 @@
 {
   "id": "zonneplan_daily_earned",
+  "uiQuickAction": false,
   "title": {
     "en": "Daily Earned",
     "nl": "Dagelijkse Opbrengst"

@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_pv_bonus",
+  "uiQuickAction": false,
   "title": {
     "en": "PV Bonus",
     "nl": "PV Bonus"

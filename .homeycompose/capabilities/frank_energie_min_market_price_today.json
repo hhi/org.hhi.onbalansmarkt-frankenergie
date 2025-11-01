@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_min_market_price_today",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Lowest Market Price Today",

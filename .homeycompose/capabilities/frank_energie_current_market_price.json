@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_current_market_price",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Current Market Price",

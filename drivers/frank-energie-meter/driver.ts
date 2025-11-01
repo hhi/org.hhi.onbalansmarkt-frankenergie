@@ -30,6 +30,16 @@ export = class SiteMeterDriver extends Homey.Driver {
       return { hasCredentials: hasCredentials || false };
     });
 
+    // Get existing credentials for pre-filling form
+    session.setHandler('get_credentials', async () => {
+      // @ts-expect-error - Accessing app instance with specific methods
+      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+      return {
+        email: appCreds?.email || '',
+        password: appCreds?.password || '',
+      };
+    });
+
     // Verify credentials and meter access with provided or app-level credentials
     session.setHandler('verify_meter', async (data?: { email?: string; password?: string }) => {
       try {
@@ -73,7 +83,7 @@ export = class SiteMeterDriver extends Homey.Driver {
       return true;
     });
 
-    // Create device with credentials and optional site reference
+    // Create device with credentials and auto-discovered site reference
     session.setHandler('list_devices', async () => {
       // Get credentials from pairing data or app settings
       // @ts-expect-error - Accessing app instance with specific methods
@@ -81,7 +91,28 @@ export = class SiteMeterDriver extends Homey.Driver {
 
       const email = pairingData?.email || appCreds?.email || '';
       const password = pairingData?.password || appCreds?.password || '';
-      const reference = 'default-site';
+
+      // Auto-discover site reference from user's first electricity connection
+      let reference = '';
+      try {
+        const client = new FrankEnergieClient({
+          logger: (msg, ...args) => this.log(msg, ...args),
+        });
+        await client.login(email, password);
+        const siteRef = await client.getFirstElectricitySiteReference();
+
+        if (siteRef) {
+          reference = siteRef;
+          this.log(`Auto-discovered site reference: ${reference}`);
+        } else {
+          this.error('No electricity connection found for meter device');
+          throw new Error('No electricity connection found on this Frank Energie account. Meter device requires an active electricity connection.');
+        }
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        this.error('Failed to discover site reference:', errorMsg);
+        throw new Error(`Failed to discover site connection: ${errorMsg}`);
+      }
 
       return [
         {

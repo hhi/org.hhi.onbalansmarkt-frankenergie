@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_today_consumption",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Consumption Today",

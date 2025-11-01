@@ -134,6 +134,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     const requiredCapabilities = [
       'external_battery_daily_charged',
       'external_battery_daily_discharged',
+      'external_battery_current_charged',
+      'external_battery_current_discharged',
       'external_battery_percentage',
       'external_battery_count',
       'external_battery_selector',
@@ -142,16 +144,30 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Check if we need to refresh capabilities (v0.0.14+ added "id" field to capability definitions)
     const needsRefresh = await this.getStoreValue('capabilities_refreshed_v014') !== true;
 
+    // Track if any capabilities were added or refreshed
+    let capabilitiesModified = false;
+
     for (const capabilityId of requiredCapabilities) {
       if (!this.hasCapability(capabilityId)) {
         this.log(`Adding missing capability: ${capabilityId}`);
         await this.addCapability(capabilityId);
+        capabilitiesModified = true;
       } else if (needsRefresh) {
         // Refresh capability to load new definition with "id" field
         this.log(`Refreshing capability definition: ${capabilityId}`);
         await this.removeCapability(capabilityId);
         await this.addCapability(capabilityId);
+        capabilitiesModified = true;
       }
+    }
+
+    // Brief delay to allow UI to register new/refreshed capabilities
+    // This ensures pickers and other UI elements are properly initialized
+    if (capabilitiesModified) {
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 300);
+      });
+      this.log('UI synchronization delay applied after capability modifications');
     }
 
     // Initialize selector to 'none'
@@ -879,6 +895,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Update aggregated device capabilities
     await this.setCapabilityValue('external_battery_daily_charged', aggregated.dailyChargedKwh);
     await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
+    await this.setCapabilityValue('external_battery_current_charged', aggregated.currentChargedKwh);
+    await this.setCapabilityValue('external_battery_current_discharged', aggregated.currentDischargedKwh);
     await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
     await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
 
@@ -940,6 +958,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Update aggregated device capabilities
     await this.setCapabilityValue('external_battery_daily_charged', aggregated.dailyChargedKwh);
     await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
+    await this.setCapabilityValue('external_battery_current_charged', aggregated.currentChargedKwh);
+    await this.setCapabilityValue('external_battery_current_discharged', aggregated.currentDischargedKwh);
     await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
     await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
 
@@ -1094,6 +1114,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       resetPromises.push(this.setCapabilityValue('external_battery_count', 0));
       resetPromises.push(this.setCapabilityValue('external_battery_daily_charged', 0));
       resetPromises.push(this.setCapabilityValue('external_battery_daily_discharged', 0));
+      resetPromises.push(this.setCapabilityValue('external_battery_current_charged', 0));
+      resetPromises.push(this.setCapabilityValue('external_battery_current_discharged', 0));
       resetPromises.push(this.setCapabilityValue('external_battery_percentage', 0));
 
       // eslint-disable-next-line node/no-unsupported-features/es-builtins
@@ -1321,6 +1343,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       // For enum capabilities, we need to set the options with all possible values
       await this.setCapabilityOptions('external_battery_selector', {
         values: batteryValues,
+      });
+
+      // Brief delay to allow UI to synchronize with new picker options
+      // This helps ensure the picker is visible in the UI after updates
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 200);
       });
 
       this.log(`Updated battery selector with ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ') || 'none'}`);

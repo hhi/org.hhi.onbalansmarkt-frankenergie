@@ -1,0 +1,24 @@
+{
+  "id": "external_battery_current_charged",
+  "uiQuickAction": false,
+  "type": "number",
+  "title": {
+    "en": "Current total charged",
+    "nl": "Huidig totaal geladen"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh"
+  },
+  "decimals": 2,
+  "insights": true,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/external_battery_current_charged.svg",
+  "description": {
+    "en": "Current cumulative total charged from external batteries (lifetime)",
+    "nl": "Huidige cumulatieve totaal geladen van externe batterijen (lifetime)"
+  }
+}

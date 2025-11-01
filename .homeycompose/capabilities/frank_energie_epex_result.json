@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_epex_result",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "EPEX Result",

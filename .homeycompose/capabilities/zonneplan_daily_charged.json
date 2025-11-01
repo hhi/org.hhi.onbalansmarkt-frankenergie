@@ -1,5 +1,6 @@
 {
   "id": "zonneplan_daily_charged",
+  "uiQuickAction": false,
   "title": {
     "en": "Daily Charged",
     "nl": "Dagelijks Geladen"

@@ -1,5 +1,6 @@
 {
   "id": "zonneplan_cycle_count",
+  "uiQuickAction": false,
   "title": {
     "en": "Cycle Count",
     "nl": "Aantal Cycli"

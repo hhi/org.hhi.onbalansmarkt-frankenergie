@@ -268,6 +268,21 @@ export interface MonthSummaryData {
   gasExcluded: boolean;
 }
 
+export interface Connection {
+  id: string;
+  connectionId: string;
+  EAN: string;
+  segment: string; // "ELECTRICITY" | "GAS"
+  status: string;
+  contractStatus: string;
+}
+
+export interface MeData {
+  id: string;
+  email: string;
+  connections: Connection[];
+}
+
 export interface EnergyDifference {
   actualUsage: number;
   actualAverageUnitPrice: number;
@@ -1370,6 +1385,53 @@ export class FrankEnergieClient {
     const response = await this.query<{ costsDelta: CostsDeltaData }>(queryData);
     this.logger(`FrankEnergieClient: Retrieved costs delta for ${siteReference}`);
     return response.data.costsDelta;
+  }
+
+  /**
+   * Get user account information including connections/sites
+   * @returns User data with electricity and gas connections
+   */
+  async getMe(): Promise<MeData> {
+    const queryData = {
+      operationName: 'Me',
+      query: `
+        query Me {
+          me {
+            id
+            email
+            connections {
+              id
+              connectionId
+              EAN
+              segment
+              status
+              contractStatus
+            }
+          }
+        }
+      `,
+    };
+
+    const response = await this.query<{ me: MeData }>(queryData);
+    this.logger('FrankEnergieClient: Retrieved user account information');
+    return response.data.me;
+  }
+
+  /**
+   * Get first electricity connection ID for use as site reference
+   * @returns Connection ID of first electricity connection or null if none found
+   */
+  async getFirstElectricitySiteReference(): Promise<string | null> {
+    const meData = await this.getMe();
+    const electricityConnection = meData.connections.find((conn) => conn.segment === 'ELECTRICITY');
+
+    if (!electricityConnection) {
+      this.logger('FrankEnergieClient: No electricity connection found');
+      return null;
+    }
+
+    this.logger(`FrankEnergieClient: Found electricity connection: ${electricityConnection.id}`);
+    return electricityConnection.id;
   }
 
   /**

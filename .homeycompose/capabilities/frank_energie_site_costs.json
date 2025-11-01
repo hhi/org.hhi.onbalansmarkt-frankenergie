@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_site_costs",
+  "uiQuickAction": false,
   "title": {
     "en": "Site Costs",
     "nl": "Locatie Kosten"

@@ -203,6 +203,13 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
     this.schedulePollInterval(pollIntervalMs);
 
     this.log(`Polling interval started: will poll every ${pollIntervalMinutes} minutes`);
+
+    // Brief delay to allow UI to synchronize before marking device as available
+    // This ensures all capabilities and their options are fully rendered
+    await new Promise((resolve) => {
+      this.homey.setTimeout(resolve, 500);
+    });
+
     await this.setAvailable();
   }
 

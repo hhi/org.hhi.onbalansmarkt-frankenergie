@@ -25,6 +25,23 @@ export = class SmartBatteryDriver extends Homey.Driver {
       onbalansmarktApiKey: string;
     } | null = null;
 
+    // Check if app-level credentials are already configured
+    session.setHandler('check_credentials', async () => {
+      // @ts-expect-error - Accessing app instance with specific methods
+      const hasCredentials = this.homey.app.hasCredentials?.() as boolean | undefined;
+      return { hasCredentials: hasCredentials || false };
+    });
+
+    // Get existing credentials for pre-filling form
+    session.setHandler('get_credentials', async () => {
+      // @ts-expect-error - Accessing app instance with specific methods
+      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+      return {
+        email: appCreds?.email || '',
+        password: appCreds?.password || '',
+      };
+    });
+
     // Verify credentials and check for batteries
     session.setHandler('verify_credentials', async (data: { email: string; password: string }) => {
       try {

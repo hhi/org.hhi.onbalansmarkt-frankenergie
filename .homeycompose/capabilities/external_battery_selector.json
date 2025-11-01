@@ -1,5 +1,6 @@
 {
   "id": "external_battery_selector",
+  "uiQuickAction": false,
   "type": "enum",
   "title": {
     "en": "External Battery Selector",

@@ -1,5 +1,6 @@
 {
   "id": "external_battery_count",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Battery # flow metrics",

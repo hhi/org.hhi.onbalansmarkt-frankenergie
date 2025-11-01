@@ -1,5 +1,6 @@
 {
   "id": "onbalansmarkt_overall_rank",
+  "uiQuickAction": false,
   "title": {
     "en": "Overall Ranking",
     "nl": "Totale Ranglijst"

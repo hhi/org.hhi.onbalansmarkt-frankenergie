@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_max_market_price_today",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Highest Market Price Today",

@@ -124,6 +124,122 @@ const modeInfo = TradingModeDetector.detectTradingMode(battery.settings);
 - **Type Safety**: Full TypeScript interfaces for all API responses
 - **Logging Integration**: All services support Homey's logging system
 
+### Credential Management Architecture
+
+The app implements a sophisticated credential management system to improve user experience during device pairing:
+
+#### App-Level Credential Storage
+
+Frank Energie credentials (email/password) are stored at the **app level** rather than per-device:
+
+- **Centralized Storage**: `this.homey.app.setCredentials(email, password)` stores credentials accessible to all drivers
+- **Single Sign-On UX**: Users only need to enter Frank Energie credentials once, not for each device
+- **Backward Compatibility**: Credentials are still stored in device settings for existing installations
+
+**App Methods:**
+```typescript
+// In app.ts
+setCredentials(email: string, password: string): void
+getCredentials(): { email: string; password: string } | null
+hasCredentials(): boolean
+```
+
+#### Credential Pre-Filling in Pairing Flows
+
+All Frank Energie drivers implement credential pre-filling for improved UX:
+
+**Battery Driver** ([drivers/frank-energie-battery](drivers/frank-energie-battery)):
+- Pre-fills email/password when app-level credentials exist
+- Makes email/password fields optional (not required) when pre-filled
+- Focuses on API key field (the only required new input)
+- User experience: Add first device → enter all credentials; add subsequent devices → only enter API key
+
+**Meter Driver** ([drivers/frank-energie-meter](drivers/frank-energie-meter)):
+- Pre-fills email/password when app-level credentials exist
+- Shows form with pre-filled credentials for verification
+- User can update credentials if needed before proceeding
+
+**EV/PV Drivers** ([drivers/frank-energie-ev](drivers/frank-energie-ev), [drivers/frank-energie-pv](drivers/frank-energie-pv)):
+- Pre-fill credentials from app-level storage
+- User only needs to verify/update if account changed
+
+#### Driver-Specific Settings
+
+Each driver only exposes settings relevant to its functionality:
+
+**Battery Driver Settings:**
+- `frank_energie_email`: Frank Energie account email
+- `frank_energie_password`: Frank Energie account password
+- `onbalansmarkt_api_key`: **Required** - API key for Onbalansmarkt.com integration
+- `poll_interval`: Data polling frequency
+- `send_measurements`: Toggle auto-send to Onbalansmarkt
+
+**Meter Driver Settings:**
+- `frank_energie_email`: Frank Energie account email
+- `frank_energie_password`: Frank Energie account password
+- `site_reference`: Site/connection identifier (auto-discovered during pairing)
+- `poll_interval`: Data polling frequency
+- ❌ No Onbalansmarkt API key (meter doesn't send measurements)
+
+**Site Reference Auto-Discovery:**
+The meter driver automatically discovers the user's electricity connection during pairing by querying the Frank Energie `Me` API. The first electricity connection is used as the site reference. This eliminates the need for users to manually configure site identifiers.
+
+**EV Driver Settings:**
+- `frank_energie_email`: Frank Energie account email
+- `frank_energie_password`: Frank Energie account password
+- `enode_location_id`: Enode location identifier
+- `poll_interval`: Data polling frequency
+- ❌ No Onbalansmarkt API key (EV doesn't send measurements)
+
+**PV Driver Settings:**
+- `frank_energie_email`: Frank Energie account email
+- `frank_energie_password`: Frank Energie account password
+- `pv_system_id`: Solar system identifier
+- `poll_interval`: Data polling frequency
+- ❌ No Onbalansmarkt API key (PV doesn't send measurements)
+
+#### Pairing Session Handlers
+
+All drivers implement consistent session handlers:
+
+**check_credentials** (Battery, Meter, EV, PV):
+```typescript
+session.setHandler('check_credentials', async () => {
+  const hasCredentials = this.homey.app.hasCredentials?.() as boolean | undefined;
+  return { hasCredentials: hasCredentials || false };
+});
+```
+
+**get_credentials** (Battery, Meter):
+```typescript
+session.setHandler('get_credentials', async () => {
+  const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+  return {
+    email: appCreds?.email || '',
+    password: appCreds?.password || '',
+  };
+});
+```
+
+**verify_credentials/verify_meter** (Battery, Meter):
+- Validates Frank Energie credentials via API
+- Stores credentials at app level on successful verification
+- Returns battery count (Battery) or success status (Meter)
+
+#### Pairing Flow Pattern
+
+**Standard Flow:**
+1. User initiates device pairing
+2. Login view calls `get_credentials` handler
+3. If credentials exist: Pre-fill form fields and show
+4. If no credentials: Show empty form
+5. User submits (with pre-filled or new credentials)
+6. Driver verifies credentials via Frank Energie API
+7. On success: Store at app level via `setCredentials()`
+8. Proceed to device selection/configuration
+
+**Important:** All drivers use **custom login.html files** (not templates) to ensure consistent UX and proper credential pre-filling functionality.
+
 ### Key Concepts
 
 - **Capabilities**: The app exposes multiple capabilities for the Frank Energie battery driver including:
@@ -426,6 +542,52 @@ and better user experience."
   - Driver class and platform settings
 
 **Rule**: If a user can change it in device settings UI, it belongs in `driver.settings.compose.json`
+
+#### Pairing Flow Configuration (CRITICAL)
+
+**Custom HTML vs Templates:**
+
+All Frank Energie drivers use **custom HTML files** for pairing views, NOT template references:
+
+```json
+// ✅ CORRECT - Custom login view
+{
+  "pair": [
+    {
+      "id": "login"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    }
+  ]
+}
+
+// ❌ WRONG - Template reference causes unknown_error_getting_file
+{
+  "pair": [
+    {
+      "id": "login",
+      "template": "login"  // DON'T DO THIS!
+    }
+  ]
+}
+```
+
+**Rules:**
+- ✅ Login views use custom HTML in `drivers/{driver}/pair/login.html`
+- ✅ Do NOT add `"template": "login"` to login pair steps
+- ✅ Templates like `list_devices` and `add_devices` are standard Homey templates
+- ❌ Adding template reference when custom HTML exists causes pairing failures
+
+**Why Custom HTML:**
+- Enables credential pre-filling functionality
+- Allows custom form validation and UX improvements
+- Supports app-level credential checking
+- Provides consistent behavior across all drivers
 
 ### Configuration File Details
 

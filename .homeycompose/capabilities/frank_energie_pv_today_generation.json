@@ -1,5 +1,6 @@
 {
   "id": "frank_energie_pv_today_generation",
+  "uiQuickAction": false,
   "type": "number",
   "title": {
     "en": "Generation Today",

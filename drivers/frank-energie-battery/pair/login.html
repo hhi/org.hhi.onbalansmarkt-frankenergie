@@ -10,7 +10,11 @@
     <h1 data-i18n="pair.battery.login.title">Frank Energie</h1>
     <p data-i18n="pair.battery.login.subtitle">Inloggen met je Frank Energie account</p>
 
-    <form class="homey-form">
+    <div id="checking" style="text-align: center; padding: 20px;">
+      <p data-i18n="pair.login.checking">Checking credentials...</p>
+    </div>
+
+    <form class="homey-form" style="display: none;">
       <div class="homey-form-group">
         <label class="homey-form-label" for="email" data-i18n="pair.login.email">E-mailadres</label>
         <input id="email" type="email" required class="homey-form-input" placeholder="jij@example.com" />
@@ -36,11 +40,44 @@
   <script>
     Homey.setTitle(Homey.__('pair.battery.login.title'));
 
+    const checkingDiv = document.getElementById('checking');
     const form = document.querySelector('form');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const apiKeyInput = document.getElementById('apiKey');
     const submitButton = form.querySelector('button[type="submit"]');
+
+    // Check for existing credentials and pre-fill form
+    async function checkAndPreFillCredentials() {
+      try {
+        const credsResult = await Homey.emit('get_credentials', {});
+
+        if (credsResult && credsResult.email && credsResult.password) {
+          // Pre-fill credentials
+          emailInput.value = credsResult.email;
+          passwordInput.value = credsResult.password;
+
+          // Make credentials optional since they're pre-filled
+          emailInput.required = false;
+          passwordInput.required = false;
+
+          // Show form and focus on API key
+          checkingDiv.style.display = 'none';
+          form.style.display = 'block';
+          apiKeyInput.focus();
+        } else {
+          // No existing credentials, show empty form
+          checkingDiv.style.display = 'none';
+          form.style.display = 'block';
+          emailInput.focus();
+        }
+      } catch (error) {
+        // Error checking credentials, show empty form
+        checkingDiv.style.display = 'none';
+        form.style.display = 'block';
+        emailInput.focus();
+      }
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -98,7 +135,8 @@
       }
     });
 
-    emailInput.focus();
+    // Start credential check on page load
+    checkAndPreFillCredentials();
   </script>
 </body>
 </html>
