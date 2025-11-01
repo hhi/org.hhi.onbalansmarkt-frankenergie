@@ -1,4 +1,9 @@
 {
+  "0.0.32": {
+    "en": "Picker updates optimized with debouncing and change detection. Updates only occur when battery list actually changes, preventing UI race conditions from rapid external battery data feeds.",
+    "nl": "Picker updates geoptimaliseerd met debouncing en wijzigingsdetectie. Updates vinden alleen plaats wanneer de batterijlijst daadwerkelijk wijzigt, wat UI race conditions van snelle externe batterij data feeds voorkomt."
+  },
+
   "0.0.31": {
     "en": "Pickers and capability controls now display correctly after device pairing. Added current total charged and discharged sensors showing lifetime cumulative battery values.",
     "nl": "Pickers en capability bedieningen worden nu correct weergegeven na het koppelen van apparaten. Huidige totaal geladen en geleverd sensoren toegevoegd die lifetime cumulatieve batterijwaarden tonen."

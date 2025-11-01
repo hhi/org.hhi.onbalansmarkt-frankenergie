@@ -44,6 +44,11 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   // Manual baseline reset timer (scheduled for 23:59)
   private manualResetTimeout: NodeJS.Timeout | null = null;
 
+  // Picker update debouncing (prevent UI race conditions from rapid updates)
+  private pickerUpdateTimeout: NodeJS.Timeout | null = null;
+  private pickerUpdatePending: boolean = false;
+  private lastPickerHash: string = '';
+
   /**
    * Initialize battery-specific clients
    */
@@ -1270,8 +1275,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       this.log(`Persisting to store: ${JSON.stringify(stored)}`);
       await this.setStoreValue('externalBatteries', stored);
 
-      // Update picker capability
-      await this.updateBatterySelectorCapability();
+      // Schedule debounced picker update (prevent race conditions from rapid updates)
+      this.schedulePickerUpdate();
     } else if (typeChanged) {
       this.log(`Battery ${batteryId} type changed from ${previousType} to ${type}`);
       this.externalBatteries.set(batteryId, type);
@@ -1282,11 +1287,42 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       this.log(`Persisting to store: ${JSON.stringify(stored)}`);
       await this.setStoreValue('externalBatteries', stored);
 
-      // Update picker capability
-      await this.updateBatterySelectorCapability();
+      // Schedule debounced picker update (prevent race conditions from rapid updates)
+      this.schedulePickerUpdate();
     } else {
       this.log(`Battery ${batteryId} already registered (${type}), skipping registration`);
     }
+  }
+
+  /**
+   * Schedule a debounced picker update
+   * Prevents UI race conditions when rapid updates arrive from external batteries
+   *
+   * How it works:
+   * - First update request: Schedule update in 2 seconds
+   * - Subsequent updates within 2 seconds: Cancel previous timer, reschedule for 2 seconds
+   * - Result: Picker only updates after 2 seconds of inactivity
+   */
+  private schedulePickerUpdate(): void {
+    // Cancel any pending update
+    if (this.pickerUpdateTimeout) {
+      this.homey.clearTimeout(this.pickerUpdateTimeout);
+      this.pickerUpdateTimeout = null;
+    }
+
+    // Mark update as pending
+    this.pickerUpdatePending = true;
+    this.log('Picker update scheduled (2 second debounce)');
+
+    // Schedule update after 2 seconds of inactivity
+    this.pickerUpdateTimeout = this.homey.setTimeout(async () => {
+      if (this.pickerUpdatePending) {
+        this.log('Executing debounced picker update');
+        await this.updateBatterySelectorCapability();
+        this.pickerUpdatePending = false;
+        this.pickerUpdateTimeout = null;
+      }
+    }, 2000); // 2 second debounce delay
   }
 
   /**
@@ -1300,6 +1336,22 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     this.log(`updateBatterySelectorCapability called. externalBatteries Map size: ${this.externalBatteries.size}`);
     this.log(`Current Map contents: ${JSON.stringify(Object.fromEntries(this.externalBatteries))}`);
+
+    // Create hash of battery IDs and types (excluding timestamps)
+    // This determines if the picker options have actually changed
+    const batteryHash = Array.from(this.externalBatteries.entries())
+      .sort((a, b) => a[0].localeCompare(b[0])) // Sort for consistent hash
+      .map(([id, type]) => `${id}:${type}`)
+      .join('|');
+
+    // Skip update if nothing changed (same batteries, same types)
+    if (batteryHash === this.lastPickerHash) {
+      this.log('Picker options unchanged, skipping UI update');
+      return;
+    }
+
+    this.log(`Picker options changed. Old hash: "${this.lastPickerHash}", New hash: "${batteryHash}"`);
+    this.lastPickerHash = batteryHash;
 
     const batteryValues: Array<{ id: string; title: { en: string; nl: string } }> = [];
 
@@ -1340,16 +1392,37 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     this.log(`Final picker values to set: ${JSON.stringify(batteryValues, null, 2)}`);
 
     try {
-      // For enum capabilities, we need to set the options with all possible values
+      // Get current value before updating options
+      const currentValue = await this.getCapabilityValue('external_battery_selector') as string;
+      this.log(`Current picker value before update: ${currentValue}`);
+
+      // Reset to 'none' first to force UI refresh
+      await this.setCapabilityValue('external_battery_selector', 'none');
+
+      // Small delay to allow UI to process the reset
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 100);
+      });
+
+      // Update the picker options
       await this.setCapabilityOptions('external_battery_selector', {
         values: batteryValues,
       });
 
-      // Brief delay to allow UI to synchronize with new picker options
-      // This helps ensure the picker is visible in the UI after updates
+      // Longer delay to allow UI to synchronize with new picker options
+      // This ensures the picker is fully rendered before restoring value
       await new Promise((resolve) => {
-        this.homey.setTimeout(resolve, 200);
+        this.homey.setTimeout(resolve, 500);
       });
+
+      // Restore previous value if it still exists in the new options
+      const valueStillExists = batteryValues.some((v) => v.id === currentValue);
+      if (valueStillExists && currentValue !== 'none') {
+        await this.setCapabilityValue('external_battery_selector', currentValue);
+        this.log(`Restored picker value to: ${currentValue}`);
+      } else {
+        this.log(`Picker value remains: none (previous value '${currentValue}' no longer valid)`);
+      }
 
       this.log(`Updated battery selector with ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ') || 'none'}`);
     } catch (error) {
@@ -1402,6 +1475,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       }
 
       this.log('Cancelled manual baseline reset timer');
+    }
+
+    // Cancel pending picker update if scheduled
+    if (this.pickerUpdateTimeout) {
+      this.homey.clearTimeout(this.pickerUpdateTimeout);
+      this.pickerUpdateTimeout = null;
+      this.pickerUpdatePending = false;
+      this.log('Cancelled pending picker update');
     }
 
     if (this.externalBatteryMetrics) {
