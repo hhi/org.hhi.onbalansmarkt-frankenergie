@@ -69,6 +69,21 @@
           "en": "How often to fetch data from Frank Energie. Limited to 30-60 minutes due to API rate limits (max 100 calls/day)",
           "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie. Beperkt tot 30-60 minuten vanwege API-limieten (max 100 aanroepen/dag)"
         }
+      },
+      {
+        "id": "poll_start_minute",
+        "type": "number",
+        "label": {
+          "en": "Start Minute",
+          "nl": "Start Minuut"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 59,
+        "hint": {
+          "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:45 (with 30-min interval)",
+          "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:45 (met 30-min interval)"
+        }
       }
     ]
   }

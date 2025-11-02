@@ -179,14 +179,79 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   }
 
   /**
+   * Calculate delay to next polling alignment point
+   * @param pollIntervalMinutes Polling interval in minutes
+   * @param startMinute Minute of the hour to align to (0-59)
+   * @returns Delay in milliseconds until next alignment
+   */
+  private calculateAlignmentDelay(pollIntervalMinutes: number, startMinute: number): number {
+    const now = new Date();
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+    const currentMs = now.getMilliseconds();
+
+    // Calculate minutes until next alignment point
+    let minutesUntilAlignment: number;
+
+    if (pollIntervalMinutes >= 60) {
+      // For hourly or longer intervals, align to the start minute
+      minutesUntilAlignment = (startMinute - currentMinute + 60) % 60;
+      // If we're exactly at the alignment and less than 5 seconds past, use it
+      // Otherwise wait for next cycle
+      if (minutesUntilAlignment === 0 && currentSecond >= 5) {
+        minutesUntilAlignment = 60;
+      }
+    } else {
+      // For sub-hourly intervals, find next alignment point
+      // Example: interval=5, start=3 → aligns at 3, 8, 13, 18, 23, 28, 33, 38, 43, 48, 53, 58
+      const minutesSinceAlignment = (currentMinute - startMinute + 60) % pollIntervalMinutes;
+      minutesUntilAlignment = (pollIntervalMinutes - minutesSinceAlignment) % pollIntervalMinutes;
+      // If we're exactly at the alignment and less than 5 seconds past, use it
+      if (minutesUntilAlignment === 0 && currentSecond >= 5) {
+        minutesUntilAlignment = pollIntervalMinutes;
+      }
+    }
+
+    // Convert to milliseconds and subtract current seconds/ms to align precisely
+    const delayMs = (minutesUntilAlignment * 60 * 1000) - (currentSecond * 1000) - currentMs;
+
+    return Math.max(0, delayMs);
+  }
+
+  /**
    * Setup polling interval
    */
   protected async setupPolling(): Promise<void> {
     const pollIntervalSetting = this.getSetting('poll_interval');
+    const pollStartMinuteSetting = this.getSetting('poll_start_minute');
+
     this.log(`Raw poll_interval setting: ${JSON.stringify(pollIntervalSetting)} (type: ${typeof pollIntervalSetting})`);
+    this.log(`Raw poll_start_minute setting: ${JSON.stringify(pollStartMinuteSetting)} (type: ${typeof pollStartMinuteSetting})`);
 
     const pollIntervalMinutes = this.validatePollInterval(pollIntervalSetting);
     const pollIntervalMs = pollIntervalMinutes * 60 * 1000;
+
+    // Validate and clamp start minute
+    let startMinute = 0;
+    if (typeof pollStartMinuteSetting === 'number') {
+      startMinute = Math.max(0, Math.min(59, Math.round(pollStartMinuteSetting)));
+    }
+
+    // Calculate delay to next alignment point
+    const alignmentDelay = this.calculateAlignmentDelay(pollIntervalMinutes, startMinute);
+
+    if (alignmentDelay > 0) {
+      const delaySeconds = Math.round(alignmentDelay / 1000);
+      this.log(`Waiting ${delaySeconds}s to align polling to minute ${startMinute}`);
+
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, alignmentDelay);
+      });
+
+      this.log('Alignment wait completed, starting polling');
+    } else {
+      this.log(`Already aligned to minute ${startMinute}, starting polling immediately`);
+    }
 
     this.log(`Setting up polling with ${pollIntervalMinutes} minute interval (${pollIntervalMs}ms)`);
 
@@ -202,7 +267,7 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     this.schedulePollInterval(pollIntervalMs);
 
-    this.log(`Polling interval started: will poll every ${pollIntervalMinutes} minutes`);
+    this.log(`Polling interval started: will poll every ${pollIntervalMinutes} minutes aligned to minute ${startMinute}`);
 
     // Brief delay to allow UI to synchronize before marking device as available
     // This ensures all capabilities and their options are fully rendered

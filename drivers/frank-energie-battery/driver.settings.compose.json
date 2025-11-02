@@ -79,6 +79,21 @@
         }
       },
       {
+        "id": "poll_start_minute",
+        "type": "number",
+        "label": {
+          "en": "Start Minute",
+          "nl": "Start Minuut"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 59,
+        "hint": {
+          "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:20, XX:25, etc.",
+          "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:20, XX:25, etc."
+        }
+      },
+      {
         "id": "send_measurements",
         "type": "checkbox",
         "label": {

@@ -1,4 +1,9 @@
 {
+  "0.0.36": {
+    "en": "Polling alignment setting added. Configure start minute (0-59) to align polling to specific times. Example: start minute 15 with 5-minute interval polls at XX:15, XX:20, XX:25. Prevents simultaneous API calls across devices.",
+    "nl": "Polling uitlijning instelling toegevoegd. Configureer start minuut (0-59) om polling uit te lijnen op specifieke tijden. Voorbeeld: start minuut 15 met 5-minuten interval pollt op XX:15, XX:20, XX:25. Voorkomt gelijktijdige API aanroepen over apparaten."
+  },
+
   "0.0.35": {
     "en": "Polling intervals now independent per driver. Battery, EV, and PV devices accept 1-1440 minutes (default: 5 minutes). Meter device limited to 30 or 60 minutes (default: 60 minutes) due to Frank Energie API rate limits.",
     "nl": "Opvraagintervallen nu onafhankelijk per driver. Batterij, EV en PV apparaten accepteren 1-1440 minuten (standaard: 5 minuten). Meter apparaat beperkt tot 30 of 60 minuten (standaard: 60 minuten) vanwege Frank Energie API limieten."
