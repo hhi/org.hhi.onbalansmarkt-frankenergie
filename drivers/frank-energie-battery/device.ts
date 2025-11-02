@@ -634,6 +634,11 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       const batteryCharge = await this.getStoreValue('lastBatteryCharge') as number || 0;
       const uploadTimestamp = new Date();
 
+      // Get external battery metrics (rounded to whole numbers)
+      const externalBatteryPercentage = this.getCapabilityValue('external_battery_percentage') as number | null;
+      const externalBatteryDailyCharged = this.getCapabilityValue('external_battery_daily_charged') as number | null;
+      const externalBatteryDailyDischarged = this.getCapabilityValue('external_battery_daily_discharged') as number | null;
+
       await this.onbalansmarktClient.sendMeasurement({
         timestamp: uploadTimestamp,
         batteryResult: results.periodTradingResult,
@@ -642,6 +647,10 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         batteryResultImbalance: results.periodImbalanceResult,
         batteryResultCustom: results.periodFrankSlim,
         mode,
+        // External battery metrics (whole numbers)
+        batteryCharge: externalBatteryPercentage !== null ? Math.round(externalBatteryPercentage) : null,
+        chargedToday: externalBatteryDailyCharged !== null ? Math.round(externalBatteryDailyCharged) : null,
+        dischargedToday: externalBatteryDailyDischarged !== null ? Math.round(externalBatteryDailyDischarged) : null,
       });
 
       // Update last upload timestamp capability

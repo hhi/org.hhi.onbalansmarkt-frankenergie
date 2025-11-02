@@ -1,4 +1,9 @@
 {
+  "0.0.37": {
+    "en": "Measurements to Onbalansmarkt now include external battery metrics: average charge percentage, daily charged kWh, and daily discharged kWh (all rounded to whole numbers).",
+    "nl": "Metingen naar Onbalansmarkt bevatten nu externe batterij metrieken: gemiddeld laadpercentage, dagelijks geladen kWh, en dagelijks geleverd kWh (allemaal afgerond op hele getallen)."
+  },
+
   "0.0.36": {
     "en": "Polling alignment setting added. Configure start minute (0-59) to align polling to specific times. Example: start minute 15 with 5-minute interval polls at XX:15, XX:20, XX:25. Prevents simultaneous API calls across devices.",
     "nl": "Polling uitlijning instelling toegevoegd. Configureer start minuut (0-59) om polling uit te lijnen op specifieke tijden. Voorbeeld: start minuut 15 met 5-minuten interval pollt op XX:15, XX:20, XX:25. Voorkomt gelijktijdige API aanroepen over apparaten."
