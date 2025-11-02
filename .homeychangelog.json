@@ -1,4 +1,9 @@
 {
+  "0.0.35": {
+    "en": "Polling intervals now independent per driver. Battery, EV, and PV devices accept 1-1440 minutes (default: 5 minutes). Meter device limited to 30 or 60 minutes (default: 60 minutes) due to Frank Energie API rate limits.",
+    "nl": "Opvraagintervallen nu onafhankelijk per driver. Batterij, EV en PV apparaten accepteren 1-1440 minuten (standaard: 5 minuten). Meter apparaat beperkt tot 30 of 60 minuten (standaard: 60 minuten) vanwege Frank Energie API limieten."
+  },
+
   "0.0.34": {
     "en": "Added Onbalansmarkt reported charged and discharged sensors showing battery energy values as recorded by the Onbalansmarkt API. These sensors enable verification of data integrity between local measurements and API-reported values.",
     "nl": "Onbalansmarkt gerapporteerd geladen en geleverd sensoren toegevoegd die batterij energie waarden tonen zoals geregistreerd door de Onbalansmarkt API. Deze sensoren maken verificatie mogelijk van data integriteit tussen lokale metingen en API-gerapporteerde waarden."

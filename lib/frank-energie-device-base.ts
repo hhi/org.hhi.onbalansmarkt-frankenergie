@@ -146,15 +146,15 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   /**
    * Validate and sanitize poll interval setting
    * @param interval User-provided interval in minutes (can be string or number)
-   * @returns Validated interval clamped to 1-60 minutes range
+   * @returns Validated interval clamped to 1-1440 minutes range
    */
   private validatePollInterval(interval: unknown): number {
-    // Default to 15 minutes if invalid (matches default in settings)
-    const defaultInterval = 15;
+    // Default to 5 minutes if invalid (safe fallback)
+    const defaultInterval = 5;
 
     let numericInterval: number;
 
-    // Handle string values from dropdown settings
+    // Handle string values from dropdown settings (Meter driver)
     if (typeof interval === 'string') {
       numericInterval = parseInt(interval, 10);
       if (Number.isNaN(numericInterval)) {
@@ -168,11 +168,11 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       return defaultInterval;
     }
 
-    // Clamp to valid range (1-60 minutes)
-    const clamped = Math.max(1, Math.min(60, Math.round(numericInterval)));
+    // Clamp to valid range (1-1440 minutes = 1 day)
+    const clamped = Math.max(1, Math.min(1440, Math.round(numericInterval)));
 
     if (clamped !== numericInterval) {
-      this.log(`Poll interval ${numericInterval} out of range [1-60], clamped to ${clamped} minutes`);
+      this.log(`Poll interval ${numericInterval} out of range [1-1440], clamped to ${clamped} minutes`);
     }
 
     return clamped;

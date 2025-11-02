@@ -35,7 +35,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   private externalBatteryMetrics?: BatteryMetricsStore;
 
   // External battery tracking (from flow cards)
-  private externalBatteries: Map<string, 'total' | 'daily'> = new Map();
+  // Stores battery ID -> { type, activationTime (timestamp when first added) }
+  private externalBatteries: Map<string, { type: 'total' | 'daily'; activationTime: number }> = new Map();
 
   // Battery-specific state tracking
   private previousBatteryCount: number = 0;
@@ -73,6 +74,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     // Migrate settings for existing devices
     await this.migrateSettings();
+
+    // Ensure Onbalansmarkt reported capabilities exist (migration for v0.0.34+)
+    await this.ensureOnbalansmarktReportedCapabilities();
 
     // Ensure external battery capabilities exist (migration for existing devices)
     await this.ensureExternalBatteryAggregatedCapabilities();
@@ -128,6 +132,37 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     if (Object.keys(updates).length > 0) {
       await this.setSettings(updates);
       this.log('Settings migration completed:', Object.keys(updates));
+    }
+  }
+
+  /**
+   * Ensure Onbalansmarkt reported capabilities exist
+   * This is needed for migration of existing devices that were paired before v0.0.34
+   */
+  private async ensureOnbalansmarktReportedCapabilities(): Promise<void> {
+    const requiredCapabilities = [
+      'onbalansmarkt_reported_charged',
+      'onbalansmarkt_reported_discharged',
+    ];
+
+    let capabilitiesAdded = false;
+
+    for (const capabilityId of requiredCapabilities) {
+      if (!this.hasCapability(capabilityId)) {
+        this.log(`Adding missing Onbalansmarkt capability: ${capabilityId}`);
+        await this.addCapability(capabilityId);
+        capabilitiesAdded = true;
+      }
+    }
+
+    if (capabilitiesAdded) {
+      // Brief delay to allow UI to register new capabilities
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 300);
+      });
+      this.log('Onbalansmarkt reported capabilities added');
+    } else {
+      this.log('Onbalansmarkt reported capabilities already exist');
     }
   }
 
@@ -1245,13 +1280,27 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
    * Load external batteries from device store
    */
   private async loadExternalBatteries(): Promise<void> {
-    const stored = (await this.getStoreValue('externalBatteries')) as Record<string, 'total' | 'daily'> | undefined;
+    const stored = (await this.getStoreValue('externalBatteries')) as
+      Record<string, 'total' | 'daily' | { type: 'total' | 'daily'; activationTime: number }> | undefined;
+
     if (stored && Object.keys(stored).length > 0) {
-      this.externalBatteries = new Map(Object.entries(stored));
+      // Convert to new format (handle migration from old format)
+      for (const [id, value] of Object.entries(stored)) {
+        if (typeof value === 'string') {
+          // Old format: just the type string - add current time as activation time
+          this.externalBatteries.set(id, {
+            type: value,
+            activationTime: Date.now(),
+          });
+        } else {
+          // New format: already has type and activationTime
+          this.externalBatteries.set(id, value);
+        }
+      }
 
       // Detailed logging of what was loaded
       const batteryDetails = Array.from(this.externalBatteries.entries())
-        .map(([id, type]) => `${id} (${type})`)
+        .map(([id, data]) => `${id} (${data.type})`)
         .join(', ');
 
       this.log(`Loaded ${this.externalBatteries.size} external batteries from store: ${batteryDetails}`);
@@ -1270,12 +1319,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
    */
   private async registerExternalBattery(batteryId: string, type: 'total' | 'daily'): Promise<void> {
     const isNewBattery = !this.externalBatteries.has(batteryId);
-    const previousType = this.externalBatteries.get(batteryId);
-    const typeChanged = previousType && previousType !== type;
+    const previousData = this.externalBatteries.get(batteryId);
+    const typeChanged = previousData && previousData.type !== type;
 
     if (isNewBattery) {
-      this.externalBatteries.set(batteryId, type);
-      this.log(`Registered external battery: ${batteryId} (${type})`);
+      // New battery: capture activation time
+      const activationTime = Date.now();
+      this.externalBatteries.set(batteryId, { type, activationTime });
+      this.log(`Registered external battery: ${batteryId} (${type}) at ${new Date(activationTime).toLocaleTimeString()}`);
       this.log(`Map now contains ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ')}`);
 
       // Persist to store
@@ -1286,8 +1337,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       // Schedule debounced picker update (prevent race conditions from rapid updates)
       this.schedulePickerUpdate();
     } else if (typeChanged) {
-      this.log(`Battery ${batteryId} type changed from ${previousType} to ${type}`);
-      this.externalBatteries.set(batteryId, type);
+      // Type changed: preserve original activation time
+      this.log(`Battery ${batteryId} type changed from ${previousData.type} to ${type}`);
+      this.externalBatteries.set(batteryId, {
+        type,
+        activationTime: previousData.activationTime, // Keep original activation time
+      });
       this.log(`Map now contains ${this.externalBatteries.size} batteries: ${Array.from(this.externalBatteries.keys()).join(', ')}`);
 
       // Persist to store
@@ -1349,7 +1404,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // This determines if the picker options have actually changed
     const batteryHash = Array.from(this.externalBatteries.entries())
       .sort((a, b) => a[0].localeCompare(b[0])) // Sort for consistent hash
-      .map(([id, type]) => `${id}:${type}`)
+      .map(([id, data]) => `${id}:${data.type}`)
       .join('|');
 
     // Skip update if nothing changed (same batteries, same types)
@@ -1364,40 +1419,35 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     const batteryValues: Array<{ id: string; title: { en: string; nl: string } }> = [];
 
     // Add all registered batteries
-    for (const [batteryId, type] of this.externalBatteries.entries()) {
-      // Get last update time for this battery
-      let timeString = '';
-      if (this.externalBatteryMetrics) {
-        const lastUpdate = await this.externalBatteryMetrics.getLastUpdateTime(batteryId);
-        if (lastUpdate) {
-          const date = new Date(lastUpdate);
-          const hours = String(date.getHours()).padStart(2, '0');
-          const minutes = String(date.getMinutes()).padStart(2, '0');
-          const seconds = String(date.getSeconds()).padStart(2, '0');
-          timeString = `; ${hours}:${minutes}:${seconds}`;
-        }
-      }
+    for (const [batteryId, data] of this.externalBatteries.entries()) {
+      // Use stored activation time (fixed timestamp from when battery was first added)
+      const date = new Date(data.activationTime);
+      const day = String(date.getDate()).padStart(2, '0');
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = monthNames[date.getMonth()];
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      const dateTimeString = `; ${day}-${month} ${hours}:${minutes}:${seconds}`;
 
       batteryValues.push({
         id: batteryId,
         title: {
-          en: `${batteryId} (${type}${timeString})`,
-          nl: `${batteryId} (${type}${timeString})`,
+          en: `${batteryId} (${data.type}${dateTimeString})`,
+          nl: `${batteryId} (${data.type}${dateTimeString})`,
         },
       });
-      this.log(`  Adding to picker: ${batteryId} (${type}${timeString})`);
+      this.log(`  Adding to picker: ${batteryId} (${data.type}${dateTimeString})`);
     }
 
     // Always add "none" option first
-    // Get activation time from first battery registration
+    // Get earliest activation time from all batteries
     let activationTime = '';
-    if (this.externalBatteries.size > 0 && this.externalBatteryMetrics) {
-      // Find earliest activation time from all batteries
+    if (this.externalBatteries.size > 0) {
       let earliestTime: number | null = null;
-      for (const batteryId of this.externalBatteries.keys()) {
-        const lastUpdate = await this.externalBatteryMetrics.getLastUpdateTime(batteryId);
-        if (lastUpdate && (earliestTime === null || lastUpdate < earliestTime)) {
-          earliestTime = lastUpdate;
+      for (const data of this.externalBatteries.values()) {
+        if (earliestTime === null || data.activationTime < earliestTime) {
+          earliestTime = data.activationTime;
         }
       }
 
@@ -1413,8 +1463,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     batteryValues.unshift({
       id: 'none',
       title: {
-        en: `— Commence activation of batteries —${activationTime}`,
-        nl: `— Activering van batterijen —${activationTime}`,
+        en: `— Participating batteries —${activationTime}`,
+        nl: `— Participerende batterijen —${activationTime}`,
       },
     });
 
