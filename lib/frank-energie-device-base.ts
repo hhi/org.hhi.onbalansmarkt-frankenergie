@@ -354,12 +354,29 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
           );
         }
 
+        // Update reported battery charged
+        if (profile.resultToday.batteryCharged !== null && profile.resultToday.batteryCharged !== undefined) {
+          updatePromises.push(
+            this.setCapabilityValue('onbalansmarkt_reported_charged', profile.resultToday.batteryCharged)
+              .catch((error) => this.error('Failed to update reported charged:', error)),
+          );
+        }
+
+        // Update reported battery discharged
+        if (profile.resultToday.batteryDischarged !== null && profile.resultToday.batteryDischarged !== undefined) {
+          updatePromises.push(
+            this.setCapabilityValue('onbalansmarkt_reported_discharged', profile.resultToday.batteryDischarged)
+              .catch((error) => this.error('Failed to update reported discharged:', error)),
+          );
+        }
+
         // eslint-disable-next-line node/no-unsupported-features/es-builtins
         await Promise.allSettled(updatePromises);
 
         this.log(
           `Rankings updated - Overall: #${profile.resultToday.overallRank}, `
-          + `Provider: #${profile.resultToday.providerRank}`,
+          + `Provider: #${profile.resultToday.providerRank}, `
+          + `Reported: charged ${profile.resultToday.batteryCharged} kWh, discharged ${profile.resultToday.batteryDischarged} kWh`,
         );
       }
     } catch (error) {

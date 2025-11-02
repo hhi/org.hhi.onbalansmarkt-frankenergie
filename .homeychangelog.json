@@ -1,4 +1,9 @@
 {
+  "0.0.34": {
+    "en": "Added Onbalansmarkt reported charged and discharged sensors showing battery energy values as recorded by the Onbalansmarkt API. These sensors enable verification of data integrity between local measurements and API-reported values.",
+    "nl": "Onbalansmarkt gerapporteerd geladen en geleverd sensoren toegevoegd die batterij energie waarden tonen zoals geregistreerd door de Onbalansmarkt API. Deze sensoren maken verificatie mogelijk van data integriteit tussen lokale metingen en API-gerapporteerde waarden."
+  },
+
   "0.0.33": {
     "en": "Added start-of-day baseline sensors showing charged and discharged kWh values at 00:00. These sensors help verify daily delta calculations (current total minus start-of-day equals daily value).",
     "nl": "Start-of-day baseline sensoren toegevoegd die geladen en geleverd kWh waarden om 00:00 tonen. Deze sensoren helpen bij het verifiëren van dagelijkse delta berekeningen (huidig totaal minus start-of-day is dagelijkse waarde)."

@@ -8,6 +8,8 @@
     "frank_energie_battery_mode",
     "onbalansmarkt_overall_rank",
     "onbalansmarkt_provider_rank",
+    "onbalansmarkt_reported_charged",
+    "onbalansmarkt_reported_discharged",
     "frank_energie_trading_result",
     "frank_energie_lifetime_total",
     "frank_energie_frank_slim_bonus",
