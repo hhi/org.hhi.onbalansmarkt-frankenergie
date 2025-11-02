@@ -26,6 +26,8 @@ export interface ExternalBatteryMetrics {
   dailyDischargedKwh: number;
   currentChargedKwh: number;
   currentDischargedKwh: number;
+  startOfDayChargedKwh: number;
+  startOfDayDischargedKwh: number;
   averageBatteryPercentage: number;
   batteryCount: number;
   batteries: Array<{
@@ -267,6 +269,8 @@ export class BatteryMetricsStore {
     let totalDailyDischarged = 0;
     let totalCurrentCharged = 0;
     let totalCurrentDischarged = 0;
+    let totalStartOfDayCharged = 0;
+    let totalStartOfDayDischarged = 0;
     let totalPercentage = 0;
     let batteryCount = 0;
 
@@ -296,6 +300,8 @@ export class BatteryMetricsStore {
       totalDailyCharged += dailyCharged;
       totalCurrentCharged += currentCharged;
       totalCurrentDischarged += currentDischarged;
+      totalStartOfDayCharged += startCharged;
+      totalStartOfDayDischarged += startDischarged;
       totalPercentage += percentage;
       batteryCount++;
     }
@@ -328,6 +334,8 @@ export class BatteryMetricsStore {
       dailyDischargedKwh: totalDailyDischarged,
       currentChargedKwh: totalCurrentCharged,
       currentDischargedKwh: totalCurrentDischarged,
+      startOfDayChargedKwh: totalStartOfDayCharged,
+      startOfDayDischargedKwh: totalStartOfDayDischarged,
       averageBatteryPercentage: batteryCount > 0 ? totalPercentage / batteryCount : 0,
       batteryCount,
       batteries,
@@ -339,6 +347,8 @@ export class BatteryMetricsStore {
       `Daily discharged: ${aggregated.dailyDischargedKwh.toFixed(2)} kWh,`,
       `Current total charged: ${aggregated.currentChargedKwh.toFixed(2)} kWh,`,
       `Current total discharged: ${aggregated.currentDischargedKwh.toFixed(2)} kWh,`,
+      `Start of day charged: ${aggregated.startOfDayChargedKwh.toFixed(2)} kWh,`,
+      `Start of day discharged: ${aggregated.startOfDayDischargedKwh.toFixed(2)} kWh,`,
       `Avg percentage: ${aggregated.averageBatteryPercentage.toFixed(1)}%, Batteries: ${batteryCount}`,
     );
 

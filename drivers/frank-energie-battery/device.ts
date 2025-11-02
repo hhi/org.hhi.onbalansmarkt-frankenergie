@@ -141,6 +141,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       'external_battery_daily_discharged',
       'external_battery_current_charged',
       'external_battery_current_discharged',
+      'external_battery_startofday_charged',
+      'external_battery_startofday_discharged',
       'external_battery_percentage',
       'external_battery_count',
       'external_battery_selector',
@@ -902,6 +904,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
     await this.setCapabilityValue('external_battery_current_charged', aggregated.currentChargedKwh);
     await this.setCapabilityValue('external_battery_current_discharged', aggregated.currentDischargedKwh);
+    await this.setCapabilityValue('external_battery_startofday_charged', aggregated.startOfDayChargedKwh);
+    await this.setCapabilityValue('external_battery_startofday_discharged', aggregated.startOfDayDischargedKwh);
     await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
     await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
 
@@ -965,6 +969,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
     await this.setCapabilityValue('external_battery_current_charged', aggregated.currentChargedKwh);
     await this.setCapabilityValue('external_battery_current_discharged', aggregated.currentDischargedKwh);
+    await this.setCapabilityValue('external_battery_startofday_charged', aggregated.startOfDayChargedKwh);
+    await this.setCapabilityValue('external_battery_startofday_discharged', aggregated.startOfDayDischargedKwh);
     await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
     await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
 
@@ -1121,6 +1127,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       resetPromises.push(this.setCapabilityValue('external_battery_daily_discharged', 0));
       resetPromises.push(this.setCapabilityValue('external_battery_current_charged', 0));
       resetPromises.push(this.setCapabilityValue('external_battery_current_discharged', 0));
+      resetPromises.push(this.setCapabilityValue('external_battery_startofday_charged', 0));
+      resetPromises.push(this.setCapabilityValue('external_battery_startofday_discharged', 0));
       resetPromises.push(this.setCapabilityValue('external_battery_percentage', 0));
 
       // eslint-disable-next-line node/no-unsupported-features/es-builtins
@@ -1381,11 +1389,32 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     }
 
     // Always add "none" option first
+    // Get activation time from first battery registration
+    let activationTime = '';
+    if (this.externalBatteries.size > 0 && this.externalBatteryMetrics) {
+      // Find earliest activation time from all batteries
+      let earliestTime: number | null = null;
+      for (const batteryId of this.externalBatteries.keys()) {
+        const lastUpdate = await this.externalBatteryMetrics.getLastUpdateTime(batteryId);
+        if (lastUpdate && (earliestTime === null || lastUpdate < earliestTime)) {
+          earliestTime = lastUpdate;
+        }
+      }
+
+      if (earliestTime) {
+        const date = new Date(earliestTime);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        activationTime = ` ${hours}:${minutes}:${seconds}`;
+      }
+    }
+
     batteryValues.unshift({
       id: 'none',
       title: {
-        en: '— No batteries —',
-        nl: '— Geen batterijen —',
+        en: `— Commence activation of batteries —${activationTime}`,
+        nl: `— Activering van batterijen —${activationTime}`,
       },
     });
 

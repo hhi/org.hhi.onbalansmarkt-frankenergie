@@ -1,0 +1,24 @@
+{
+  "id": "external_battery_startofday_charged",
+  "uiQuickAction": false,
+  "type": "number",
+  "title": {
+    "en": "Start of day charged",
+    "nl": "Begin van de dag geladen"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh"
+  },
+  "decimals": 2,
+  "insights": true,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/external_battery_startofday_charged.svg",
+  "description": {
+    "en": "Baseline charged value at 00:00 (start of day) from external batteries",
+    "nl": "Baseline geladen waarde om 00:00 (begin van de dag) van externe batterijen"
+  }
+}

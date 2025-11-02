@@ -1,4 +1,9 @@
 {
+  "0.0.33": {
+    "en": "Added start-of-day baseline sensors showing charged and discharged kWh values at 00:00. These sensors help verify daily delta calculations (current total minus start-of-day equals daily value).",
+    "nl": "Start-of-day baseline sensoren toegevoegd die geladen en geleverd kWh waarden om 00:00 tonen. Deze sensoren helpen bij het verifiëren van dagelijkse delta berekeningen (huidig totaal minus start-of-day is dagelijkse waarde)."
+  },
+
   "0.0.32": {
     "en": "Picker updates optimized with debouncing and change detection. Updates only occur when battery list actually changes, preventing UI race conditions from rapid external battery data feeds.",
     "nl": "Picker updates geoptimaliseerd met debouncing en wijzigingsdetectie. Updates vinden alleen plaats wanneer de batterijlijst daadwerkelijk wijzigt, wat UI race conditions van snelle externe batterij data feeds voorkomt."
