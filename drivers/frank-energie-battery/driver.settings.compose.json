@@ -53,6 +53,19 @@
           "en": "Your Onbalansmarkt.com API key (optional). Get one at https://onbalansmarkt.com",
           "nl": "Uw Onbalansmarkt.com API-sleutel (optioneel). Verkrijg er een op https://onbalansmarkt.com"
         }
+      },
+      {
+        "id": "load_balancing_active",
+        "type": "checkbox",
+        "label": {
+          "en": "Load Balancing Active",
+          "nl": "Load Balancing Actief"
+        },
+        "value": false,
+        "hint": {
+          "en": "Enable this if dynamic load balancing is active on your battery system",
+          "nl": "Schakel dit in als dynamische load balancing actief is op uw batterijsysteem"
+        }
       }
     ]
   },

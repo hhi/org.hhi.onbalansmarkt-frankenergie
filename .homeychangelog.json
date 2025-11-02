@@ -1,4 +1,9 @@
 {
+  "0.0.38": {
+    "en": "Load balancing active status setting added. Configure ON/OFF in battery device settings to indicate if dynamic load balancing is active. Value sent with measurements to Onbalansmarkt.",
+    "nl": "Load balancing actieve status instelling toegevoegd. Configureer AAN/UIT in batterij apparaat instellingen om aan te geven of dynamische load balancing actief is. Waarde wordt meegestuurd met metingen naar Onbalansmarkt."
+  },
+
   "0.0.37": {
     "en": "Measurements to Onbalansmarkt now include external battery metrics: average charge percentage, daily charged kWh, and daily discharged kWh (all rounded to whole numbers).",
     "nl": "Metingen naar Onbalansmarkt bevatten nu externe batterij metrieken: gemiddeld laadpercentage, dagelijks geladen kWh, en dagelijks geleverd kWh (allemaal afgerond op hele getallen)."

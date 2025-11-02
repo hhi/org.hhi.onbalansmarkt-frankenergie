@@ -639,6 +639,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       const externalBatteryDailyCharged = this.getCapabilityValue('external_battery_daily_charged') as number | null;
       const externalBatteryDailyDischarged = this.getCapabilityValue('external_battery_daily_discharged') as number | null;
 
+      // Get load balancing setting (convert boolean to 'on'/'off')
+      const loadBalancingActive = this.getSetting('load_balancing_active') as boolean;
+
       await this.onbalansmarktClient.sendMeasurement({
         timestamp: uploadTimestamp,
         batteryResult: results.periodTradingResult,
@@ -651,6 +654,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         batteryCharge: externalBatteryPercentage !== null ? Math.round(externalBatteryPercentage) : null,
         chargedToday: externalBatteryDailyCharged !== null ? Math.round(externalBatteryDailyCharged) : null,
         dischargedToday: externalBatteryDailyDischarged !== null ? Math.round(externalBatteryDailyDischarged) : null,
+        loadBalancingActive: loadBalancingActive ? 'on' : 'off',
       });
 
       // Update last upload timestamp capability
