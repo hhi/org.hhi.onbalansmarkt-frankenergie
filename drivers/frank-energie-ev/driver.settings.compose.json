@@ -37,8 +37,8 @@
   {
     "type": "group",
     "label": {
-      "en": "EV Charger Settings",
-      "nl": "Laadpaal Instellingen"
+      "en": "EV Charger Configuration",
+      "nl": "Laadpaal Configuratie"
     },
     "children": [
       {
@@ -52,21 +52,6 @@
         "hint": {
           "en": "Enode location identifier (automatically set during pairing)",
           "nl": "Enode locatie identificatie (automatisch ingesteld tijdens koppelen)"
-        }
-      },
-      {
-        "id": "charge_limit",
-        "type": "number",
-        "label": {
-          "en": "Charge Limit (A)",
-          "nl": "Laadlimiet (A)"
-        },
-        "value": 16,
-        "min": 6,
-        "max": 32,
-        "hint": {
-          "en": "Maximum charging current in Amperes (6-32A)",
-          "nl": "Maximale laadstroom in Ampère (6-32A)"
         }
       }
     ]
