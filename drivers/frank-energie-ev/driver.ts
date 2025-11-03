@@ -66,10 +66,8 @@ export = class EvChargerDriver extends Homey.Driver {
       }
     });
 
-    // Create device with credentials and default charge limit
-    session.setHandler('list_devices', async (data: { email?: string; password?: string; chargeLimit?: number }) => {
-      const limit = Math.min(Math.max(data.chargeLimit || 16, 6), 32);
-
+    // Create device with credentials
+    session.setHandler('list_devices', async (data: { email?: string; password?: string }) => {
       // Get credentials (may be from app settings or provided during pairing)
       // @ts-expect-error - Accessing app instance with specific methods
       const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
@@ -108,8 +106,8 @@ export = class EvChargerDriver extends Homey.Driver {
             // Store credentials at device level for backwards compatibility
             frank_energie_email: email,
             frank_energie_password: password,
-            charge_limit: limit,
             poll_interval: 5,
+            poll_start_minute: 0,
             enode_location_id: locationId,
           },
         },
