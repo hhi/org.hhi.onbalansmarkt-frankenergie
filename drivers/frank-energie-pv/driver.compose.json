@@ -11,6 +11,11 @@
     "frank_energie_pv_status",
     "frank_energie_pv_bonus"
   ],
+  "capabilitiesOptions": {
+    "onoff": {
+      "uiQuickAction": false
+    }
+  },
   "platforms": [
     "local"
   ],

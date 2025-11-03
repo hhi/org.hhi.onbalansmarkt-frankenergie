@@ -10,6 +10,11 @@
     "frank_energie_ev_charging_status",
     "frank_energie_ev_bonus"
   ],
+  "capabilitiesOptions": {
+    "onoff": {
+      "uiQuickAction": false
+    }
+  },
   "platforms": [
     "local"
   ],

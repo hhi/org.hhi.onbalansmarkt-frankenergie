@@ -1,4 +1,9 @@
 {
+  "0.0.39": {
+    "en": "Quick action disabled for EV Charger and PV System devices. Clicking device tile no longer triggers toggle action.",
+    "nl": "Snelle actie uitgeschakeld voor EV Lader en PV Systeem apparaten. Klikken op apparaat tegel triggert niet langer schakelactie."
+  },
+
   "0.0.38": {
     "en": "Load balancing active status setting added. Configure ON/OFF in battery device settings to indicate if dynamic load balancing is active. Value sent with measurements to Onbalansmarkt.",
     "nl": "Load balancing actieve status instelling toegevoegd. Configureer AAN/UIT in batterij apparaat instellingen om aan te geven of dynamische load balancing actief is. Waarde wordt meegestuurd met metingen naar Onbalansmarkt."

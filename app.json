@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -1701,6 +1701,11 @@
         "frank_energie_ev_charging_status",
         "frank_energie_ev_bonus"
       ],
+      "capabilitiesOptions": {
+        "onoff": {
+          "uiQuickAction": false
+        }
+      },
       "platforms": [
         "local"
       ],
@@ -1991,6 +1996,11 @@
         "frank_energie_pv_status",
         "frank_energie_pv_bonus"
       ],
+      "capabilitiesOptions": {
+        "onoff": {
+          "uiQuickAction": false
+        }
+      },
       "platforms": [
         "local"
       ],
