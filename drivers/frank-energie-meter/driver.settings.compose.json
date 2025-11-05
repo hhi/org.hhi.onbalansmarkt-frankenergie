@@ -43,31 +43,17 @@
     "children": [
       {
         "id": "poll_interval",
-        "type": "dropdown",
+        "type": "number",
         "label": {
           "en": "Polling Interval",
           "nl": "Opvraaginterval"
         },
-        "value": "60",
-        "values": [
-          {
-            "id": "30",
-            "label": {
-              "en": "30 minutes",
-              "nl": "30 minuten"
-            }
-          },
-          {
-            "id": "60",
-            "label": {
-              "en": "60 minutes",
-              "nl": "60 minuten"
-            }
-          }
-        ],
+        "value": 60,
+        "min": 30,
+        "max": 60,
         "hint": {
-          "en": "How often to fetch data from Frank Energie. Limited to 30-60 minutes due to API rate limits (max 100 calls/day)",
-          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie. Beperkt tot 30-60 minuten vanwege API-limieten (max 100 aanroepen/dag)"
+          "en": "How often to fetch data from Frank Energie. Recommended 30-60 minutes due to API rate limits (max 100 calls/day)",
+          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie. Aanbevolen 30-60 minuten vanwege API-limieten (max 100 aanroepen/dag)"
         }
       },
       {

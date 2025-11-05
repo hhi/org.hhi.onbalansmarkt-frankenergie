@@ -87,7 +87,7 @@
   },
   "recovery_state": {
     "not_scheduled": "Niet gepland",
-    "scheduled_today": "Gepland voor vandaag 23:59",
-    "scheduled_tomorrow": "Gepland voor morgen 23:59"
+    "scheduled_today": "Gepland voor vandaag om 23:59",
+    "scheduled_tomorrow": "Gepland voor morgen om 23:59"
   }
 }

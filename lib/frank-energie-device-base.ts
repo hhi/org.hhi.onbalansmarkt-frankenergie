@@ -40,6 +40,7 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     try {
       await this.initializeClients();
+      await this.normalizePollIntervalSetting();
       await this.setupCommonFlowCards();
       await this.setupDeviceSpecificFlowCards();
       await this.setupPolling();
@@ -141,6 +142,30 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       .registerRunListener(this.condProviderRankBetter.bind(this));
 
     this.log('Common flow cards registered');
+  }
+
+  /**
+   * Ensure poll_interval is stored as a finite number in device settings
+   * Normalizes legacy string values and resets invalid entries to a safe default
+   */
+  protected async normalizePollIntervalSetting(): Promise<void> {
+    const pollInterval = this.getSetting('poll_interval');
+
+    if (typeof pollInterval === 'number' && Number.isFinite(pollInterval)) {
+      return;
+    }
+
+    if (typeof pollInterval === 'string') {
+      const parsed = Number(pollInterval);
+      if (Number.isFinite(parsed)) {
+        await this.setSettings({ poll_interval: parsed });
+        this.log(`Normalized poll_interval from string "${pollInterval}" to number ${parsed}`);
+        return;
+      }
+    }
+
+    await this.setSettings({ poll_interval: 5 });
+    this.log('poll_interval setting was invalid or missing and has been reset to 5 minutes');
   }
 
   /**
@@ -558,6 +583,9 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
     newSettings: { [key: string]: boolean | string | number | undefined | null };
     changedKeys: string[];
   }): Promise<string | void> {
+    // CRITICAL: First line of handler - if you don't see this, onSettings isn't being called
+    this.log('[onSettings] === ENTRY POINT === changedKeys:', JSON.stringify(changedKeys));
+    this.log('[onSettings] newSettings:', JSON.stringify(newSettings));
     this.log('Device settings changed:', changedKeys);
 
     // Handle manual actions (dropdown menu)
@@ -591,26 +619,29 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
           throw new Error(`Manual refresh failed: ${errorMsg}`);
         }
       } else if (action === 'reset_baseline') {
-        this.log('Manual action: Reset daily baseline');
-        try {
-          await this.handleManualResetBaseline();
-          this.log('Manual baseline reset completed successfully');
-          // Reset dropdown to "none" after onSettings completes
-          this.homey.setTimeout(() => {
-            this.setSettings({ manual_action: 'none' })
-              .catch((error) => this.error('Failed to reset manual_action dropdown:', error));
-          }, 100);
-          return; // Don't restart polling or reinitialize clients
-        } catch (error) {
-          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-          this.error('Manual baseline reset failed:', errorMsg);
-          // Reset dropdown to "none" even on failure
-          this.homey.setTimeout(() => {
-            this.setSettings({ manual_action: 'none' })
-              .catch((err) => this.error('Failed to reset manual_action dropdown:', err));
-          }, 100);
-          throw new Error(`Manual baseline reset failed: ${errorMsg}`);
-        }
+        this.log('[SETTINGS] Manual action: Reset daily baseline - ENTERING');
+
+        // Schedule the actual work to happen AFTER onSettings returns
+        // This ensures onSettings completes immediately without blocking
+        this.homey.setTimeout(async () => {
+          this.log('[DEFERRED] Executing reset_baseline after onSettings completed');
+          try {
+            await this.handleManualResetBaseline();
+            this.log('[DEFERRED] handleManualResetBaseline() completed successfully');
+          } catch (error) {
+            const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+            this.error('[DEFERRED] Manual baseline reset failed:', errorMsg);
+          }
+        }, 10);
+
+        // Reset dropdown to "none" immediately
+        this.homey.setTimeout(() => {
+          this.setSettings({ manual_action: 'none' })
+            .catch((error) => this.error('Failed to reset manual_action dropdown:', error));
+        }, 100);
+
+        this.log('[SETTINGS] Returning from onSettings immediately');
+        return; // Return immediately without awaiting anything
       } else if (action === 'reset_external_batteries') {
         this.log('Manual action: Reset external batteries list');
         try {
@@ -652,28 +683,41 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       this.log('Polling stopped for settings reconfiguration');
     }
 
-    try {
-      // If credentials changed, reinitialize clients
-      if (
-        changedKeys.includes('frank_energie_email')
-        || changedKeys.includes('frank_energie_password')
-        || changedKeys.includes('onbalansmarkt_api_key')
-      ) {
-        this.log('Reinitializing clients due to credential changes');
+    // If credentials changed, reinitialize clients
+    if (
+      changedKeys.includes('frank_energie_email')
+      || changedKeys.includes('frank_energie_password')
+      || changedKeys.includes('onbalansmarkt_api_key')
+    ) {
+      this.log('Reinitializing clients due to credential changes');
+      try {
         await this.initializeClients();
         this.log('Clients reinitialized successfully');
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        this.error('Failed to reinitialize clients:', errorMsg);
+        await this.setUnavailable(`Client initialization failed: ${errorMsg}`);
+        throw new Error(`Failed to reinitialize clients: ${errorMsg}`);
       }
-
-      // Restart polling with new configuration
-      await this.setupPolling();
-      this.log('Settings applied successfully');
-      await this.setAvailable();
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      this.error('Failed to apply settings:', errorMsg);
-      await this.setUnavailable(`Settings error: ${errorMsg}`);
-      throw new Error(`Failed to apply settings: ${errorMsg}`);
     }
+
+    // Defer polling restart to avoid blocking onSettings
+    // This ensures settings save completes quickly
+    this.log('[onSettings] Scheduling deferred polling restart');
+    this.homey.setTimeout(async () => {
+      this.log('[onSettings] Restarting polling after settings change');
+      try {
+        await this.setupPolling();
+        this.log('[onSettings] Polling restarted successfully');
+        await this.setAvailable();
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        this.error('[onSettings] Failed to restart polling:', errorMsg);
+        await this.setUnavailable(`Polling restart failed: ${errorMsg}`);
+      }
+    }, 100);
+
+    this.log('[onSettings] Returning immediately, polling will restart in 100ms');
   }
 
   async onRenamed(name: string) {

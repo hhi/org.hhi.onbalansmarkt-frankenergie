@@ -87,7 +87,7 @@
   },
   "recovery_state": {
     "not_scheduled": "Not scheduled",
-    "scheduled_today": "Scheduled for today 23:59",
-    "scheduled_tomorrow": "Scheduled for tomorrow 23:59"
+    "scheduled_today": "Scheduled for today at 23:59",
+    "scheduled_tomorrow": "Scheduled for tomorrow at 23:59"
   }
 }

@@ -72,14 +72,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       throw new Error('No smart batteries found on Frank Energie account');
     }
 
-    // Migrate settings for existing devices
-    await this.migrateSettings();
-
     // Ensure Onbalansmarkt reported capabilities exist (migration for v0.0.34+)
     await this.ensureOnbalansmarktReportedCapabilities();
 
     // Ensure external battery capabilities exist (migration for existing devices)
     await this.ensureExternalBatteryAggregatedCapabilities();
+
+    // Ensure recovery state capability exists (migration for existing devices)
+    await this.ensureRecoveryStateCapability();
 
     // Setup individual battery capabilities
     await this.setupIndividualBatteryCapabilities();
@@ -101,37 +101,17 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Load external batteries from store
     await this.loadExternalBatteries();
 
-    // Initialize recovery state to not scheduled
-    try {
-      await this.setCapabilityValue(
-        'frank_energie_recovery_state',
-        this.homey.__('recovery_state.not_scheduled'),
-      );
-      this.log('Recovery state initialized to not scheduled');
-    } catch (error) {
-      this.error('Failed to initialize recovery state:', error);
-    }
-  }
-
-  /**
-   * Migrate settings for existing devices
-   * Fixes type mismatches that can occur after app updates
-   */
-  private async migrateSettings(): Promise<void> {
-    const settings = this.getSettings();
-    const updates: Record<string, string | number | boolean> = {};
-
-    // Fix poll_interval type: must be string for dropdown
-    const pollInterval = settings.poll_interval;
-    if (typeof pollInterval === 'number') {
-      this.log(`Migrating poll_interval from number (${pollInterval}) to string ("${pollInterval}")`);
-      updates.poll_interval = String(pollInterval);
-    }
-
-    // Apply migrations if any
-    if (Object.keys(updates).length > 0) {
-      await this.setSettings(updates);
-      this.log('Settings migration completed:', Object.keys(updates));
+    // Initialize recovery state to not scheduled (only if capability exists)
+    if (this.hasCapability('frank_energie_recovery_state')) {
+      try {
+        await this.setCapabilityValue(
+          'frank_energie_recovery_state',
+          'Not scheduled',
+        );
+        this.log('Recovery state initialized to not scheduled');
+      } catch (error) {
+        this.error('Failed to initialize recovery state:', error);
+      }
     }
   }
 
@@ -231,6 +211,28 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     }
 
     this.log(`ensureExternalBatteryAggregatedCapabilities completed. externalBatteries Map size: ${this.externalBatteries.size}`);
+  }
+
+  /**
+   * Ensure recovery state capability exists
+   * This is needed for migration of existing devices that were paired before this capability was added
+   */
+  private async ensureRecoveryStateCapability(): Promise<void> {
+    const capabilityId = 'frank_energie_recovery_state';
+
+    if (!this.hasCapability(capabilityId)) {
+      this.log(`Adding missing recovery state capability: ${capabilityId}`);
+      await this.addCapability(capabilityId);
+
+      // Brief delay to allow UI to register new capability
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 300);
+      });
+
+      this.log('Recovery state capability added');
+    } else {
+      this.log('Recovery state capability already exists');
+    }
   }
 
   /**
@@ -1081,19 +1083,23 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
    * Overrides base class to implement baseline reset
    */
   protected async handleManualResetBaseline(): Promise<void> {
+    this.log('[BASELINE] Starting handleManualResetBaseline');
+
     if (!this.externalBatteryMetrics) {
-      this.error('External battery metrics store not initialized');
+      this.error('[BASELINE] External battery metrics store not initialized');
       throw new Error('External battery metrics store not initialized');
     }
+    this.log('[BASELINE] External battery metrics store check passed');
 
     // Cancel any existing manual reset timer
     if (this.manualResetTimeout) {
       this.homey.clearTimeout(this.manualResetTimeout);
       this.manualResetTimeout = null;
-      this.log('Cancelled previous manual baseline reset timer');
+      this.log('[BASELINE] Cancelled previous manual baseline reset timer');
     }
 
     // Calculate milliseconds until next 23:59
+    this.log('[BASELINE] Calculating next 23:59 time');
     const now = new Date();
     const next2359 = new Date(now);
     next2359.setHours(23, 59, 0, 0); // 23:59:00 today
@@ -1106,40 +1112,52 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
     const msUntilReset = next2359.getTime() - now.getTime();
     const minutesUntilReset = Math.floor(msUntilReset / 1000 / 60);
-
-    // Update recovery state to show scheduled time
-    const stateValue = isToday
-      ? this.homey.__('recovery_state.scheduled_today')
-      : this.homey.__('recovery_state.scheduled_tomorrow');
-
-    try {
-      await this.setCapabilityValue('frank_energie_recovery_state', stateValue);
-      this.log(`Recovery state updated: ${stateValue}`);
-    } catch (error) {
-      this.error('Failed to update recovery state:', error);
-    }
+    this.log(`[BASELINE] Calculated time: ${minutesUntilReset} minutes until reset`);
 
     // Schedule one-time reset at 23:59
+    this.log('[BASELINE] Scheduling timeout');
     this.manualResetTimeout = this.homey.setTimeout(async () => {
       this.log('Executing scheduled manual baseline reset at 23:59');
 
       await this.externalBatteryMetrics!.emergencyResetBaseline();
 
-      // Update recovery state to not scheduled
-      try {
-        await this.setCapabilityValue(
-          'frank_energie_recovery_state',
-          this.homey.__('recovery_state.not_scheduled'),
-        );
-        this.log('Manual baseline reset completed successfully at 23:59');
-      } catch (error) {
-        this.error('Failed to update recovery state after reset:', error);
+      // Update recovery state to not scheduled (only if capability exists)
+      if (this.hasCapability('frank_energie_recovery_state')) {
+        try {
+          await this.setCapabilityValue(
+            'frank_energie_recovery_state',
+            'Not scheduled',
+          );
+          this.log('Manual baseline reset completed successfully at 23:59');
+        } catch (error) {
+          this.error('Failed to update recovery state after reset:', error);
+        }
       }
 
       this.manualResetTimeout = null;
     }, msUntilReset);
 
-    this.log(`Manual baseline reset scheduled for 23:59 (${minutesUntilReset} minutes from now)`);
+    this.log(`[BASELINE] Timeout scheduled, method completing now (${minutesUntilReset} minutes until reset)`);
+
+    // Defer capability update to avoid timer interference
+    // Schedule it to run 500ms after onSettings completes
+    this.log('[BASELINE] Scheduling deferred capability update');
+    this.homey.setTimeout(() => {
+      if (this.hasCapability('frank_energie_recovery_state')) {
+        const stateValue = isToday
+          ? 'Scheduled for today at 23:59'
+          : 'Scheduled for tomorrow at 23:59';
+
+        this.log(`[BASELINE] Deferred update - setting capability to: ${stateValue}`);
+        this.setCapabilityValue('frank_energie_recovery_state', stateValue)
+          .then(() => {
+            this.log(`[BASELINE] Deferred update successful: ${stateValue}`);
+          })
+          .catch((error) => {
+            this.error('[BASELINE] Deferred update failed:', error);
+          });
+      }
+    }, 500);
   }
 
   /**
@@ -1555,15 +1573,17 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       this.homey.clearTimeout(this.manualResetTimeout);
       this.manualResetTimeout = null;
 
-      // Reset recovery state to not scheduled
-      try {
-        await this.setCapabilityValue(
-          'frank_energie_recovery_state',
-          this.homey.__('recovery_state.not_scheduled'),
-        );
-        this.log('Recovery state reset to not scheduled');
-      } catch (error) {
-        this.error('Failed to reset recovery state:', error);
+      // Reset recovery state to not scheduled (only if capability exists)
+      if (this.hasCapability('frank_energie_recovery_state')) {
+        try {
+          await this.setCapabilityValue(
+            'frank_energie_recovery_state',
+            'Not scheduled',
+          );
+          this.log('Recovery state reset to not scheduled');
+        } catch (error) {
+          this.error('Failed to reset recovery state:', error);
+        }
       }
 
       this.log('Cancelled manual baseline reset timer');

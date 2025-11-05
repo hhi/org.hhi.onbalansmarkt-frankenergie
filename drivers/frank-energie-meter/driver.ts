@@ -126,7 +126,7 @@ export = class SiteMeterDriver extends Homey.Driver {
             frank_energie_email: email,
             frank_energie_password: password,
             site_reference: reference,
-            poll_interval: 5,
+            poll_interval: 60,
           },
         },
       ];

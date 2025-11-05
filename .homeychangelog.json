@@ -1,4 +1,9 @@
 {
+  "0.0.42": {
+    "en": "Settings save immediately without timeout. Reset baseline and all other settings changes complete within milliseconds.",
+    "nl": "Instellingen worden direct opgeslagen zonder timeout. Reset baseline en alle andere instellingswijzigingen voltooien binnen milliseconden."
+  },
+
   "0.0.40": {
     "en": "Charge limit setting removed from EV Charger driver. Driver now only displays read-only data without control settings.",
     "nl": "Laadlimiet instelling verwijderd uit EV Lader driver. Driver toont nu alleen read-only data zonder besturings instellingen."
