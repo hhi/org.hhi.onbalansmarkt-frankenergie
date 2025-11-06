@@ -1,4 +1,9 @@
 {
+  "0.0.44": {
+    "en": "Next poll timer sensor added to EV Charger and PV System drivers.",
+    "nl": "Volgende poll timer sensor toegevoegd aan EV Lader en PV Systeem drivers."
+  },
+
   "0.0.43": {
     "en": "Device initialization no longer blocked by polling alignment. Sensors populate correctly on startup.",
     "nl": "Apparaat initialisatie wordt niet meer geblokkeerd door polling uitlijning. Sensoren worden correct gevuld bij opstarten."

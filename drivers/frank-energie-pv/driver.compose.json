@@ -9,7 +9,8 @@
     "frank_energie_pv_current_power",
     "frank_energie_pv_today_generation",
     "frank_energie_pv_status",
-    "frank_energie_pv_bonus"
+    "frank_energie_pv_bonus",
+    "frank_energie_next_poll_minutes"
   ],
   "capabilitiesOptions": {
     "onoff": {
