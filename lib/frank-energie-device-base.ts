@@ -43,7 +43,23 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       await this.normalizePollIntervalSetting();
       await this.setupCommonFlowCards();
       await this.setupDeviceSpecificFlowCards();
-      await this.setupPolling();
+
+      // Defer polling setup to avoid blocking onInit with alignment delays
+      // This ensures device initialization completes quickly
+      this.log('[onInit] Scheduling deferred polling setup');
+      this.homey.setTimeout(async () => {
+        this.log('[onInit] Starting polling after device initialization');
+        try {
+          await this.setupPolling();
+          this.log('[onInit] Polling started successfully');
+          await this.setAvailable();
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          this.error('[onInit] Failed to start polling:', errorMsg);
+          await this.setUnavailable(`Polling setup failed: ${errorMsg}`);
+        }
+      }, 100);
+
       this.log(`${this.constructor.name} initialized successfully`);
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';

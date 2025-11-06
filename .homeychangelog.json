@@ -1,4 +1,9 @@
 {
+  "0.0.43": {
+    "en": "Device initialization no longer blocked by polling alignment. Sensors populate correctly on startup.",
+    "nl": "Apparaat initialisatie wordt niet meer geblokkeerd door polling uitlijning. Sensoren worden correct gevuld bij opstarten."
+  },
+
   "0.0.42": {
     "en": "Settings save immediately without timeout. Reset baseline and all other settings changes complete within milliseconds.",
     "nl": "Instellingen worden direct opgeslagen zonder timeout. Reset baseline en alle andere instellingswijzigingen voltooien binnen milliseconden."
