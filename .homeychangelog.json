@@ -1,4 +1,9 @@
 {
+  "0.0.45": {
+    "en": "Capability migration added for EV and PV drivers. Picker and other capabilities now visible immediately without GUI refresh.",
+    "nl": "Capability migratie toegevoegd voor EV en PV drivers. Picker en andere capabilities nu direct zichtbaar zonder GUI refresh."
+  },
+
   "0.0.44": {
     "en": "Next poll timer sensor added to EV Charger and PV System drivers.",
     "nl": "Volgende poll timer sensor toegevoegd aan EV Lader en PV Systeem drivers."

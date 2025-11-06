@@ -27,6 +27,9 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
       throw new Error('FrankEnergieClient not initialized');
     }
 
+    // Capability migration for existing devices
+    await this.migrateCapabilities();
+
     // Get configured PV system ID
     this.selectedPvSystemId = this.getSetting('pv_system_id') as string;
     if (!this.selectedPvSystemId) {
@@ -39,6 +42,43 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
 
     if (!this.pvSystems.find((pv) => pv.id === this.selectedPvSystemId)) {
       throw new Error(`Configured PV system ${this.selectedPvSystemId} not found`);
+    }
+  }
+
+  /**
+   * Migrate capabilities for existing devices
+   * Ensures all capabilities defined in driver.compose.json are present
+   */
+  private async migrateCapabilities(): Promise<void> {
+    const requiredCapabilities = [
+      'onoff',
+      'frank_energie_pv_current_power',
+      'frank_energie_pv_today_generation',
+      'frank_energie_pv_status',
+      'frank_energie_pv_bonus',
+      'frank_energie_next_poll_minutes',
+    ];
+
+    let capabilitiesAdded = false;
+
+    for (const capabilityId of requiredCapabilities) {
+      if (!this.hasCapability(capabilityId)) {
+        try {
+          await this.addCapability(capabilityId);
+          this.log(`Added missing capability: ${capabilityId}`);
+          capabilitiesAdded = true;
+        } catch (error) {
+          this.error(`Failed to add capability ${capabilityId}:`, error);
+        }
+      }
+    }
+
+    // Brief delay to allow UI to register new capabilities
+    if (capabilitiesAdded) {
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 300);
+      });
+      this.log('PV capability migration completed');
     }
   }
 

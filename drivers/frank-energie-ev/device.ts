@@ -27,15 +27,8 @@ export = class EvChargerDevice extends FrankEnergieDeviceBase {
       throw new Error('FrankEnergieClient not initialized');
     }
 
-    // Ensure measure_battery capability exists (for older devices)
-    if (!this.hasCapability('measure_battery')) {
-      try {
-        await this.addCapability('measure_battery');
-        this.log('Added missing capability: measure_battery');
-      } catch (error) {
-        this.error('Failed to add measure_battery capability:', error);
-      }
-    }
+    // Capability migration for existing devices
+    await this.migrateCapabilities();
 
     // Get configured location ID
     this.enodeLocationId = this.getSetting('enode_location_id') as string;
@@ -44,6 +37,42 @@ export = class EvChargerDevice extends FrankEnergieDeviceBase {
     }
 
     this.log(`EV Charger configured for location: ${this.enodeLocationId}`);
+  }
+
+  /**
+   * Migrate capabilities for existing devices
+   * Ensures all capabilities defined in driver.compose.json are present
+   */
+  private async migrateCapabilities(): Promise<void> {
+    const requiredCapabilities = [
+      'onoff',
+      'measure_battery',
+      'frank_energie_ev_charging_status',
+      'frank_energie_ev_bonus',
+      'frank_energie_next_poll_minutes',
+    ];
+
+    let capabilitiesAdded = false;
+
+    for (const capabilityId of requiredCapabilities) {
+      if (!this.hasCapability(capabilityId)) {
+        try {
+          await this.addCapability(capabilityId);
+          this.log(`Added missing capability: ${capabilityId}`);
+          capabilitiesAdded = true;
+        } catch (error) {
+          this.error(`Failed to add capability ${capabilityId}:`, error);
+        }
+      }
+    }
+
+    // Brief delay to allow UI to register new capabilities
+    if (capabilitiesAdded) {
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 300);
+      });
+      this.log('EV capability migration completed');
+    }
   }
 
   /**
