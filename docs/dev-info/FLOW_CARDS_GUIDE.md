@@ -101,16 +101,18 @@ ACTIONS:
 
 ## All Available Flow Cards
 
+The battery ecosystem now exposes **12 triggers**, **6 conditions**, and **10 actions**. Triggers and actions are defined under `.homeycompose/flow/**` and implemented in `drivers/frank-energie-battery/device.ts` (plus the separate Zonneplan driver for Zonneplan-specific flows).
+
 ### TRIGGERS
 
 #### Daily Results Available
 Fires when new daily Onbalansmarkt trading results are fetched.
 
-**Tokens (Available in Actions/Conditions):**
+- **Tokens (Available in Actions/Conditions):**
 - `batteryResult` - Today's battery trading result (€)
 - `batteryResultTotal` - Cumulative monthly result (€)
-- `overallRank` - Your position in overall Onbalansmarkt rankings
-- `providerRank` - Your position among same provider users
+- `overallRank` - Your position in overall Onbalansmarkt rankings (`onbalansmarkt_overall_rank`)
+- `providerRank` - Provider-specific ranking (`onbalansmarkt_provider_rank`)
 - `tradingMode` - Current trading mode (imbalance, aggressive, etc.)
 - `resultDate` - Date of result (YYYY-MM-DD)
 
@@ -192,6 +194,25 @@ Fires when trading results are sent to Onbalansmarkt.
 - `batteryCharge` - Battery charge percentage
 - `tradingMode` - Trading mode sent
 - `timestamp` - When sent (ISO 8601)
+
+#### External Battery Metrics Updated
+Fires whenever the `BatteryMetricsStore` aggregates new external metrics (flow actions `receive_battery_metrics` or `receive_battery_daily_metrics`).
+
+**Tokens:**
+- `daily_charged_kwh`
+- `daily_discharged_kwh`
+- `average_percentage`
+- `battery_count`
+
+#### Zonneplan Metrics Updated
+Fires when the Zonneplan virtual battery driver receives fresh data via `receive_zonneplan_metrics`.
+
+**Tokens:**
+- `daily_earned`, `total_earned`
+- `daily_charged`, `daily_discharged`
+- `battery_percentage`
+- `cycle_count`
+- `load_balancing_active`
 
 ---
 
@@ -298,6 +319,30 @@ Prepares dashboard data for display (for dashboard app integration).
   - Current Metrics: Rank, Result, Mode
   - Ranking Progress: Visual rank progression
   - Monthly Earnings Chart: Earnings over time
+
+#### Receive Battery Metrics (lifetime)
+Accepts cumulative charged/discharged values and pushes them into the external battery aggregator. Use this in flows that receive lifetime totals (e.g., Sessy API).
+
+**Parameters:**
+- `battery_id`
+- `total_charged_kwh`
+- `total_discharged_kwh`
+- `battery_percentage`
+
+#### Receive Battery Daily Metrics
+Specialized version for batteries that only expose daily totals (resets every night). Values are inserted directly as “daily-only” without delta calculation.
+
+**Parameters:**
+- `battery_id`
+- `daily_charged_kwh`
+- `daily_discharged_kwh`
+- `battery_percentage`
+
+#### Reset Baseline
+Emergency action that aligns the start-of-day baseline with current totals. Use when external data got out of sync; the next measurement will generate the correct delta again.
+
+#### Receive Zonneplan Metrics
+Dedicated action for the Zonneplan virtual device. Accepts per-flow values (earnings, charged/discharged kWh, percentage, cycle count, load-balancing status, timestamp) and optionally forwards them to Onbalansmarkt (if enabled in the device settings).
 
 ---
 
@@ -456,4 +501,3 @@ THEN Send "Strong performance today"
 - **Frank Energie:** https://www.frankenergieservice.nl/
 - **Onbalansmarkt:** https://onbalansmarkt.com/
 - **App Issues:** Report at GitHub issues
-

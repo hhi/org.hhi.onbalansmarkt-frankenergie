@@ -278,25 +278,10 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       startMinute = Math.max(0, Math.min(59, Math.round(pollStartMinuteSetting)));
     }
 
-    // Calculate delay to next alignment point
-    const alignmentDelay = this.calculateAlignmentDelay(pollIntervalMinutes, startMinute);
-
-    if (alignmentDelay > 0) {
-      const delaySeconds = Math.round(alignmentDelay / 1000);
-      this.log(`Waiting ${delaySeconds}s to align polling to minute ${startMinute}`);
-
-      await new Promise((resolve) => {
-        this.homey.setTimeout(resolve, alignmentDelay);
-      });
-
-      this.log('Alignment wait completed, starting polling');
-    } else {
-      this.log(`Already aligned to minute ${startMinute}, starting polling immediately`);
-    }
-
     this.log(`Setting up polling with ${pollIntervalMinutes} minute interval (${pollIntervalMs}ms)`);
 
-    // Initial poll - don't let errors block the setup
+    // Initial poll FIRST - get data immediately without waiting for alignment
+    this.log('Performing initial poll immediately...');
     try {
       await this.pollData();
       this.log('Initial poll completed successfully');
@@ -304,6 +289,22 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Initial poll failed (will retry on interval):', errorMsg);
       // Continue with setup even if initial poll fails
+    }
+
+    // Calculate delay to next alignment point
+    const alignmentDelay = this.calculateAlignmentDelay(pollIntervalMinutes, startMinute);
+
+    if (alignmentDelay > 0) {
+      const delaySeconds = Math.round(alignmentDelay / 1000);
+      this.log(`Waiting ${delaySeconds}s to align next poll to minute ${startMinute}`);
+
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, alignmentDelay);
+      });
+
+      this.log('Alignment wait completed, starting aligned polling');
+    } else {
+      this.log(`Already aligned to minute ${startMinute}, starting aligned polling immediately`);
     }
 
     this.schedulePollInterval(pollIntervalMs);

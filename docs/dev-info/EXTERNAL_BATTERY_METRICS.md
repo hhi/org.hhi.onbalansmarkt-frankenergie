@@ -33,10 +33,14 @@ De Frank Energie Homey app ondersteunt nu het ontvangen en aggregeren van batter
 
 ### Componenten
 
-1. **BatteryMetricsStore**: Service die metrieken opslaat in associatieve arrays
-2. **Action Card**: `receive_battery_metrics` - ontvangt individuele batterij data
-3. **Trigger Card**: `external_battery_metrics_updated` - wordt getriggerd na aggregatie
-4. **Capabilities**: 4 nieuwe capabilities voor geaggregeerde data
+1. **BatteryMetricsStore**: Service die metrieken opslaat in associatieve arrays (lifetime én “daily-only” varianten)
+2. **Action Cards**:
+   - `receive_battery_metrics` — ontvangt cumulatieve (lifetime) waardes
+   - `receive_battery_daily_metrics` — ontvangt batterijen die elke dag resetten
+3. **Trigger Cards**:
+   - `external_battery_metrics_updated` — geaggregeerde lifetime/dagdata
+   - `zonneplan_metrics_updated` — virtuele Zonneplan-device integratie
+4. **Capabilities**: 9 aggregatie-capabilities plus selector en statusvelden op het Frank Energie Battery device
 
 ## Gebruik met Sessy Batterijen
 
@@ -85,6 +89,20 @@ total_discharged_kwh: 1204.67
 battery_percentage: 76
 ```
 
+### Action Card: Receive Battery Daily Metrics
+
+**ID**: `receive_battery_daily_metrics`
+
+Gebruik deze kaart voor batterijen (bijv. SolarEdge, Huawei) die dagelijks resetten en geen lifetime teller aanbieden.
+
+**Argumenten**:
+- `battery_id` (text)
+- `daily_charged_kwh` (number) — Vandaag geladen
+- `daily_discharged_kwh` (number) — Vandaag geleverd
+- `battery_percentage` (range 0-100)
+
+De waarden worden rechtstreeks opgeslagen in `dailyOnly.*` zonder delta-berekening.
+
 ### Trigger Card: External Battery Metrics Updated
 
 **ID**: `external_battery_metrics_updated`
@@ -94,22 +112,26 @@ battery_percentage: 76
 - `daily_discharged_kwh`: Totaal geleverd kWh vandaag (alle batterijen)
 - `average_percentage`: Gemiddeld batterij percentage
 - `battery_count`: Aantal batterijen dat data levert
+- `current_charged_kwh`: Totale cumulatieve geladen kWh (lifetime)
+- `current_discharged_kwh`: Totale cumulatieve geleverde kWh (lifetime)
+
+### Zonneplan Metrics Integration
+
+Voor gebruikers die de aparte **Zonneplan Battery** driver inzetten, bestaat een eigen flow action (`receive_zonneplan_metrics`) en trigger (`zonneplan_metrics_updated`). Deze gebruiken hetzelfde aggregatiepad (Onbalansmarkt client + timeline logging) maar publiceren naar Zonneplan-specifieke capabilities (`zonneplan_*`). Zie `drivers/zonneplan-battery/device.ts` voor de volledige verwerking.
 
 ## Capabilities
 
-De app voegt 4 nieuwe capabilities toe aan het Frank Energie Battery device:
+Het device beheert nu de volgende capabilities (toegevoegd/geverifieerd tijdens `ensureExternalBatteryAggregatedCapabilities()`):
 
-1. **external_battery_daily_charged** (kWh)
-   - Totaal geladen energie vandaag van alle externe batterijen
-
-2. **external_battery_daily_discharged** (kWh)
-   - Totaal geleverde energie vandaag van alle externe batterijen
-
-3. **external_battery_percentage** (%)
-   - Gemiddeld batterij percentage van alle externe batterijen
-
-4. **external_battery_count**
-   - Aantal externe batterijen dat momenteel data levert
+1. `external_battery_daily_charged`
+2. `external_battery_daily_discharged`
+3. `external_battery_current_charged`
+4. `external_battery_current_discharged`
+5. `external_battery_startofday_charged`
+6. `external_battery_startofday_discharged`
+7. `external_battery_percentage`
+8. `external_battery_count`
+9. `external_battery_selector` (picker met individuele batterijen of “none”)
 
 ## Technische Details
 
@@ -125,8 +147,13 @@ De app gebruikt associatieve arrays om data per batterij op te slaan:
     percentage: { "sessy-1": 76, "sessy-2": 82, "sessy-3": 68 }
   },
   startOfDay: {
-    discharged: { "sessy-1": 1195.00, "sessy-2": 1148.00, "sessy-3": 1081.50 },
-    charged: { "sessy-1": 1515.00, "sessy-2": 1471.00, "sessy-3": 1394.00 }
+    discharged: { "sessy-1": 1195.00, ... },
+    charged: { "sessy-1": 1515.00, ... }
+  },
+  dailyOnly: {
+    dailyCharged: {},    // batterijen die direct dagelijkse waardes aanleveren
+    dailyDischarged: {},
+    percentage: {}
   }
 }
 ```
@@ -155,11 +182,12 @@ Om middernacht (Europe/Amsterdam tijdzone) reset de app automatisch:
 
 Bij elke nieuwe meting:
 1. Store individuele batterij data in associatieve array
-2. Bereken daily delta per batterij
+2. Bereken daily delta per batterij (lifetime) of neem aangeleverde daily-only waarde over
 3. Som alle daily charged/discharged kWh
-4. Bereken gemiddeld percentage
-5. Update capabilities
-6. Trigger flow card
+4. Bereken cumulatieve waarden (`current_*`) en start-of-day baselines
+5. Bereken gemiddeld percentage en update selector-opties
+6. Update capabilities
+7. Trigger flow cards (inclusief Zonneplan metrics waar relevant)
 
 ## Voorbeelden
 

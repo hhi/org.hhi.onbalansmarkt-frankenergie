@@ -59,9 +59,14 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
    * Poll meter and pricing data
    */
   async pollData(): Promise<void> {
+    this.log('=== [METER] Starting poll cycle ===');
+
     if (!this.frankEnergieClient || !this.siteReference) {
+      this.error('[METER] Clients not initialized - frankEnergieClient:', !!this.frankEnergieClient, 'siteReference:', this.siteReference);
       throw new Error('Clients not initialized');
     }
+
+    this.log(`[METER] Polling data for siteReference: ${this.siteReference}`);
 
     // Check if milestones should be reset (monthly)
     await this.checkAndResetMilestones();
@@ -69,17 +74,25 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
     try {
       // Get today's market prices
       const now = new Date();
+      this.log(`[METER] Fetching market prices for date: ${now.toISOString().split('T')[0]}`);
       const marketPrices = await this.frankEnergieClient.getMarketPrices(this.siteReference, now);
+      this.log(`[METER] ✓ Market prices received: ${marketPrices.electricityPrices.length} prices, avg: €${marketPrices.averageElectricityPrices.averageMarketPrice.toFixed(4)}/kWh`);
 
       // Get month summary
+      this.log('[METER] Fetching month summary...');
       const monthSummary = await this.frankEnergieClient.getMonthSummary(this.siteReference);
+      this.log(`[METER] ✓ Month summary received: €${monthSummary.actualCostsUntilLastMeterReadingDate.toFixed(2)} costs until ${monthSummary.lastMeterReadingDate}`);
 
       // Get period usage and costs
       const yearMonth = now.toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }).slice(0, 7);
+      this.log(`[METER] Fetching period usage for ${yearMonth}...`);
       const periodUsageAndCosts = await this.frankEnergieClient.getPeriodUsageAndCosts(this.siteReference, yearMonth);
+      this.log(`[METER] ✓ Period usage received: ${periodUsageAndCosts.electricity.usageTotal.toFixed(2)} kWh total, ${periodUsageAndCosts.electricity.items.length} items`);
 
       // Update capabilities
+      this.log('[METER] Updating capabilities...');
       await this.updateCapabilities(marketPrices, monthSummary, periodUsageAndCosts);
+      this.log('[METER] ✓ Capabilities updated');
 
       // Emit flow triggers
       await this.processMeterFlowCardTriggers(monthSummary, periodUsageAndCosts);
@@ -91,9 +104,15 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
       await this.setStoreValue('lastUsage', periodUsageAndCosts.electricity.usageTotal);
 
       await this.setAvailable();
+      this.log('=== [METER] Poll cycle completed successfully ===');
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      this.error('Poll meter data failed:', errorMsg);
+      const errorStack = error instanceof Error ? error.stack : '';
+      this.error('=== [METER] Poll meter data FAILED ===');
+      this.error('[METER] Error:', errorMsg);
+      if (errorStack) {
+        this.error('[METER] Stack:', errorStack);
+      }
       await this.setUnavailable(`Data fetch failed: ${errorMsg}`);
       throw error;
     }
@@ -111,16 +130,25 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
 
     // Calculate market price statistics from today's data
     const marketPriceValues = prices.electricityPrices.map((p: { marketPrice: number }) => p.marketPrice);
-    const currentHour = new Date().getHours();
-    const currentPrice = prices.electricityPrices.find((p: { from: string; marketPrice: number }) => {
-      const hour = new Date(p.from).getHours();
-      return hour === currentHour;
+    const now = new Date();
+
+    // Find current price based on time range (supports both hourly and quarter-hour pricing)
+    const currentPrice = prices.electricityPrices.find((p: { from: string; till: string; marketPrice: number }) => {
+      const fromTime = new Date(p.from);
+      const tillTime = new Date(p.till);
+      return now >= fromTime && now < tillTime;
     })?.marketPrice || prices.averageElectricityPrices.averageMarketPrice;
 
-    const nextHourPrice = prices.electricityPrices.find((p: { from: string; marketPrice: number }) => {
-      const hour = new Date(p.from).getHours();
-      return hour === (currentHour + 1) % 24;
-    })?.marketPrice || currentPrice;
+    // Find next period price (works for both hourly and quarter-hour)
+    const sortedPrices = prices.electricityPrices
+      .map((p: { from: string; till: string; marketPrice: number }) => ({
+        from: new Date(p.from),
+        till: new Date(p.till),
+        marketPrice: p.marketPrice,
+      }))
+      .sort((a, b) => a.from.getTime() - b.from.getTime());
+
+    const nextPeriodPrice = sortedPrices.find((p) => p.from > now)?.marketPrice || currentPrice;
 
     const minPrice = Math.min(...marketPriceValues);
     const maxPrice = Math.max(...marketPriceValues);
@@ -139,7 +167,7 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
     );
 
     updatePromises.push(
-      this.setCapabilityValue('frank_energie_next_hour_market_price', nextHourPrice)
+      this.setCapabilityValue('frank_energie_next_hour_market_price', nextPeriodPrice)
         .catch((error) => this.error('Failed to update next hour market price:', error)),
     );
 
@@ -184,8 +212,13 @@ export = class MeterSiteDevice extends FrankEnergieDeviceBase {
     await Promise.allSettled(updatePromises);
 
     this.log(
-      `Meter Capabilities updated - Current Price: €${currentPrice.toFixed(4)}/kWh, `
-      + `Today: ${todayConsumption.toFixed(2)} kWh / €${todayCosts.toFixed(2)}, `
+      `[METER] Capabilities updated - Current Price: €${currentPrice.toFixed(4)}/kWh, `
+      + `Next: €${nextPeriodPrice.toFixed(4)}/kWh, `
+      + `Min/Max: €${minPrice.toFixed(4)}-€${maxPrice.toFixed(4)}/kWh, `
+      + `Avg: €${avgPrice.toFixed(4)}/kWh`,
+    );
+    this.log(
+      `[METER] Today: ${todayConsumption.toFixed(2)} kWh / €${todayCosts.toFixed(2)} | `
       + `Month: ${usage.electricity.usageTotal.toFixed(2)} kWh / €${monthSummary.actualCostsUntilLastMeterReadingDate.toFixed(2)}`,
     );
   }

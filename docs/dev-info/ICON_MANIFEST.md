@@ -1,6 +1,6 @@
 # Frank Energie Onbalansmarkt - Icon Manifest
 
-This document lists all SVG icons created for the Frank Energie smart home app.
+This document lists all SVG icons created for the Frank Energie smart home app (currently **49** capability/app icons).
 
 ## Main App Icon
 
@@ -203,6 +203,24 @@ All capability icons use a 200x200px viewBox with consistent design language.
     - Countdown timer display
     - Purple accent color
     - Example: 5m left
+
+### External Battery Runtime Icons (4 icons)
+
+41. **external_battery_current_charged.svg** - Lifetime charged energy indicator
+42. **external_battery_current_discharged.svg** - Lifetime discharged energy
+43. **external_battery_startofday_charged.svg** - Start-of-day baseline (charged)
+44. **external_battery_startofday_discharged.svg** - Start-of-day baseline (discharged)
+
+### Onbalansmarkt Runtime Icons (4 icons)
+
+45. **onbalansmarkt_overall_rank.svg** - Overall ranking (distinct from legacy `frank_energie_overall_rank`)
+46. **onbalansmarkt_provider_rank.svg** - Provider ranking badge
+47. **onbalansmarkt_reported_charged.svg** - Reported charged energy
+48. **onbalansmarkt_reported_discharged.svg** - Reported discharged energy
+
+### Recovery & Diagnostics (1 icon)
+
+49. **frank_energie_recovery_state.svg** - Shows automatic baseline-recovery status (`Not scheduled`, `Queued`, etc.)
 
 ## Design Guidelines
 

@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.0.45",
+  "version": "0.0.48",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -1858,7 +1858,8 @@
         "frank_energie_max_market_price_today",
         "frank_energie_avg_market_price_today",
         "frank_energie_site_usage",
-        "frank_energie_site_costs"
+        "frank_energie_site_costs",
+        "frank_energie_next_poll_minutes"
       ],
       "platforms": [
         "local"

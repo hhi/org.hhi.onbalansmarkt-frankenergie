@@ -4,6 +4,9 @@
 
 This guide shows how to access app-level methods in a type-safe manner without using `@ts-expect-error`.
 
+> **Current status (Nov 2025)**  
+> De meeste drivers gebruiken deze aanpak nog niet: `frank-energie-*/driver.ts` bevat nog `@ts-expect-error` annotaties. Gebruik dit document als referentie voor nieuwe code of wanneer je bestaande handlers refactort; houd er rekening mee dat een volledige migratie nog gepland staat.
+
 ## The Problem
 
 When accessing custom app-level methods like `getCredentials()` or `hasCredentials()`, TypeScript doesn't know about these methods because they're not defined in the base `Homey.App` interface.

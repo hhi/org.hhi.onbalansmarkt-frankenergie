@@ -212,6 +212,7 @@ export interface HourlyPrice {
   from: string;
   till: string;
   date: string;
+  resolution: string; // "HOUR" | "QUARTER_HOUR" - indicates price resolution
   marketPrice: number;
   marketPricePlus: number;
   allInPrice: number;
@@ -268,6 +269,16 @@ export interface MonthSummaryData {
   gasExcluded: boolean;
 }
 
+export interface Address {
+  zipCode: string;
+  houseNumber: string;
+  houseNumberAddition: string;
+}
+
+export interface ExternalDetails {
+  address: Address;
+}
+
 export interface Connection {
   id: string;
   connectionId: string;
@@ -275,6 +286,8 @@ export interface Connection {
   segment: string; // "ELECTRICITY" | "GAS"
   status: string;
   contractStatus: string;
+  cluster?: string; // Site reference (e.g., "7609PA 31 B 1447720") - directly from API
+  externalDetails?: ExternalDetails;
 }
 
 export interface MeData {
@@ -315,6 +328,7 @@ export interface UsageItem {
   date: string;
   from: string;
   till: string;
+  granularity: string; // "DAY" | "HOUR" | "QUARTER_HOUR" - indicates data granularity
   usage: number;
   costs: number;
   unit: string;
@@ -1062,6 +1076,7 @@ export class FrankEnergieClient {
               from
               till
               date
+              resolution
               marketPrice
               marketPricePlus
               allInPrice
@@ -1080,6 +1095,7 @@ export class FrankEnergieClient {
               from
               till
               date
+              resolution
               marketPrice
               marketPricePlus
               allInPrice
@@ -1300,6 +1316,7 @@ export class FrankEnergieClient {
                 date
                 from
                 till
+                granularity
                 usage
                 costs
                 unit
@@ -1313,6 +1330,7 @@ export class FrankEnergieClient {
                 date
                 from
                 till
+                granularity
                 usage
                 costs
                 unit
@@ -1326,6 +1344,7 @@ export class FrankEnergieClient {
                 date
                 from
                 till
+                granularity
                 usage
                 costs
                 unit
@@ -1406,6 +1425,14 @@ export class FrankEnergieClient {
               segment
               status
               contractStatus
+              cluster
+              externalDetails {
+                address {
+                  zipCode
+                  houseNumber
+                  houseNumberAddition
+                }
+              }
             }
           }
         }
@@ -1418,8 +1445,34 @@ export class FrankEnergieClient {
   }
 
   /**
-   * Get first electricity connection ID for use as site reference
-   * @returns Connection ID of first electricity connection or null if none found
+   * Calculate siteReference from connection data
+   * Format: "{zipCode} {houseNumber} {houseNumberAddition} {connectionId-suffix}"
+   * Example: "7609PA 31 B 1447720"
+   * @param connection Connection with address details
+   * @returns Calculated siteReference or null if address data is missing
+   */
+  private calculateSiteReference(connection: Connection): string | null {
+    if (!connection.externalDetails?.address) {
+      this.logger('FrankEnergieClient: No address details available for siteReference calculation');
+      return null;
+    }
+
+    const { zipCode, houseNumber, houseNumberAddition } = connection.externalDetails.address;
+
+    // Extract last 7 digits from connection ID as suffix
+    // Example: "clucw2kiq02mohr12noqrb5dg" -> extract numeric portion
+    const idMatch = connection.id.match(/(\d{7,})$/);
+    const suffix = idMatch ? idMatch[1].slice(-7) : connection.id.slice(-7);
+
+    const siteReference = `${zipCode} ${houseNumber} ${houseNumberAddition} ${suffix}`.trim();
+
+    this.logger(`FrankEnergieClient: Calculated siteReference: ${siteReference}`);
+    return siteReference;
+  }
+
+  /**
+   * Get first electricity connection siteReference
+   * @returns siteReference of first electricity connection or null if none found
    */
   async getFirstElectricitySiteReference(): Promise<string | null> {
     const meData = await this.getMe();
@@ -1430,7 +1483,21 @@ export class FrankEnergieClient {
       return null;
     }
 
-    this.logger(`FrankEnergieClient: Found electricity connection: ${electricityConnection.id}`);
+    // Priority 1: Use cluster field if available (directly from API)
+    if (electricityConnection.cluster) {
+      this.logger(`FrankEnergieClient: Using cluster as siteReference: ${electricityConnection.cluster}`);
+      return electricityConnection.cluster;
+    }
+
+    // Priority 2: Calculate from address details
+    const calculatedReference = this.calculateSiteReference(electricityConnection);
+    if (calculatedReference) {
+      this.logger(`FrankEnergieClient: Calculated siteReference: ${calculatedReference}`);
+      return calculatedReference;
+    }
+
+    // Priority 3: Fallback to connection ID
+    this.logger('FrankEnergieClient: Could not get siteReference - using connection ID as fallback');
     return electricityConnection.id;
   }
 

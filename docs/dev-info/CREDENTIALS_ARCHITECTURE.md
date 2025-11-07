@@ -17,7 +17,7 @@ App Level (homey.settings)
     ├── Battery Device
     │   ├── frank_energie_email      (legacy/backup)
     │   ├── frank_energie_password   (legacy/backup)
-    │   └── onbalansmarkt_api_key    ← Battery-specific (REQUIRED)
+    │   └── onbalansmarkt_api_key    ← Battery-specific (required during pairing)
     │
     ├── EV Charger Device
     │   ├── frank_energie_email      (legacy/backup)
@@ -36,21 +36,23 @@ App Level (homey.settings)
 
 When a device needs credentials:
 
-1. **Try app-level credentials first** (preferred)
-2. **Fall back to device-level credentials** (backwards compatibility)
-3. **Throw error** if neither available
+1. **Try app-level credentials** (preferred, via `homey.settings`)
+2. **Fall back to device-level credentials** (`device.settings`) for users that paired before the shared-store rollout
+3. **Throw an error** if neither location has a value
 
 ```typescript
-// In FrankEnergieDeviceBase.initializeClients()
-const appCredentials = this.homey.app.getCredentials();
+// lib/frank-energie-device-base.ts
+const app = this.homey.app as FrankEnergieApp;
+const appCredentials: AppCredentials | null = app.getCredentials?.() || null;
+
 if (appCredentials) {
-  // Use app-level (preferred)
   frankEmail = appCredentials.email;
   frankPassword = appCredentials.password;
+  this.log('Using app-level Frank Energie credentials');
 } else {
-  // Fall back to device-level
-  frankEmail = this.getSetting('frank_energie_email');
-  frankPassword = this.getSetting('frank_energie_password');
+  frankEmail = this.getSetting('frank_energie_email') as string;
+  frankPassword = this.getSetting('frank_energie_password') as string;
+  this.log('Using device-level Frank Energie credentials (legacy)');
 }
 ```
 
@@ -150,20 +152,26 @@ protected async initializeClients(): Promise<void> {
 }
 ```
 
-### Battery Driver ([drivers/frank-energie-battery/driver.ts](drivers/frank-energie-battery/driver.ts:51))
+### Battery Driver ([drivers/frank-energie-battery/driver.ts](drivers/frank-energie-battery/driver.ts:19))
 
 ```typescript
-session.setHandler('list_devices', async (data) => {
-  // Store credentials at app level for all devices
-  this.homey.app.setCredentials?.(data.email, data.password);
+session.setHandler('store_credentials', async (data) => {
+  pairingData = data;
+  return true;
+});
 
-  // Also store at device level for backwards compatibility
-  settings: {
-    frank_energie_email: data.email,
-    frank_energie_password: data.password,
-    onbalansmarkt_api_key: data.onbalansmarktApiKey,  // Battery-specific
-    // ...
-  }
+session.setHandler('list_devices', async () => {
+  this.homey.app.setCredentials?.(pairingData.email, pairingData.password);
+
+  return [{
+    settings: {
+      frank_energie_email: pairingData.email,
+      frank_energie_password: pairingData.password,
+      onbalansmarkt_api_key: pairingData.onbalansmarktApiKey,
+      poll_interval: 15,
+      send_measurements: false,
+    },
+  }];
 });
 ```
 
@@ -183,49 +191,22 @@ session.setHandler('verify_charger', async (data) => {
 });
 ```
 
-## Battery Device: Onbalansmarkt API Key Required
+## Battery Device: Onbalansmarkt API Key Handling
 
-### Why Required?
+### Why the UI still requires it
 
-The Battery device is the only device that communicates with Onbalansmarkt.com to:
-- Send battery trading results
-- Retrieve rankings (overall and provider-specific)
-- Trigger ranking-related flow cards
+The Battery driver is the only component that:
+- Sends measurements to Onbalansmarkt.com
+- Retrieves rankings (overall/provider) via the REST API
+- Emits ranking-related flow cards
 
-### Pairing Flow
+To avoid a broken initial experience, the pairing UI keeps the API key field `required`. When users paste a placeholder key, the driver logs a warning but still creates the device so they can fetch Frank Energie data immediately (see `drivers/frank-energie-battery/driver.ts:97-107`).
 
-The battery pairing now requires **3 fields**:
+### Runtime behavior
 
-```html
-<!-- login.html -->
-<input id="email" type="email" required />
-<input id="password" type="password" required />
-<input id="apiKey" type="text" required />  ← NEW: Required for battery
-```
-
-**Validation**:
-```javascript
-if (!email || !password || !apiKey) {
-  // Show error - all fields required
-}
-```
-
-### Device Settings
-
-After pairing, the API key can be updated in device settings:
-
-**Battery Device Settings**:
-- ✅ `frank_energie_email` (app-level + device fallback)
-- ✅ `frank_energie_password` (app-level + device fallback)
-- ✅ `onbalansmarkt_api_key` ⚠️ **Device-specific** (not shared)
-- ✅ `poll_interval`
-- ✅ `send_measurements`
-
-**Other Device Settings** (EV, PV, Meter):
-- ✅ `frank_energie_email` (app-level + device fallback)
-- ✅ `frank_energie_password` (app-level + device fallback)
-- ✅ `poll_interval`
-- ❌ No `onbalansmarkt_api_key` (not needed)
+* Settings screen allows the key to be cleared after pairing.
+* `initializeClients()` only instantiates `OnbalansmarktClient` when a trimmed API key is present.
+* All ranking-related capabilities (`onbalansmarkt_*`) and flow cards automatically disable themselves when no API key is configured.
 
 ## Migration Path
 

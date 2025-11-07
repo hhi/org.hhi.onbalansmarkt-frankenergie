@@ -61,9 +61,10 @@ The battery selection step was redundant because:
 const result = await Homey.emit('get_batteries', { email, password });
 Homey.nextView(); // Goes to select-battery.html
 
-// New: verify and create device immediately
+// New: verify credentials, store them, continue to default list_devices view
 const result = await Homey.emit('verify_credentials', { email, password });
-await Homey.emit('list_devices', { email, password, batteryCount });
+await Homey.emit('store_credentials', { email, password, batteryCount, onbalansmarktApiKey });
+Homey.nextView(); // triggers built-in list_devices → add_devices flow
 ```
 
 **UX Improvements**:
@@ -73,9 +74,8 @@ await Homey.emit('list_devices', { email, password, batteryCount });
 
 ### 3. File Changes
 
-**Removed**: `drivers/frank-energie-battery/pair/select-battery.html`
-- No longer needed with simplified pairing flow
-- Battery selection is now automatic during first poll
+- **Removed**: `drivers/frank-energie-battery/pair/select-battery.html` (fallback removed)
+- **Added**: `store_credentials` handler to persist form state between `login` view and the generic `list_devices` template
 
 ## User Experience
 
@@ -101,10 +101,10 @@ data: {
 }
 ```
 
-**Design**: Users can only have ONE Frank Energie Battery device per account because:
-- One device aggregates ALL batteries from that account
-- Multiple devices would create duplicate data
-- Credentials and settings are account-level
+**Design**: Users can only have ONE Frank Energie Battery device per account omdat:
+- Eén device alle batterijen aggregeert
+- Meerdere devices zouden dezelfde app-level credentials en data dupliceren
+- Onbalansmarkt API key is device-specifiek maar wordt alleen gebruikt door dit ene device
 
 ## Backward Compatibility
 

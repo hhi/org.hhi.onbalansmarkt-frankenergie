@@ -20,7 +20,9 @@ This document provides complete technical specifications for all flow cards impl
 │   ├── trading_mode_changed.json
 │   ├── frank_slim_bonus_detected.json
 │   ├── new_battery_added.json
-│   └── measurement_sent.json
+│   ├── measurement_sent.json
+│   ├── external_battery_metrics_updated.json
+│   └── zonneplan_metrics_updated.json
 ├── conditions/
 │   ├── rank_in_top_x.json
 │   ├── result_positive.json
@@ -34,7 +36,11 @@ This document provides complete technical specifications for all flow cards impl
     ├── force_data_poll.json
     ├── toggle_measurement_sending.json
     ├── log_to_timeline.json
-    └── update_dashboard.json
+    ├── update_dashboard.json
+    ├── receive_battery_metrics.json
+    ├── receive_battery_daily_metrics.json
+    ├── reset_baseline.json
+    └── receive_zonneplan_metrics.json
 ```
 
 ### Implementation Location
@@ -65,8 +71,8 @@ Store Keys:
 - lastBatteryResultTotal: number
 - lastTradingMode: string
 - lastFrankSlim: number
-- lastBatteryCharge: number
 - lastTimelineEntry: { message, timestamp }
+- batteryMetrics: StoredMetrics (external batteries)
 ```
 
 ---
@@ -91,8 +97,8 @@ Store Keys:
 |-------|------|--------|
 | `batteryResult` | number | `results.periodTradingResult` |
 | `batteryResultTotal` | number | `results.totalTradingResult` |
-| `overallRank` | number | Capability: `frank_energie_overall_rank` |
-| `providerRank` | number | Capability: `frank_energie_provider_rank` |
+| `overallRank` | number | Capability: `onbalansmarkt_overall_rank` |
+| `providerRank` | number | Capability: `onbalansmarkt_provider_rank` |
 | `tradingMode` | string | `TradingModeDetector.detectTradingMode()` |
 | `resultDate` | string | Current date (YYYY-MM-DD) |
 
@@ -329,6 +335,45 @@ const percentile = currentRank <= 10 ? 'Top 1%' :
 
 ---
 
+#### 11. external_battery_metrics_updated
+
+**File:** `.homeycompose/flow/triggers/external_battery_metrics_updated.json`
+
+**Purpose:** Fires after `BatteryMetricsStore` aggregates new external metrics (either lifetime deltas or daily-only submissions).
+
+**Tokens Provided:**
+
+| Token | Type | Description |
+|-------|------|-------------|
+| `daily_charged_kwh` | number | Sum of charged energy today |
+| `daily_discharged_kwh` | number | Sum of discharged energy today |
+| `average_percentage` | number | Average SoC across reported batteries |
+| `battery_count` | number | Number of batteries that contributed |
+
+**Emission Point:** `BatteryMetricsStore.storeMetric()` / `.storeDailyMetric()` → `SmartBatteryDevice.emitExternalBatteryMetricsUpdated()`
+
+---
+
+#### 12. zonneplan_metrics_updated
+
+**File:** `.homeycompose/flow/triggers/zonneplan_metrics_updated.json`
+
+**Purpose:** Fires when the Zonneplan virtual battery driver receives metrics via `receive_zonneplan_metrics`.
+
+**Tokens Provided:**
+
+| Token | Type |
+|-------|------|
+| `daily_earned`, `total_earned` | number |
+| `daily_charged`, `daily_discharged` | number |
+| `battery_percentage` | number |
+| `cycle_count` | number |
+| `load_balancing_active` | boolean |
+
+**Emission Point:** `drivers/zonneplan-battery/device.ts → emitMetricsUpdatedTrigger()`
+
+---
+
 ### CONDITIONS
 
 #### 1. rank_in_top_x
@@ -350,8 +395,8 @@ const percentile = currentRank <= 10 ? 'Top 1%' :
 private async condRankInTopX(args: any) {
   if (args.device !== this) return false;
   const rank = args.rankType === 'overall'
-    ? await this.getCapabilityValue('frank_energie_overall_rank')
-    : await this.getCapabilityValue('frank_energie_provider_rank');
+    ? await this.getCapabilityValue('onbalansmarkt_overall_rank')
+    : await this.getCapabilityValue('onbalansmarkt_provider_rank');
   return (rank as number) <= args.threshold;
 }
 ```
@@ -467,8 +512,8 @@ private async condFrankSlimActive(args: any) {
 ```typescript
 private async condProviderRankBetter(args: any) {
   if (args.device !== this) return false;
-  const overallRank = await this.getCapabilityValue('frank_energie_overall_rank') as number;
-  const providerRank = await this.getCapabilityValue('frank_energie_provider_rank') as number;
+  const overallRank = await this.getCapabilityValue('onbalansmarkt_overall_rank') as number;
+  const providerRank = await this.getCapabilityValue('onbalansmarkt_provider_rank') as number;
   return providerRank < overallRank;
 }
 ```
@@ -501,7 +546,7 @@ private async actionSendNotification(args: any) {
 
   if (args.includeMetrics) {
     const result = await this.getStoreValue('lastBatteryResult') as number || 0;
-    const rank = await this.getCapabilityValue('frank_energie_overall_rank') as number;
+  const rank = await this.getCapabilityValue('onbalansmarkt_overall_rank') as number;
     const mode = await this.getStoreValue('lastTradingMode') as string;
     message += `\n\nResult: €${result.toFixed(2)}\nRank: #${rank}\nMode: ${mode}`;
   }
@@ -650,6 +695,54 @@ private async actionLogToTimeline(args: any) {
 
 ---
 
+#### 7. receive_battery_metrics
+
+**File:** `.homeycompose/flow/actions/receive_battery_metrics.json`
+
+**Purpose:** Accepts cumulative charged/discharged counters from external batteries and feeds them into `BatteryMetricsStore`.
+
+**Handler:** `SmartBatteryDevice.actionReceiveBatteryMetrics`
+
+**Args:** `battery_id`, `total_charged_kwh`, `total_discharged_kwh`, `battery_percentage`
+
+---
+
+#### 8. receive_battery_daily_metrics
+
+**File:** `.homeycompose/flow/actions/receive_battery_daily_metrics.json`
+
+**Purpose:** Handles batteries that only expose daily totals (no lifetime counters). Values are stored under `dailyOnly.*`.
+
+**Args:** `battery_id`, `daily_charged_kwh`, `daily_discharged_kwh`, `battery_percentage`
+
+**Handler:** `SmartBatteryDevice.actionReceiveBatteryDailyMetrics`
+
+---
+
+#### 9. reset_baseline
+
+**File:** `.homeycompose/flow/actions/reset_baseline.json`
+
+**Purpose:** Manually re-aligns the start-of-day baseline with the current totals (used when data glitches cause negative deltas).
+
+**Handler:** `SmartBatteryDevice.actionResetBaseline`
+
+**Behavior:** Calls `BatteryMetricsStore.resetBaseline()` and logs the action to the device timeline.
+
+---
+
+#### 10. receive_zonneplan_metrics
+
+**File:** `.homeycompose/flow/actions/receive_zonneplan_metrics.json`
+
+**Purpose:** Entry point for the Zonneplan virtual device. Updates Zonneplan-specific capabilities and (optionally) forwards measurements to Onbalansmarkt.
+
+**Handler:** `ZonneplanBatteryDevice.registerFlowCardHandler` (device-local)
+
+**Args:** Daily/total earnings, charged/discharged kWh, percentage, cycle count, load-balancing flag, timestamp.
+
+---
+
 ## Integration Points
 
 ### Data Flow
@@ -766,4 +859,3 @@ Currently no unit tests. Recommend:
 - Homey SDK Flow Cards: https://apps-sdk-v3.developer.homey.app/Flow.html
 - Device Class: https://apps-sdk-v3.developer.homey.app/Device.html
 - Capabilities: https://apps-sdk-v3.developer.homey.app/tutorial-device-capabilities.html
-

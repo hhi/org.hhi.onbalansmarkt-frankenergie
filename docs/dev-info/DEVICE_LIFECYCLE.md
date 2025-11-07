@@ -368,35 +368,25 @@ this.homey.flow.getActionCard('receive_battery_metrics')
 
 **Poll Interval Configuration**:
 ```typescript
-// Get poll interval from settings (default: 15 minutes)
-const pollIntervalMinutes = this.validatePollInterval(
-  this.getSetting('poll_interval')
-);
+const pollIntervalSetting = this.getSetting('poll_interval');
+const pollStartMinuteSetting = this.getSetting('poll_start_minute');
 
-this.log(`Setting up polling with interval: ${pollIntervalMinutes} minutes`);
+const pollIntervalMinutes = this.validatePollInterval(pollIntervalSetting); // clamps to 1‑1440
+const pollIntervalMs = pollIntervalMinutes * 60 * 1000;
 
-// Start polling timer
-this.pollInterval = this.homey.setInterval(
-  async () => {
-    try {
-      await this.pollData();
-    } catch (error) {
-      this.error('Polling error:', error);
-    }
-  },
-  pollIntervalMinutes * 60 * 1000  // Convert minutes to milliseconds
-);
+await this.pollData(); // immediate poll
+const alignmentDelay = this.calculateAlignmentDelay(pollIntervalMinutes, pollStartMinute);
+if (alignmentDelay > 0) await wait(alignmentDelay);
 
-// Eerste data poll direct uitvoeren
-await this.pollData();
+this.schedulePollInterval(pollIntervalMs);
 ```
 
 **Validatie**:
-- Poll interval moet tussen 1-60 minuten liggen
-- Dropdown settings: 15, 30, 45, 60 minuten
-- Fallback naar 5 minuten bij ongeldige waarde
+- `poll_interval` stores any numeric value between **1 and 1440 minutes** (default 5)
+- `poll_start_minute` aligns the timer to a specific minute within the hour (0‑59)
+- Invalid inputs are logged and replaced with the default
 
-**Code**: [frank-energie-device-base.ts:190-210](../lib/frank-energie-device-base.ts#L190-L210)
+**Code**: [frank-energie-device-base.ts:200-313](../lib/frank-energie-device-base.ts#L200-L313)
 
 ---
 
@@ -436,7 +426,7 @@ async pollData() {
     }
 
     // 6. Check en trigger flow cards
-    await this.checkAndTriggerFlows(results, tradingModeInfo);
+    await this.processBatteryFlowCardTriggers(results, tradingModeInfo.mode);
 
     this.log('Poll completed successfully');
   } catch (error) {
@@ -450,75 +440,63 @@ async pollData() {
 
 ### 3.2 Update Capabilities
 
-**16 capabilities worden bijgewerkt**:
+`SmartBatteryDevice.updateCapabilities()` focuses on the trading stack and mode. The battery driver no longer exposes individual charge state capabilities; those now live in the external battery aggregation feature.
 
-#### Battery State Capabilities
 ```typescript
-// Charging state: 'charging' | 'discharging' | 'idle'
-await this.setCapabilityValue('battery_charging_state', chargingState);
+const updatePromises = [];
 
-// Battery charge percentage
-await this.setCapabilityValue('frank_energie_battery_charge', batteryCharge);
-
-// Battery trading mode
-await this.setCapabilityValue('frank_energie_battery_mode', tradingMode);
-```
-
-#### Trading Results Capabilities
-```typescript
-// Total trading result today
-await this.setCapabilityValue('frank_energie_trading_result', results.periodTradingResult);
-
-// Frank Slim bonus
-await this.setCapabilityValue('frank_energie_frank_slim_bonus', results.periodFrankSlim);
-
-// EPEX result
-await this.setCapabilityValue('frank_energie_epex_result', results.periodEpexResult);
-
-// Trading result split
-await this.setCapabilityValue('frank_energie_trading_result_split', results.periodTradingResult);
-
-// Imbalance result
-await this.setCapabilityValue('frank_energie_imbalance_result', results.periodImbalanceResult);
-```
-
-#### Ranking Capabilities (optioneel)
-```typescript
-if (this.onbalansmarktClient) {
-  const profile = await this.onbalansmarktClient.getProfile();
-
-  // Overall ranking position
-  await this.setCapabilityValue('frank_energie_overall_rank',
-    profile.resultToday?.overallRank || null);
-
-  // Provider-specific ranking position
-  await this.setCapabilityValue('frank_energie_provider_rank',
-    profile.resultToday?.providerRank || null);
+if (results.periodTradingResult !== null) {
+  updatePromises.push(this.setCapabilityValue('frank_energie_trading_result', results.periodTradingResult));
 }
-```
-
-#### External Battery Capabilities (optioneel)
-```typescript
-if (this.externalBatteryMetrics) {
-  const metrics = this.externalBatteryMetrics.getAggregatedMetrics();
-
-  // Number of external batteries
-  await this.setCapabilityValue('external_battery_count', metrics.count);
-
-  // Average charge percentage
-  await this.setCapabilityValue('external_battery_percentage', metrics.avgPercentage);
-
-  // Total charged today (kWh)
-  await this.setCapabilityValue('external_battery_daily_charged', metrics.totalCharged);
-
-  // Total discharged today (kWh)
-  await this.setCapabilityValue('external_battery_daily_discharged', metrics.totalDischarged);
+if (results.totalTradingResult !== null) {
+  updatePromises.push(this.setCapabilityValue('frank_energie_lifetime_total', results.totalTradingResult));
 }
+if (results.periodFrankSlim !== null) {
+  updatePromises.push(this.setCapabilityValue('frank_energie_frank_slim_bonus', results.periodFrankSlim));
+}
+if (results.periodEpexResult !== null) {
+  updatePromises.push(this.setCapabilityValue('frank_energie_epex_result', results.periodEpexResult));
+}
+if (results.periodImbalanceResult !== null) {
+  updatePromises.push(this.setCapabilityValue('frank_energie_imbalance_result', results.periodImbalanceResult));
+}
+
+const mode = await this.getStoreValue('lastTradingMode') as string | undefined;
+if (mode) {
+  updatePromises.push(this.setCapabilityValue('frank_energie_battery_mode', mode));
+}
+
+await Promise.allSettled(updatePromises);
 ```
 
-**Concurrency**: Alle capability updates worden parallel uitgevoerd met `Promise.allSettled()` om partial failures te voorkomen.
+#### Ranking Capabilities (optional)
 
-**Code**: [device.ts:173-240](../drivers/frank-energie-battery/device.ts#L173-L240)
+Rankings are stored in the `onbalansmarkt_*` capabilities (the earlier `frank_energie_*_rank` names were retired). When an API key is configured, `FrankEnergieDeviceBase.updateRankings()` updates:
+
+```typescript
+await this.setCapabilityValue('onbalansmarkt_overall_rank', profile.resultToday?.overallRank);
+await this.setCapabilityValue('onbalansmarkt_provider_rank', profile.resultToday?.providerRank);
+await this.setCapabilityValue('onbalansmarkt_reported_charged', profile.resultToday?.batteryCharged);
+await this.setCapabilityValue('onbalansmarkt_reported_discharged', profile.resultToday?.batteryDischarged);
+```
+
+#### External Battery Capabilities
+
+`ensureExternalBatteryAggregatedCapabilities()` makes sure the following capabilities exist and stay in sync with the metrics store:
+
+- `external_battery_daily_charged`
+- `external_battery_daily_discharged`
+- `external_battery_current_charged`
+- `external_battery_current_discharged`
+- `external_battery_startofday_charged`
+- `external_battery_startofday_discharged`
+- `external_battery_percentage`
+- `external_battery_count`
+- `external_battery_selector`
+
+Whenever `BatteryMetricsStore` publishes a new aggregate, these capabilities are updated together with the dedicated trigger `external_battery_metrics_updated`.
+
+**Code**: [device.ts:120-215](../drivers/frank-energie-battery/device.ts#L120-L215) and [device.ts:400-505](../drivers/frank-energie-battery/device.ts#L400-L505)
 
 ### 3.3 Send Measurement (Optioneel)
 
@@ -901,14 +879,15 @@ async onSettings({
    → Set frank_energie_epex_result: 0.25
    → Set frank_energie_imbalance_result: 0.30
    → Set frank_energie_frank_slim_bonus: 0.06
-   → Set battery_charging_state: 'charging'
-   → ... (15 capabilities total)
+   → Set frank_energie_lifetime_total: 293.94
+   → Set frank_energie_battery_mode: 'imbalance'
 
 3. updateRankings() (if API key set)
    → Call Onbalansmarkt.com /api/me
    → Return: { overallRank: 12, providerRank: 3 }
-   → Set frank_energie_overall_rank: 12
-   → Set frank_energie_provider_rank: 3
+   → Set onbalansmarkt_overall_rank: 12
+   → Set onbalansmarkt_provider_rank: 3
+   → Set onbalansmarkt_reported_charged/onbalansmarkt_reported_discharged
 
 4. sendMeasurement() (if send_measurements = true)
    → POST to Onbalansmarkt.com /api/live
@@ -917,7 +896,7 @@ async onSettings({
    → Set frank_energie_last_upload: "2025-10-26T14:30:00.000Z"
    → Trigger: measurement_sent
 
-5. checkAndTriggerFlows()
+5. processBatteryFlowCardTriggers()
    → Result positive? → Trigger: result_positive_negative
    → Milestone €250 reached? → Trigger: milestone_reached
 ```
@@ -952,12 +931,12 @@ User changes poll_interval: 15 → 30 minutes
 ### Bij Start (onInit)
 - ✅ Multi-layered client initialization (Frank Energie + Onbalansmarkt)
 - ✅ Battery aggregator opzet voor multi-battery support
-- ✅ 22 flow cards registreert (triggers, conditions, actions)
+- ✅ 28 flow cards registreert (12 triggers, 6 conditions, 10 actions)
 - ✅ Polling timer start met eerste immediate execution
 
 ### Tijdens Operatie (Elke X minuten)
 - ✅ Trading results ophaalt van alle batterijen (aggregated)
-- ✅ 16 capabilities real-time update
+- ✅ Trading-, ranking- en externe-batterij-capabilities real-time update
 - ✅ Rankings bijwerkt van Onbalansmarkt.com (optioneel)
 - ✅ Metingen verstuurt (optioneel, privacy-first default: OFF)
 - ✅ Flow card events triggert (rankings, milestones, modes, etc)

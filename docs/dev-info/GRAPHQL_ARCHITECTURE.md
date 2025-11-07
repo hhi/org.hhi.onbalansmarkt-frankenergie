@@ -3,7 +3,7 @@
 Dit document beschrijft de architectuur van de Frank Energie GraphQL API, inclusief alle query relaties, toegangspaden, en sleutelvelden die queries aan elkaar koppelen.
 
 **Laatste update**: 27 oktober 2025
-**Gebaseerd op**: Analyse van alle 21 GraphQL query voorbeelden in `docs/graphql/`
+**Gebaseerd op**: Analyse van alle 22 GraphQL query voorbeelden in `docs/graphql/`
 
 ---
 
@@ -49,10 +49,17 @@ Me (Entrypoint)
 ├── connections → siteReference
 │   ├── MarketPrices(siteReference, date)
 │   ├── PeriodUsageAndCosts(siteReference, date)
-│   └── MonthSummary(siteReference)
+│   ├── MonthSummary(siteReference)
+│   ├── MonthInsights(siteReference, date)
+│   └── WeightedAveragePrices(siteReference, dateRange)
 ├── SmartBatteryGetConnectRequests
 ├── SmartPvSystemGetConnectRequests
-└── UserSmartCharging
+├── UserSmartCharging
+├── UserSmartFeedIn
+├── SmartFeedInSessions(startDate, endDate)
+├── EnodeSessions
+├── CostsDelta(siteReference, dateRange)
+└── RenewToken(refreshToken)
 ```
 
 ---

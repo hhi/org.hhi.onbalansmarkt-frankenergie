@@ -35,27 +35,26 @@ Alle queries zijn geïmplementeerd in `lib/frank-energie-client.ts`.
 ### 1.2 `getSmartBatterySessions(deviceId, startDate, endDate)`
 **Retourneert**: `SmartBatterySessionData`
 
-**Beschikbare data**:
+**Beschikbare data** (see `lib/frank-energie-client.ts:543`):
 ```typescript
 {
   sessions: BatterySession[];
-  periodTradingResult: number;      // Opbrengst in periode (€)
-  totalTradingResult: number;       // Totale opbrengst (€)
-  frankSlimBonus: number;           // Frank Slim bonus (€)
-  epex: number;                     // EPEX prijzen
-  trading: number;                  // Trading opbrengst
-  imbalance: number;                // Onbalans opbrengst
+  periodTradingResult: number;
+  periodFrankSlim: number;
+  periodEpexResult: number;
+  periodImbalanceResult: number;
+  periodTotalResult: number;
+  periodTradeIndex: number | null;
+  totalTradingResult: number;
 }
 ```
 
 **Huidige capabilities**:
-- `frank_energie_trading_result` - Gebruikt voor dagresultaat
-
-**Mogelijke nieuwe capabilities**:
-- `frank_slim_bonus` - Frank Slim bonus vandaag (€)
-- `epex_result` - EPEX opbrengst vandaag (€)
-- `imbalance_result` - Onbalans opbrengst vandaag (€)
-- `trading_result` - Pure trading opbrengst (€)
+- `frank_energie_trading_result`
+- `frank_energie_lifetime_total`
+- `frank_energie_frank_slim_bonus`
+- `frank_energie_epex_result`
+- `frank_energie_imbalance_result`
 
 ---
 
@@ -69,12 +68,12 @@ Alle queries zijn geïmplementeerd in `lib/frank-energie-client.ts`.
 - `totalResult`: Totale opbrengst (€)
 
 **Huidige capabilities**:
-- `frank_energie_battery_charge` - Laadniveau
+- Niet direct gemapt. De actuele app richt zich op trading-resultaten i.p.v. individuele SoC.
 
-**Mogelijke nieuwe capabilities**:
+**Mogelijke toekomstige capabilities**:
 - `battery_status` - Status (charging/discharging/idle)
+- `frank_energie_battery_charge` - Aggregated SoC (indien opnieuw geïntroduceerd)
 - `last_battery_update` - Timestamp laatste update
-- `total_result_lifetime` - Lifetime totaal resultaat (€)
 
 ---
 
@@ -130,19 +129,17 @@ Alle queries zijn geïmplementeerd in `lib/frank-energie-client.ts`.
 **Retourneert**: `SmartPvSystemSummary`
 
 **Beschikbare data**:
-- `currentPower`: Huidig vermogen (kW)
-- `lastUpdate`: Laatste update timestamp
-- `todayGeneration`: Opwek vandaag (kWh)
-- `status`: Status (bijv. "producing", "idle")
+- `operationalStatus`
+- `operationalStatusTimestamp`
+- `steeringStatus`
+- `totalBonus`
 
 **Huidige capabilities**:
-- `frank_energie_pv_status` - Status
-- `frank_energie_pv_bonus` - Bonus (maar deze komt niet uit deze query!)
+- `frank_energie_pv_status` (derived from `operationalStatus`)
+- `frank_energie_pv_bonus` (mapped to `totalBonus`)
 
-**Mogelijke nieuwe capabilities**:
-- `current_power` - Huidig vermogen (kW)
-- `today_generation` - Opwek vandaag (kWh)
-- `last_pv_update` - Timestamp laatste update
+**Nog niet beschikbaar uit GraphQL**:
+- Live power en dagopwek (de API retourneert ze nog niet, daarom blijven `frank_energie_pv_current_power` en `frank_energie_pv_today_generation` placeholderwaarden totdat Frank Energie de data ontsluit).
 
 ---
 
