@@ -1,4 +1,9 @@
 {
+  "0.0.46": {
+    "en": "Simulate Send action added to battery device. Shows measurement data in logs without sending to Onbalansmarkt. Capability migration now reads from driver manifest.",
+    "nl": "Simuleer Verzenden actie toegevoegd aan batterij apparaat. Toont meetdata in logs zonder te verzenden naar Onbalansmarkt. Capability migratie leest nu uit driver manifest."
+  },
+
   "0.0.45": {
     "en": "Capability migration added for EV and PV drivers. Picker and other capabilities now visible immediately without GUI refresh.",
     "nl": "Capability migratie toegevoegd voor EV en PV drivers. Picker en andere capabilities nu direct zichtbaar zonder GUI refresh."

@@ -625,6 +625,104 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Simulate sending measurement (dry run for debugging/testing)
+   * Logs all data that would be sent without actually calling the API
+   */
+  async simulateSendMeasurement(): Promise<void> {
+    this.log('='.repeat(80));
+    this.log('SIMULATION: Onbalansmarkt API Send (Dry Run)');
+    this.log('='.repeat(80));
+
+    if (!this.onbalansmarktClient) {
+      this.log('❌ Onbalansmarkt client not initialized (API key missing?)');
+      return;
+    }
+
+    if (!this.frankEnergieClient) {
+      this.log('❌ Frank Energie client not initialized');
+      return;
+    }
+
+    try {
+      // Get current trading results
+      const aggregatedResults = await this.batteryAggregator!.getAggregatedResults(
+        new Date(),
+        new Date(),
+      );
+
+      // Get trading mode
+      const battery = await this.frankEnergieClient.getSmartBattery(this.batteries[0].id);
+      if (!battery.settings) {
+        throw new Error('Battery settings not available');
+      }
+      const tradingModeInfo = TradingModeDetector.detectTradingMode(battery.settings);
+
+      // Get external battery metrics
+      const batteryCharge = await this.getStoreValue('lastBatteryCharge') as number || 0;
+      const externalBatteryPercentage = this.getCapabilityValue('external_battery_percentage') as number | null;
+      const externalBatteryDailyCharged = this.getCapabilityValue('external_battery_daily_charged') as number | null;
+      const externalBatteryDailyDischarged = this.getCapabilityValue('external_battery_daily_discharged') as number | null;
+      const loadBalancingActive = this.getSetting('load_balancing_active') as boolean;
+
+      // Build measurement object
+      const measurement = {
+        timestamp: new Date(),
+        batteryResult: aggregatedResults.periodTradingResult,
+        batteryResultTotal: aggregatedResults.totalTradingResult,
+        batteryResultEpex: aggregatedResults.periodEpexResult,
+        batteryResultImbalance: aggregatedResults.periodImbalanceResult,
+        batteryResultCustom: aggregatedResults.periodFrankSlim,
+        mode: tradingModeInfo.mode,
+        batteryCharge: externalBatteryPercentage !== null ? Math.round(externalBatteryPercentage) : null,
+        chargedToday: externalBatteryDailyCharged !== null ? Math.round(externalBatteryDailyCharged) : null,
+        dischargedToday: externalBatteryDailyDischarged !== null ? Math.round(externalBatteryDailyDischarged) : null,
+        loadBalancing: loadBalancingActive ? 'on' : 'off',
+      };
+
+      // Log detailed measurement data
+      this.log('\n📊 Measurement Data that would be sent:');
+      this.log('-'.repeat(80));
+      this.log(`  Timestamp:              ${measurement.timestamp.toISOString()}`);
+      this.log(`  Trading Mode:           ${measurement.mode}`);
+      this.log('');
+      this.log('💰 Trading Results:');
+      this.log(`  Period Result:          €${measurement.batteryResult?.toFixed(2) ?? 'null'}`);
+      this.log(`  Lifetime Total:         €${measurement.batteryResultTotal?.toFixed(2) ?? 'null'}`);
+      this.log(`  EPEX Result:            €${measurement.batteryResultEpex?.toFixed(2) ?? 'null'}`);
+      this.log(`  Imbalance Result:       €${measurement.batteryResultImbalance?.toFixed(2) ?? 'null'}`);
+      this.log(`  Frank Slim Bonus:       €${measurement.batteryResultCustom?.toFixed(2) ?? 'null'}`);
+      this.log('');
+      this.log('🔋 External Battery Metrics:');
+      this.log(`  Battery Charge:         ${measurement.batteryCharge !== null ? `${measurement.batteryCharge}%` : 'null'}`);
+      this.log(`  Charged Today:          ${measurement.chargedToday !== null ? `${measurement.chargedToday} kWh` : 'null'}`);
+      this.log(`  Discharged Today:       ${measurement.dischargedToday !== null ? `${measurement.dischargedToday} kWh` : 'null'}`);
+      this.log(`  Load Balancing:         ${measurement.loadBalancing}`);
+      this.log('-'.repeat(80));
+
+      // Log JSON format
+      this.log('\n📝 JSON Payload:');
+      this.log(JSON.stringify(measurement, null, 2));
+
+      this.log('\n✅ SIMULATION COMPLETE - No data was actually sent to Onbalansmarkt');
+      this.log('   To enable real sending, turn on "Send measurements" in settings');
+      this.log('='.repeat(80));
+
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error('❌ Simulation failed:', errorMsg);
+      this.log('='.repeat(80));
+      throw error;
+    }
+  }
+
+  /**
+   * Override handleSimulateSend to call simulation method
+   */
+  protected async handleSimulateSend(): Promise<void> {
+    await this.simulateSendMeasurement();
+  }
+
+  /**
    * Send measurement to Onbalansmarkt API
    */
   private async sendMeasurement(results: AggregatedResults, mode: TradingMode): Promise<void> {

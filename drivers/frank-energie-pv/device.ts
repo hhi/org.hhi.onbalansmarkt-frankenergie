@@ -47,22 +47,18 @@ export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
 
   /**
    * Migrate capabilities for existing devices
-   * Ensures all capabilities defined in driver.compose.json are present
+   * Dynamically ensures all capabilities defined in driver manifest are present
+   * This automatically picks up new capabilities without code changes
    */
   private async migrateCapabilities(): Promise<void> {
-    const requiredCapabilities = [
-      'onoff',
-      'frank_energie_pv_current_power',
-      'frank_energie_pv_today_generation',
-      'frank_energie_pv_status',
-      'frank_energie_pv_bonus',
-      'frank_energie_next_poll_minutes',
-    ];
+    // Get capabilities from driver manifest (single source of truth)
+    const driverCapabilities = this.driver.manifest.capabilities || [];
+    const currentCapabilities = this.getCapabilities();
 
     let capabilitiesAdded = false;
 
-    for (const capabilityId of requiredCapabilities) {
-      if (!this.hasCapability(capabilityId)) {
+    for (const capabilityId of driverCapabilities) {
+      if (!currentCapabilities.includes(capabilityId)) {
         try {
           await this.addCapability(capabilityId);
           this.log(`Added missing capability: ${capabilityId}`);

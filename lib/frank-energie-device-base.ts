@@ -577,6 +577,10 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
     // Default no-op - subclasses override if they support external batteries reset
   }
 
+  protected async handleSimulateSend(): Promise<void> {
+    // Default no-op - subclasses override if they support simulation
+  }
+
   /**
    * Abstract methods - must be implemented by subclasses
    */
@@ -678,6 +682,27 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
               .catch((err) => this.error('Failed to reset manual_action dropdown:', err));
           }, 100);
           throw new Error(`Manual external batteries reset failed: ${errorMsg}`);
+        }
+      } else if (action === 'simulate_send') {
+        this.log('Manual action: Simulate send to Onbalansmarkt (Dry Run)');
+        try {
+          await this.handleSimulateSend();
+          this.log('Simulation completed successfully - check logs for detailed output');
+          // Reset dropdown to "none" after onSettings completes
+          this.homey.setTimeout(() => {
+            this.setSettings({ manual_action: 'none' })
+              .catch((error) => this.error('Failed to reset manual_action dropdown:', error));
+          }, 100);
+          return; // Don't restart polling or reinitialize clients
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          this.error('Simulation failed:', errorMsg);
+          // Reset dropdown to "none" even on failure
+          this.homey.setTimeout(() => {
+            this.setSettings({ manual_action: 'none' })
+              .catch((err) => this.error('Failed to reset manual_action dropdown:', err));
+          }, 100);
+          throw new Error(`Simulation failed: ${errorMsg}`);
         }
       }
 

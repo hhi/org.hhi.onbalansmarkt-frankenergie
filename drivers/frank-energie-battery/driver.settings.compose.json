@@ -186,6 +186,13 @@
               "en": "Reset external batteries list",
               "nl": "Lijst van externe batterijen herstellen"
             }
+          },
+          {
+            "id": "simulate_send",
+            "label": {
+              "en": "Simulate Send to Onbalansmarkt (Dry Run)",
+              "nl": "Simuleer Verzenden naar Onbalansmarkt (Dry Run)"
+            }
           }
         ],
         "hint": {
