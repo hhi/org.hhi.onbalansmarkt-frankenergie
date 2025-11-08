@@ -1,4 +1,9 @@
 {
+  "0.0.48": {
+    "en": "Meter driver functionality enhanced and documentation updated. Improved device base implementation for better reliability. Updated Frank Energie client with better data handling.",
+    "nl": "Meter driver functionaliteit verbeterd en documentatie bijgewerkt. Verbeterde device base implementatie voor betere betrouwbaarheid. Frank Energie client bijgewerkt met beter data handling."
+  },
+
   "0.0.46": {
     "en": "Simulate Send action added to battery device. Shows measurement data in logs without sending to Onbalansmarkt. Capability migration now reads from driver manifest.",
     "nl": "Simuleer Verzenden actie toegevoegd aan batterij apparaat. Toont meetdata in logs zonder te verzenden naar Onbalansmarkt. Capability migratie leest nu uit driver manifest."
