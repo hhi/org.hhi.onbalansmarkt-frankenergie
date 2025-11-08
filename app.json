@@ -30,6 +30,10 @@
   },
   "brandColor": "#00b8a9",
   "icon": "/assets/icon.svg",
+  "support": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues",
+  "privacy": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
+  "homepageUrl": "https://onbalansmarkt.com",
+  "bugUrl": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues",
   "flow": {
     "triggers": [
       {
@@ -433,6 +437,10 @@
           {
             "name": "isPositive",
             "type": "dropdown",
+            "title": {
+              "en": "Result type",
+              "nl": "Resultaattype"
+            },
             "values": [
               {
                 "id": "positive",
@@ -1259,6 +1267,10 @@
           {
             "name": "title",
             "type": "text",
+            "title": {
+              "en": "Notification Title",
+              "nl": "Notificatietitel"
+            },
             "placeholder": {
               "en": "e.g., Trading Results Update",
               "nl": "bijv., Handelsresultaten Update"
@@ -1267,6 +1279,10 @@
           {
             "name": "message",
             "type": "text",
+            "title": {
+              "en": "Notification Message",
+              "nl": "Notificatiebericht"
+            },
             "placeholder": {
               "en": "Notification message...",
               "nl": "Notificatiebericht..."

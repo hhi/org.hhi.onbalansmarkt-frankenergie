@@ -17,6 +17,10 @@
     {
       "name": "isPositive",
       "type": "dropdown",
+      "title": {
+        "en": "Result type",
+        "nl": "Resultaattype"
+      },
       "values": [
         {
           "id": "positive",

@@ -28,5 +28,9 @@
     "email": "iphone.HHi@me.com"
   },
   "brandColor": "#00b8a9",
-  "icon": "/assets/icon.svg"
+  "icon": "/assets/icon.svg",
+  "support": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues",
+  "privacy": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
+  "homepageUrl": "https://onbalansmarkt.com",
+  "bugUrl": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues"
 }

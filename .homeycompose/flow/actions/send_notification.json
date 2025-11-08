@@ -17,6 +17,10 @@
     {
       "name": "title",
       "type": "text",
+      "title": {
+        "en": "Notification Title",
+        "nl": "Notificatietitel"
+      },
       "placeholder": {
         "en": "e.g., Trading Results Update",
         "nl": "bijv., Handelsresultaten Update"
@@ -25,6 +29,10 @@
     {
       "name": "message",
       "type": "text",
+      "title": {
+        "en": "Notification Message",
+        "nl": "Notificatiebericht"
+      },
       "placeholder": {
         "en": "Notification message...",
         "nl": "Notificatiebericht..."
