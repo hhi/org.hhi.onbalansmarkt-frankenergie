@@ -1,4 +1,9 @@
 {
+  "0.0.49": {
+    "en": "README files added.",
+    "nl": "README-bestanden toegevoegd."
+  },
+
   "0.0.48": {
     "en": "Meter driver functionality enhanced and documentation updated. Improved device base implementation for better reliability. Updated Frank Energie client with better data handling.",
     "nl": "Meter driver functionaliteit verbeterd en documentatie bijgewerkt. Verbeterde device base implementatie voor betere betrouwbaarheid. Frank Energie client bijgewerkt met beter data handling."
