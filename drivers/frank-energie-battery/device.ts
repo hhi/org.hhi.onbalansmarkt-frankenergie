@@ -372,6 +372,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Check if milestones should be reset (monthly)
     await this.checkAndResetMilestones();
 
+    // Check if daily reset is needed (fallback in case automatic 00:00 timer failed)
+    // This ensures startOfDay gets updated even if app restarted before 00:00
+    if (this.externalBatteryMetrics) {
+      await this.externalBatteryMetrics.ensureDayReset();
+    }
+
     try {
       // Get aggregated results from all batteries
       const now = new Date();

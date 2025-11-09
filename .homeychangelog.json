@@ -1,4 +1,9 @@
 {
+  "0.0.50": {
+    "en": "Daily baseline reset now happens on every poll, even if automatic 00:00 timer failed. Fixes incorrect daily deltas when app restarted before midnight.",
+    "nl": "Dagelijkse baseline reset gebeurt nu bij elke poll, zelfs als automatische 00:00 timer niet werd uitgevoerd. Corrigeert onjuiste dagelijkse verschillen wanneer app voor middernacht herstarte."
+  },
+
   "0.0.49": {
     "en": "README files added.",
     "nl": "README-bestanden toegevoegd."
