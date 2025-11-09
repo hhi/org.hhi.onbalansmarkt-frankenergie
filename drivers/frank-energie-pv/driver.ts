@@ -1,5 +1,8 @@
 import Homey from 'homey';
-import { FrankEnergieClient } from '../../lib';
+import {
+  FrankEnergieClient,
+  getFrankEnergieApp,
+} from '../../lib';
 
 /**
  * Smart PV System Driver
@@ -19,17 +22,15 @@ export = class SmartPvSystemDriver extends Homey.Driver {
   async onPair(session: Homey.Driver.PairSession) {
     // Check if app-level credentials are already configured
     session.setHandler('check_credentials', async () => {
-      // @ts-expect-error - Accessing app instance with specific methods
-      const hasCredentials = this.homey.app.hasCredentials?.() as boolean | undefined;
-      return { hasCredentials: hasCredentials || false };
+      const hasCredentials = getFrankEnergieApp(this.homey.app)?.hasCredentials?.() ?? false;
+      return { hasCredentials };
     });
 
     // Handler to verify PV systems with provided or app-level credentials
     session.setHandler('verify_pv_system', async (data?: { email?: string; password?: string }) => {
       try {
         // Get credentials from app settings or data
-        // @ts-expect-error - Accessing app instance with specific methods
-        const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+        const appCreds = getFrankEnergieApp(this.homey.app)?.getCredentials?.() ?? null;
 
         const email = data?.email || appCreds?.email;
         const password = data?.password || appCreds?.password;
@@ -53,8 +54,7 @@ export = class SmartPvSystemDriver extends Homey.Driver {
 
         // Store credentials at app level if provided
         if (data?.email && data?.password) {
-          // @ts-expect-error - Accessing app instance with specific methods
-          this.homey.app.setCredentials?.(data.email, data.password);
+          getFrankEnergieApp(this.homey.app)?.setCredentials?.(data.email, data.password);
           this.log('Stored Frank Energie credentials at app level');
         }
 
@@ -69,8 +69,7 @@ export = class SmartPvSystemDriver extends Homey.Driver {
     // Handler for device creation - uses first PV system
     session.setHandler('list_devices', async (data?: { email?: string; password?: string }) => {
       // Get credentials (may be from app settings or provided during pairing)
-      // @ts-expect-error - Accessing app instance with specific methods
-      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+      const appCreds = getFrankEnergieApp(this.homey.app)?.getCredentials?.() ?? null;
 
       const email = data?.email || appCreds?.email || '';
       const password = data?.password || appCreds?.password || '';

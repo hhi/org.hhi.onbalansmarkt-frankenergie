@@ -9,6 +9,7 @@ export {
   type FrankEnergieApp,
   type AppCredentials,
   isFrankEnergieApp,
+  getFrankEnergieApp,
 } from './app-types';
 
 // Frank Energie API Client

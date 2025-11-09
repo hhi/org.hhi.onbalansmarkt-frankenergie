@@ -31,6 +31,13 @@ export interface FrankEnergieApp extends Homey.App {
    * @returns Credentials object or null if not configured
    */
   getCredentials?: () => AppCredentials | null;
+
+  /**
+   * Store credentials at app level
+   * @param email Frank Energie email
+   * @param password Frank Energie password
+   */
+  setCredentials?: (email: string, password: string) => void;
 }
 
 /**
@@ -39,4 +46,11 @@ export interface FrankEnergieApp extends Homey.App {
 export function isFrankEnergieApp(app: Homey.App): app is FrankEnergieApp {
   return typeof (app as FrankEnergieApp).hasCredentials === 'function'
     && typeof (app as FrankEnergieApp).getCredentials === 'function';
+}
+
+/**
+ * Return the Frank Energie app when available, otherwise null
+ */
+export function getFrankEnergieApp(app: Homey.App): FrankEnergieApp | null {
+  return isFrankEnergieApp(app) ? app : null;
 }

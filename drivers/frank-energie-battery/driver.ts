@@ -1,5 +1,8 @@
 import Homey from 'homey';
-import { FrankEnergieClient } from '../../lib';
+import {
+  FrankEnergieClient,
+  getFrankEnergieApp,
+} from '../../lib';
 
 /**
  * Smart Battery Driver
@@ -27,15 +30,13 @@ export = class SmartBatteryDriver extends Homey.Driver {
 
     // Check if app-level credentials are already configured
     session.setHandler('check_credentials', async () => {
-      // @ts-expect-error - Accessing app instance with specific methods
-      const hasCredentials = this.homey.app.hasCredentials?.() as boolean | undefined;
-      return { hasCredentials: hasCredentials || false };
+      const hasCredentials = getFrankEnergieApp(this.homey.app)?.hasCredentials?.() ?? false;
+      return { hasCredentials };
     });
 
     // Get existing credentials for pre-filling form
     session.setHandler('get_credentials', async () => {
-      // @ts-expect-error - Accessing app instance with specific methods
-      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+      const appCreds = getFrankEnergieApp(this.homey.app)?.getCredentials?.() ?? null;
       return {
         email: appCreds?.email || '',
         password: appCreds?.password || '',
@@ -95,8 +96,7 @@ export = class SmartBatteryDriver extends Homey.Driver {
         : 'Frank Energie Battery';
 
       // Store credentials at app level for all devices to use
-      // @ts-expect-error - Accessing app instance with specific methods
-      this.homey.app.setCredentials?.(pairingData.email, pairingData.password);
+      getFrankEnergieApp(this.homey.app)?.setCredentials?.(pairingData.email, pairingData.password);
       this.log('Stored Frank Energie credentials at app level');
 
       // Onbalansmarkt API key is required for battery device

@@ -1,5 +1,8 @@
 import Homey from 'homey';
-import { FrankEnergieClient } from '../../lib';
+import {
+  FrankEnergieClient,
+  getFrankEnergieApp,
+} from '../../lib';
 
 /**
  * Site Meter Driver
@@ -25,15 +28,13 @@ export = class SiteMeterDriver extends Homey.Driver {
 
     // Check if app-level credentials are already configured
     session.setHandler('check_credentials', async () => {
-      // @ts-expect-error - Accessing app instance with specific methods
-      const hasCredentials = this.homey.app.hasCredentials?.() as boolean | undefined;
-      return { hasCredentials: hasCredentials || false };
+      const hasCredentials = getFrankEnergieApp(this.homey.app)?.hasCredentials?.() ?? false;
+      return { hasCredentials };
     });
 
     // Get existing credentials for pre-filling form
     session.setHandler('get_credentials', async () => {
-      // @ts-expect-error - Accessing app instance with specific methods
-      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+      const appCreds = getFrankEnergieApp(this.homey.app)?.getCredentials?.() ?? null;
       return {
         email: appCreds?.email || '',
         password: appCreds?.password || '',
@@ -44,8 +45,7 @@ export = class SiteMeterDriver extends Homey.Driver {
     session.setHandler('verify_meter', async (data?: { email?: string; password?: string }) => {
       try {
         // Get credentials from app settings or data
-        // @ts-expect-error - Accessing app instance with specific methods
-        const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+        const appCreds = getFrankEnergieApp(this.homey.app)?.getCredentials?.() ?? null;
 
         const email = data?.email || appCreds?.email;
         const password = data?.password || appCreds?.password;
@@ -63,8 +63,7 @@ export = class SiteMeterDriver extends Homey.Driver {
 
         // Store credentials at app level if provided
         if (data?.email && data?.password) {
-          // @ts-expect-error - Accessing app instance with specific methods
-          this.homey.app.setCredentials?.(data.email, data.password);
+          getFrankEnergieApp(this.homey.app)?.setCredentials?.(data.email, data.password);
           this.log('Stored Frank Energie credentials at app level');
         }
 
@@ -86,8 +85,7 @@ export = class SiteMeterDriver extends Homey.Driver {
     // Create device with credentials and auto-discovered site reference
     session.setHandler('list_devices', async () => {
       // Get credentials from pairing data or app settings
-      // @ts-expect-error - Accessing app instance with specific methods
-      const appCreds = this.homey.app.getCredentials?.() as { email: string; password: string } | null | undefined;
+      const appCreds = getFrankEnergieApp(this.homey.app)?.getCredentials?.() ?? null;
 
       const email = pairingData?.email || appCreds?.email || '';
       const password = pairingData?.password || appCreds?.password || '';
