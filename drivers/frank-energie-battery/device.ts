@@ -1238,6 +1238,16 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         }
       }
 
+      // Send timeline notification
+      try {
+        await this.homey.notifications.createNotification({
+          excerpt: `${this.getName()}: Manual baseline reset executed at 23:59`,
+        });
+        this.log('Timeline notification sent: Manual baseline reset executed');
+      } catch (error) {
+        this.error('Failed to create timeline notification:', error);
+      }
+
       this.manualResetTimeout = null;
     }, msUntilReset);
 
