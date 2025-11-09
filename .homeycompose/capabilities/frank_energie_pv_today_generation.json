@@ -2,6 +2,7 @@
   "id": "frank_energie_pv_today_generation",
   "uiQuickAction": false,
   "type": "number",
+  "insights": true,
   "title": {
     "en": "Generation Today",
     "nl": "Opwek Vandaag"

@@ -2,6 +2,7 @@
   "id": "battery_2_total",
   "uiQuickAction": false,
   "type": "number",
+  "insights": true,
   "title": {
     "en": "Battery 2 Total",
     "nl": "Batterij 2 Totaal"

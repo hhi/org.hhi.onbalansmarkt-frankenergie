@@ -2,6 +2,7 @@
   "id": "frank_energie_min_market_price_today",
   "uiQuickAction": false,
   "type": "number",
+  "insights": true,
   "title": {
     "en": "Lowest Market Price Today",
     "nl": "Laagste Marktprijs Vandaag"

@@ -2,6 +2,7 @@
   "id": "frank_energie_today_consumption",
   "uiQuickAction": false,
   "type": "number",
+  "insights": true,
   "title": {
     "en": "Consumption Today",
     "nl": "Verbruik Vandaag"

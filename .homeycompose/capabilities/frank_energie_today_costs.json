@@ -2,6 +2,7 @@
   "id": "frank_energie_today_costs",
   "uiQuickAction": false,
   "type": "number",
+  "insights": true,
   "title": {
     "en": "Costs Today",
     "nl": "Kosten Vandaag"
