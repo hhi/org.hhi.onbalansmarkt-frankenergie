@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -30,10 +30,25 @@
   },
   "brandColor": "#00b8a9",
   "icon": "/assets/icon.svg",
-  "support": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues",
-  "privacy": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
-  "homepageUrl": "https://onbalansmarkt.com",
-  "bugUrl": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues",
+  "support": "mailto:iphone.HHi@me.com",
+  "source": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
+  "homepageUrl": "https://onbalansmarkt.com/help",
+  "homeyCommunityTopicId": 12345,
+  "bugs": {
+    "url": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues"
+  },
+  "tags": {
+    "nl": [
+      "thuisbatterij",
+      "onbalansmarkt",
+      "Frank Energie"
+    ],
+    "en": [
+      "home battery",
+      "imbalance market",
+      "Frank Energie"
+    ]
+  },
   "flow": {
     "triggers": [
       {
@@ -1046,6 +1061,24 @@
         ]
       },
       {
+        "id": "send_measurements_now",
+        "title": {
+          "en": "Send measurements to Onbalansmarkt now",
+          "nl": "Verstuur metingen nu naar Onbalansmarkt"
+        },
+        "hint": {
+          "en": "Send current measurement data immediately, regardless of polling schedule or send_measurements setting",
+          "nl": "Verstuur huidige meetgegevens direct, ongeacht het pollschema of send_measurements instelling"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ]
+      },
+      {
         "id": "send_notification",
         "title": {
           "en": "Send trading notification",
@@ -1493,10 +1526,10 @@
                   }
                 },
                 {
-                  "id": "simulate_send",
+                  "id": "direct_send",
                   "label": {
-                    "en": "Simulate Send to Onbalansmarkt (Dry Run)",
-                    "nl": "Simuleer Verzenden naar Onbalansmarkt (Dry Run)"
+                    "en": "Send measurements now",
+                    "nl": "Verstuur metingen nu"
                   }
                 }
               ],

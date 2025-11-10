@@ -1,14 +1,14 @@
 {
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "Onbalansmarkt smartBattery liveresults",
-    "nl": "Onbalansmarkt smartBattery liveresultaten"
+    "en": "Onbalansmarkt smartbattery liveresults",
+    "nl": "Onbalansmarkt smartbattery liveresultaten"
   },
   "description": {
     "en": "Delivers battery trading liveresults to the onbalansmarkt.com site.",
@@ -30,11 +30,22 @@
   "brandColor": "#00b8a9",
   "icon": "/assets/icon.svg",
   "support": "mailto:iphone.HHi@me.com",
-  "privacy": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
+  "source": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
   "homepageUrl": "https://onbalansmarkt.com/help",
-  "bugUrl": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues",
-  "homeyCommunityTopicId": 12345,
+  "homeyCommunityTopicId": 145203,
   "bugs": {
     "url": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues"
+  },
+  "tags": {
+    "nl": [
+      "thuisbatterij",
+      "onbalansmarkt",
+      "Frank Energie"
+    ],
+    "en": [
+      "home battery",
+      "imbalance market",
+      "Frank Energie"
+    ]
   }
 }

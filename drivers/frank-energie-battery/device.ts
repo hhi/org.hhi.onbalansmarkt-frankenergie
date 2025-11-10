@@ -1609,22 +1609,19 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     for (const [batteryId, data] of this.externalBatteries.entries()) {
       // Use stored activation time (fixed timestamp from when battery was first added)
       const date = new Date(data.activationTime);
-      const day = String(date.getDate()).padStart(2, '0');
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const month = monthNames[date.getMonth()];
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const seconds = String(date.getSeconds()).padStart(2, '0');
-      const dateTimeString = `; ${day}-${month} ${hours}:${minutes}:${seconds}`;
+      const timeString = ` ${hours}:${minutes}:${seconds}`;
 
       batteryValues.push({
         id: batteryId,
         title: {
-          en: `${batteryId} (${data.type}${dateTimeString})`,
-          nl: `${batteryId} (${data.type}${dateTimeString})`,
+          en: `${batteryId} (${data.type}${timeString})`,
+          nl: `${batteryId} (${data.type}${timeString})`,
         },
       });
-      this.log(`  Adding to picker: ${batteryId} (${data.type}${dateTimeString})`);
+      this.log(`  Adding to picker: ${batteryId} (${data.type}${timeString})`);
     }
 
     // Always add "none" option first
