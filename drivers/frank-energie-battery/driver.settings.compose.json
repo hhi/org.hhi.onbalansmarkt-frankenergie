@@ -188,10 +188,10 @@
             }
           },
           {
-            "id": "simulate_send",
+            "id": "direct_send",
             "label": {
-              "en": "Simulate Send to Onbalansmarkt (Dry Run)",
-              "nl": "Simuleer Verzenden naar Onbalansmarkt (Dry Run)"
+              "en": "Send measurements now",
+              "nl": "Verstuur metingen nu"
             }
           }
         ],

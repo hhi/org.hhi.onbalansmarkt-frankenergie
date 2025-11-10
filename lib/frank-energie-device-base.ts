@@ -578,8 +578,8 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
     // Default no-op - subclasses override if they support external batteries reset
   }
 
-  protected async handleSimulateSend(): Promise<void> {
-    // Default no-op - subclasses override if they support simulation
+  protected async handleDirectSend(): Promise<void> {
+    // Default no-op - subclasses override if they support sending
   }
 
   /**
@@ -684,11 +684,11 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
           }, 100);
           throw new Error(`Manual external batteries reset failed: ${errorMsg}`);
         }
-      } else if (action === 'simulate_send') {
-        this.log('Manual action: Simulate send to Onbalansmarkt (Dry Run)');
+      } else if (action === 'direct_send') {
+        this.log('Manual action: Send measurements to Onbalansmarkt now');
         try {
-          await this.handleSimulateSend();
-          this.log('Simulation completed successfully - check logs for detailed output');
+          await this.handleDirectSend();
+          this.log('Measurements sent successfully');
           // Reset dropdown to "none" after onSettings completes
           this.homey.setTimeout(() => {
             this.setSettings({ manual_action: 'none' })
@@ -697,13 +697,13 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
           return; // Don't restart polling or reinitialize clients
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-          this.error('Simulation failed:', errorMsg);
+          this.error('Direct send failed:', errorMsg);
           // Reset dropdown to "none" even on failure
           this.homey.setTimeout(() => {
             this.setSettings({ manual_action: 'none' })
               .catch((err) => this.error('Failed to reset manual_action dropdown:', err));
           }, 100);
-          throw new Error(`Simulation failed: ${errorMsg}`);
+          throw new Error(`Direct send failed: ${errorMsg}`);
         }
       }
 

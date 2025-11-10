@@ -349,6 +349,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       .registerRunListener(this.actionReceiveBatteryDailyMetrics.bind(this));
     this.homey.flow.getActionCard('reset_baseline')
       .registerRunListener(this.actionResetBaseline.bind(this));
+    this.homey.flow.getActionCard('send_measurements_now')
+      .registerRunListener(this.actionSendMeasurementsNow.bind(this));
 
     this.log('Battery-specific flow cards registered');
   }
@@ -722,10 +724,36 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
-   * Override handleSimulateSend to call simulation method
+   * Override handleDirectSend to send measurements immediately
+   * Sends current measurement data to Onbalansmarkt, regardless of settings or polling schedule
    */
-  protected async handleSimulateSend(): Promise<void> {
-    await this.simulateSendMeasurement();
+  protected async handleDirectSend(): Promise<void> {
+    if (!this.onbalansmarktClient) {
+      this.log('Cannot send: Onbalansmarkt client not initialized (API key missing?)');
+      throw new Error('Onbalansmarkt client not initialized - API key may be missing');
+    }
+
+    if (!this.batteryAggregator) {
+      throw new Error('Battery aggregator not initialized');
+    }
+
+    // Get current trading results
+    const aggregatedResults = await this.batteryAggregator.getAggregatedResults(
+      new Date(),
+      new Date(),
+    );
+
+    // Get trading mode from first battery
+    const battery = await this.frankEnergieClient!.getSmartBattery(this.batteries[0].id);
+    if (!battery.settings) {
+      throw new Error('Battery settings not available');
+    }
+    const tradingModeInfo = TradingModeDetector.detectTradingMode(battery.settings);
+
+    // Send the measurement
+    await this.sendMeasurement(aggregatedResults, tradingModeInfo.mode);
+
+    this.log('Direct send measurement completed successfully');
   }
 
   /**
@@ -1170,6 +1198,20 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     this.log('Reset baseline action triggered by user (flow card)');
     await this.externalBatteryMetrics.emergencyResetBaseline();
     this.log('Baseline reset completed successfully');
+  }
+
+  private async actionSendMeasurementsNow(args: ActionOnlyDeviceArgs) {
+    if (args.device !== this) return;
+
+    this.log('Send measurements now action triggered via flow card');
+    try {
+      await this.handleDirectSend();
+      this.log('Measurements sent successfully via flow card');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error('Failed to send measurements via flow card:', errorMsg);
+      throw new Error(`Failed to send measurements: ${errorMsg}`);
+    }
   }
 
   /**
