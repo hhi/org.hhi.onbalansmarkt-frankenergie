@@ -1,7 +1,7 @@
 {
   "name": {
-    "en": "Frank Energie Energy Meter",
-    "nl": "Frank Energie Energiemeter"
+    "en": "Frank Energie - Smart meter overview",
+    "nl": "Frank Energie - Slimme meter overzicht"
   },
   "class": "sensor",
   "capabilities": [

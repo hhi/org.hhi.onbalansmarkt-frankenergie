@@ -1,6 +1,5 @@
 # Onbalansmarkt Frank Energie Homey App
-
-Homey app voor live feedback van actueel handelsresultaat via Frank Energie naar onbalansmarkt.com.
+Homey app for live feedback of current trading results (at Frank Energie / Zonneplan) to onbalansmarkt.com.
 
 **Languages:** English | [Nederlands](#nederlands)
 

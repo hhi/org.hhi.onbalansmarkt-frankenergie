@@ -146,8 +146,8 @@
   {
     "type": "group",
     "label": {
-      "en": "Manual Actions",
-      "nl": "Handmatige Acties"
+      "en": "Manual Actions (repair)",
+      "nl": "Handmatige Acties (reparatie)"
     },
     "children": [
       {
@@ -196,8 +196,8 @@
           }
         ],
         "hint": {
-          "en": "Select an action and save to execute it immediately",
-          "nl": "Selecteer een actie en sla op om deze direct uit te voeren"
+          "en": "Select a recovery action and save to execute it",
+          "nl": "Selecteer een recovery actie en sla op om deze uit te voeren"
         }
       }
     ]

@@ -1,7 +1,7 @@
 {
   "name": {
-    "en": "Frank Energie PV System",
-    "nl": "Frank Energie PV Systeem"
+    "en": "Frank Energie - Smart PV Feed-in",
+    "nl": "Frank Energie - Slim terugleveren"
   },
   "class": "service",
   "capabilities": [
