@@ -1,41 +1,73 @@
-Send live feedback of your current trading results achieved via Frank Energie (or Zonneplan) to Onbalansmarkt.  
-Receive ranking feedback and reported charge/discharge values together with all relevant Frank Energie information.
-Integration of relevant Frank Energie information.
+Send live feedback of your current trading results achieved with your home battery system via Frank Energie to Onbalansmarkt.
+Monitor Onbalansmarkt rankings and reported charge/discharge values from your participating home battery system.
+Overview of relevant Frank Energie smart services information.
 
-Operating your battery system via Frank Energie’s Slim Handelen:
-- Sum the batteries that register the total charge/discharge state.
-- Aggregate batteries that report their daily charge/discharge totals.
-- Determine the average battery percentage.
-- Process the load-balancer presence indicator (via settings).
-- Forward the trading strategy.
-- Configure a poll and reporting timer (preferably every 15 minutes).
 
-Data returned from Onbalansmarkt:
-- Reported charged and delivered energy (previous upload).
-- Live Frank Energie leaderboard.
-- Leaderboard across all providers.
+FEATURES
 
-Data from Frank Energie:
-- Trading result and EPEX yield.
-- Lifetime total.
-- Slim discount.
-- Yield per participating battery.
+Frank Energie - Slim Handelen:
+Deploy your battery system via Frank Energie's Slim Handelen:
+- Sum of batteries that register total charge/discharge state
+- Aggregate handling of batteries with daily total charge/discharge values
+- Average battery percentage determination
+- Load balancer presence indicator processing (via settings)
+- Trading strategy forwarding
+- Poll and reporting timer (preferably every 15 minutes)
 
-Frank Energie EV – smart charging (electric vehicle):
-- EV charging bonus.
-- Last known EV battery percentage.
-- EV charger status.
-- Poll timer (minimum every 5 minutes).
+Onbalansmarkt feedback:
+- Reported charged and delivered (previous upload)
+- Live Frank Energie ranking
+- Ranking across all providers
 
-Frank Energie PV – smart PV system (solar panels):
-- Current power.
-- Current generation.
-- PV bonus.
-- Poll timer (minimum every 5 minutes).
+Frank Energie - Slim Handelen (smart battery) metrics:
+- Trading result and EPEX yield
+- Lifetime total
+- Slim discount
+- Yield per participating battery
 
-Frank Energie – energy metering reporting:
-- Current and next market price.
-- Today’s consumption and costs.
-- Lowest/highest/average market price today.
-- Consumption on the low tariff.
-- Poll timer (minimum every 30 minutes).
+Frank Energie EV - Smart charging (electric vehicle):
+- EV charging bonus
+- Last known EV battery percentage
+- EV charger status
+- Poll timer (minimum every 5 minutes)
+
+Frank Energie PV - Smart PV system (solar panels):
+- Current power output
+- Current generation
+- PV bonus
+- Poll timer (minimum every 5 minutes)
+
+Frank Energie - Energy measurement reporting:
+- Current and next market price
+- Today's consumption and costs
+- Lowest/highest/average market price today
+- Consumption on low tariff
+- Poll timer (minimum every 30 minutes)
+
+
+SETUP
+
+Add the Frank Energie Battery (Slim Laden) device first:
+- Enter your Frank Energie login credentials,
+- Enter the Onbalansmarkt API key,
+- Let the wizard save credentials for any additional drivers (PV, EV, Meter)
+
+INTEGRATION
+
+To process current battery set measurements in the app, we use an Advanced Flow schema.
+Via an action (THEN) flow card, you provide the measured values for each participating battery.
+
+Using the "Receive daily battery metrics" action card:
+- Daily charged power in kWh
+- Daily delivered power in kWh
+- Measured battery percentage
+
+Using the "Receive battery metrics" action card:
+- Total charged power value in kWh
+- Total delivered power value in kWh
+- Measured battery percentage
+
+
+USAGE
+
+After integration, open the battery settings to configure poll-interval, auto-send measurements, and load-balancing.

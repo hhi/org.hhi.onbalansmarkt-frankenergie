@@ -2,9 +2,6 @@ Stuur live feedback van je actuele handelsresultaten die je met je thuisbatterij
 Monitoring van Onbalansmarkt Ranking en gerapporteerde waarden van (ont)laden van je participerende thuisbatterijset.
 Overzicht van relevante Frank Energie slimme diensten informatie.
 
-KOPPELINGEN
-
-- Deelnemende Frank Energie batterijen via Slim laden
 
 FEATURES
 
@@ -22,7 +19,7 @@ Onbalansmarkt feedback:
 - ranglijst live Frank Energie
 - ranglijst alle Providers
 
-Frank Energie - Slim handelen metrieken:
+Frank Energie - Slim handelen (thuisbatterij) metrieken:
 - Handelsresultaat en EPEX opbrengst
 - Lifetime totaal
 - slim korting
@@ -69,5 +66,8 @@ Middels het "Ontvang batterij metrieken" actie kaartje:
 - totaalwaarde geladen vermogen in kWh
 - totaalwaarde geleverd vermogen in kWh
 - gemeten accu percentage
+
+
+GEBRUIK
 
 Open na het koppelen de batterij-instellingen om poll-interval, auto-send measurements en load-balancing in te stellen.
