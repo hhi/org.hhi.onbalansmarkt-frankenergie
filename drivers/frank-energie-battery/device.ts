@@ -1612,21 +1612,21 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const seconds = String(date.getSeconds()).padStart(2, '0');
-      const timeString = ` ${hours}:${minutes}:${seconds}`;
+      const timeString = `${hours}:${minutes}:${seconds}`;
 
       batteryValues.push({
         id: batteryId,
         title: {
-          en: `${batteryId} (${data.type}${timeString})`,
-          nl: `${batteryId} (${data.type}${timeString})`,
+          en: `${batteryId} (${data.type}; ${timeString})`,
+          nl: `${batteryId} (${data.type}; ${timeString})`,
         },
       });
-      this.log(`  Adding to picker: ${batteryId} (${data.type}${timeString})`);
+      this.log(`  Adding to picker: ${batteryId} (${data.type}; ${timeString})`);
     }
 
     // Always add "none" option first
-    // Get earliest activation time from all batteries
-    let activationTime = '';
+    // Get earliest activation date from all batteries
+    let activationDate = '';
     if (this.externalBatteries.size > 0) {
       let earliestTime: number | null = null;
       for (const data of this.externalBatteries.values()) {
@@ -1637,18 +1637,18 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
       if (earliestTime) {
         const date = new Date(earliestTime);
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-        activationTime = ` ${hours}:${minutes}:${seconds}`;
+        const day = String(date.getDate()).padStart(2, '0');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = monthNames[date.getMonth()];
+        activationDate = ` ${day}-${month}`;
       }
     }
 
     batteryValues.unshift({
       id: 'none',
       title: {
-        en: `— Participating batteries —${activationTime}`,
-        nl: `— Participerende batterijen —${activationTime}`,
+        en: `— Participating batteries —${activationDate}`,
+        nl: `— Participerende batterijen —${activationDate}`,
       },
     });
 

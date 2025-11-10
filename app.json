@@ -8,8 +8,8 @@
     "local"
   ],
   "name": {
-    "en": "Onbalansmarkt smartBattery liveresults",
-    "nl": "Onbalansmarkt smartBattery liveresultaten"
+    "en": "Onbalansmarkt smartbattery liveresults",
+    "nl": "Onbalansmarkt smartbattery liveresultaten"
   },
   "description": {
     "en": "Delivers battery trading liveresults to the onbalansmarkt.com site.",
@@ -33,7 +33,7 @@
   "support": "mailto:iphone.HHi@me.com",
   "source": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
   "homepageUrl": "https://onbalansmarkt.com/help",
-  "homeyCommunityTopicId": 12345,
+  "homeyCommunityTopicId": 145203,
   "bugs": {
     "url": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues"
   },
