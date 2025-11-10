@@ -1,4 +1,9 @@
 {
+  "0.1.0": {
+    "en": "Zonneplan driver removed from active codebase. Focus on Frank Energie integration only. Code preserved in Git history for future reference. Documentation updated for Frank Energie devices.",
+    "nl": "Zonneplan driver verwijderd uit actieve codebase. Geconcentreerd op Frank Energie integratie. Code behouden in Git-geschiedenis voor toekomstige referentie. Documentatie bijgewerkt voor Frank Energie apparaten."
+  },
+
   "0.0.51": {
     "en": "Drivers now use typed Frank Energie app helpers, eliminating ts-expect-error directives while keeping credential sharing intact.",
     "nl": "Drivers gebruiken nu getype-de Frank Energie app helpers, waardoor ts-expect-error instructies verdwijnen en credential delen behouden blijft."

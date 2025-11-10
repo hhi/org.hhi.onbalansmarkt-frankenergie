@@ -19,7 +19,7 @@ Onbalansmarkt feedback:
 - Live Frank Energie ranking
 - Ranking across all providers
 
-Frank Energie - Slim Handelen (home battery) metrics:
+Frank Energie - Slim Handelen (smart battery) metrics:
 - Trading result and EPEX yield
 - Lifetime total
 - Slim discount

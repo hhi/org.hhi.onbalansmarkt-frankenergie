@@ -1,5 +1,6 @@
 # Onbalansmarkt Frank Energie Homey App
-Homey app for live feedback of current trading results (at Frank Energie / Zonneplan) to onbalansmarkt.com.
+
+Homey app for live feedback of current trading results from Frank Energie to onbalansmarkt.com.
 
 **Languages:** English | [Nederlands](#nederlands)
 
@@ -13,7 +14,6 @@ This Homey app delivers real-time battery trading results from your Frank Energi
 - **Frank Energie Meter** - Track electricity consumption and production data
 - **Frank Energie EV Charger** - Monitor electric vehicle charging status
 - **Frank Energie PV System** - Track solar panel performance
-- **Zonneplan Battery** - Alternative battery system support via flow cards
 
 ## Features
 
@@ -98,7 +98,7 @@ For subsequent devices (Meter, EV, PV):
 
 ## Flow Cards
 
-### Triggers (12)
+### Triggers
 
 - Daily results available
 - External battery metrics updated
@@ -109,7 +109,6 @@ For subsequent devices (Meter, EV, PV):
 - Result positive/negative
 - Top performer alert
 - Trading mode changed
-- Zonneplan metrics updated
 - And more...
 
 ### Conditions (6)
@@ -214,7 +213,6 @@ Deze Homey-app levert real-time batterijtradingresultaten van uw Frank Energie-s
 - **Frank Energie Meter** - Traceer energie consumptie en productie
 - **Frank Energie EV Lader** - Monitor EV laadstatus
 - **Frank Energie PV Systeem** - Volg zonnepaneel prestaties
-- **Zonneplan Batterij** - Alternatieve batterij via flow cards
 
 ## Functies
 
