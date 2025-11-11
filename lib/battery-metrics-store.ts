@@ -406,13 +406,22 @@ export class BatteryMetricsStore {
    * Called on device init to ensure proper daily baseline management
    */
   scheduleAutomaticReset(): void {
-    // Calculate milliseconds until next 00:00
+    // Calculate milliseconds until next 00:00 (Amsterdam timezone)
     const now = new Date();
-    const next00 = new Date(now);
-    next00.setDate(next00.getDate() + 1); // Tomorrow
-    next00.setHours(0, 0, 0, 0); // 00:00:00
 
-    const msUntilReset = next00.getTime() - now.getTime();
+    // Get current Amsterdam date/time
+    const amsterdamNow = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' }));
+
+    // Calculate next 00:00 in Amsterdam time
+    const next00Amsterdam = new Date(amsterdamNow);
+    next00Amsterdam.setDate(next00Amsterdam.getDate() + 1);
+    next00Amsterdam.setHours(0, 0, 0, 0);
+
+    // Convert back to UTC for scheduling
+    const offset = amsterdamNow.getTime() - now.getTime();
+    const next00UTC = new Date(next00Amsterdam.getTime() - offset);
+
+    const msUntilReset = next00UTC.getTime() - now.getTime();
 
     // Schedule first reset using Homey's setTimeout (auto-cleanup on app restart)
     this.resetTimeout = this.device.homey.setTimeout(async () => {
@@ -428,7 +437,7 @@ export class BatteryMetricsStore {
     }, msUntilReset);
 
     this.logger(
-      `BatteryMetricsStore: Scheduled automatic reset at 00:00 (${(msUntilReset / 1000 / 60).toFixed(0)} minutes from now)`,
+      `BatteryMetricsStore: Scheduled automatic reset at 00:00 Amsterdam time (${(msUntilReset / 1000 / 60).toFixed(0)} minutes from now)`,
     );
   }
 

@@ -1,4 +1,9 @@
 {
+  "0.1.4": {
+    "en": "Daily baseline reset now occurs at midnight Amsterdam time. StartOfDay values reflect the previous day's totals at 00:00.",
+    "nl": "Dagelijkse baseline reset vindt nu plaats op middernacht (Amsterdam-tijd). StartOfDay-waarden geven de totalen van de vorige dag weer om 00:00."
+  },
+
   "0.1.3": {
     "en": "New setup guides for Sessy battery integration. Improved documentation with step-by-step battery configuration instructions (English and Dutch).",
     "nl": "Nieuwe handleidingen voor Sessy-batterijintegratie. Verbeterde documentatie met stap-voor-stap batterijconfiguratie-instructies (Engels en Nederlands)."
