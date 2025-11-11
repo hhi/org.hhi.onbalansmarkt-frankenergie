@@ -1,0 +1,19 @@
+{
+  "id": "battery_10_total",
+  "uiQuickAction": false,
+  "type": "number",
+  "insights": true,
+  "title": {
+    "en": "Battery 10 Total",
+    "nl": "Batterij 10 Totaal"
+  },
+  "units": {
+    "en": "€",
+    "nl": "€"
+  },
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/battery_10_total.svg"
+}

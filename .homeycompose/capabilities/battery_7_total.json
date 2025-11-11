@@ -1,0 +1,19 @@
+{
+  "id": "battery_7_total",
+  "uiQuickAction": false,
+  "type": "number",
+  "insights": true,
+  "title": {
+    "en": "Battery 7 Total",
+    "nl": "Batterij 7 Totaal"
+  },
+  "units": {
+    "en": "€",
+    "nl": "€"
+  },
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/battery_7_total.svg"
+}

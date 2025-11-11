@@ -1,0 +1,21 @@
+{
+  "id": "frank_energie_battery_charge",
+  "uiQuickAction": false,
+  "title": {
+    "en": "Battery Charge",
+    "nl": "Batterijlading"
+  },
+  "description": {
+    "en": "Current battery charge percentage",
+    "nl": "Huidige ladingpercentage batterij"
+  },
+  "type": "number",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "min": 0,
+  "max": 100,
+  "units": "%",
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_battery_charge.svg"
+}

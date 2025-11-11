@@ -1,0 +1,18 @@
+{
+  "id": "send_measurements_now",
+  "title": {
+    "en": "Send measurements to Onbalansmarkt now",
+    "nl": "Verstuur metingen nu naar Onbalansmarkt"
+  },
+  "hint": {
+    "en": "Send current measurement data immediately, regardless of polling schedule or send_measurements setting",
+    "nl": "Verstuur huidige meetgegevens direct, ongeacht het pollschema of send_measurements instelling"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ]
+}

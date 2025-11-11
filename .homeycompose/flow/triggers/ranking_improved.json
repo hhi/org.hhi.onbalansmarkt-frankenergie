@@ -1,0 +1,52 @@
+{
+  "id": "ranking_improved",
+  "title": {
+    "en": "Ranking improved",
+    "nl": "Ranglijstpositie verbeterd"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "currentRank",
+      "title": {
+        "en": "Current Rank",
+        "nl": "Huidige Ranglijst"
+      },
+      "type": "number",
+      "example": 42
+    },
+    {
+      "name": "previousRank",
+      "title": {
+        "en": "Previous Rank",
+        "nl": "Vorige Ranglijst"
+      },
+      "type": "number",
+      "example": 56
+    },
+    {
+      "name": "improvement",
+      "title": {
+        "en": "Improvement",
+        "nl": "Verbetering"
+      },
+      "type": "number",
+      "example": 14
+    },
+    {
+      "name": "batteryResult",
+      "title": {
+        "en": "Daily Result",
+        "nl": "Dagelijks Resultaat"
+      },
+      "type": "number",
+      "example": 45.67
+    }
+  ]
+}

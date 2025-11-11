@@ -1,0 +1,3050 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "org.hhi.onbalansmarkt-frankenergie",
+  "version": "0.1.3",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Onbalansmarkt smartbattery liveresults",
+    "nl": "Onbalansmarkt smartbattery liveresultaten"
+  },
+  "description": {
+    "en": "Delivers battery trading liveresults to the onbalansmarkt.com site.",
+    "nl": "Levert batterij handelsresultaten live aan de onbalansmarkt.com site."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/onbalansmarkt_250x175.png",
+    "large": "/assets/images/onbalansmarkt_500x350.png",
+    "xlarge": "/assets/images/onbalansmarkt_1000x700.png"
+  },
+  "author": {
+    "name": "H Hi",
+    "email": "iphone.HHi@me.com"
+  },
+  "brandColor": "#00b8a9",
+  "icon": "/assets/icon.svg",
+  "support": "mailto:iphone.HHi@me.com",
+  "source": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie",
+  "homepageUrl": "https://onbalansmarkt.com/help",
+  "homeyCommunityTopicId": 145203,
+  "bugs": {
+    "url": "https://github.com/hhi/org.hhi.onbalansmarkt-frankenergie/issues"
+  },
+  "tags": {
+    "nl": [
+      "thuisbatterij",
+      "onbalansmarkt",
+      "Frank Energie"
+    ],
+    "en": [
+      "home battery",
+      "imbalance market",
+      "Frank Energie"
+    ]
+  },
+  "flow": {
+    "triggers": [
+      {
+        "id": "daily_results_available",
+        "title": {
+          "en": "Daily results available",
+          "nl": "Dagelijkse resultaten beschikbaar"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "batteryResult",
+            "title": {
+              "en": "Battery Result",
+              "nl": "Batterij Resultaat"
+            },
+            "type": "number",
+            "example": 45.67
+          },
+          {
+            "name": "batteryResultTotal",
+            "title": {
+              "en": "Battery Result Total",
+              "nl": "Totaal Batterij Resultaat"
+            },
+            "type": "number",
+            "example": 523.45
+          },
+          {
+            "name": "overallRank",
+            "title": {
+              "en": "Overall Rank",
+              "nl": "Totaal Ranglijst"
+            },
+            "type": "number",
+            "example": 42
+          },
+          {
+            "name": "providerRank",
+            "title": {
+              "en": "Provider Rank",
+              "nl": "Provider Ranglijst"
+            },
+            "type": "number",
+            "example": 12
+          },
+          {
+            "name": "tradingMode",
+            "title": {
+              "en": "Trading Mode",
+              "nl": "Handelsmodus"
+            },
+            "type": "string",
+            "example": "imbalance_aggressive"
+          },
+          {
+            "name": "resultDate",
+            "title": {
+              "en": "Result Date",
+              "nl": "Resultaat Datum"
+            },
+            "type": "string",
+            "example": "2025-10-23"
+          }
+        ]
+      },
+      {
+        "id": "external_battery_metrics_updated",
+        "title": {
+          "en": "External battery metrics updated",
+          "nl": "Externe batterij metrieken bijgewerkt"
+        },
+        "hint": {
+          "en": "Triggered when external battery metrics are aggregated from multiple physical batteries.",
+          "nl": "Wordt getriggerd wanneer externe batterij metrieken worden geaggregeerd van meerdere fysieke batterijen."
+        },
+        "tokens": [
+          {
+            "name": "daily_charged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily charged (kWh)",
+              "nl": "Dagelijks geladen (kWh)"
+            },
+            "example": 12.5
+          },
+          {
+            "name": "daily_discharged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily discharged (kWh)",
+              "nl": "Dagelijks geleverd (kWh)"
+            },
+            "example": 8.3
+          },
+          {
+            "name": "average_percentage",
+            "type": "number",
+            "title": {
+              "en": "Average battery %",
+              "nl": "Gemiddeld batterij %"
+            },
+            "example": 75
+          },
+          {
+            "name": "battery_count",
+            "type": "number",
+            "title": {
+              "en": "Number of batteries",
+              "nl": "Aantal batterijen"
+            },
+            "example": 3
+          }
+        ]
+      },
+      {
+        "id": "frank_slim_bonus_detected",
+        "title": {
+          "en": "Frank Slim bonus detected",
+          "nl": "Frank Slim bonus gedetecteerd"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "bonusAmount",
+            "title": {
+              "en": "Bonus Amount",
+              "nl": "Bonusbedrag"
+            },
+            "type": "number",
+            "example": 12.5
+          },
+          {
+            "name": "batteryResult",
+            "title": {
+              "en": "Daily Result",
+              "nl": "Dagelijks Resultaat"
+            },
+            "type": "number",
+            "example": 45.67
+          }
+        ]
+      },
+      {
+        "id": "measurement_sent",
+        "title": {
+          "en": "Measurement sent",
+          "nl": "Meting verzonden"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "batteryResult",
+            "title": {
+              "en": "Battery Result",
+              "nl": "Batterij Resultaat"
+            },
+            "type": "number",
+            "example": 45.67
+          },
+          {
+            "name": "batteryCharge",
+            "title": {
+              "en": "Battery Charge %",
+              "nl": "Batterij Laad %"
+            },
+            "type": "number",
+            "example": 75
+          },
+          {
+            "name": "tradingMode",
+            "title": {
+              "en": "Trading Mode",
+              "nl": "Handelsmodus"
+            },
+            "type": "string",
+            "example": "imbalance_aggressive"
+          },
+          {
+            "name": "timestamp",
+            "title": {
+              "en": "Send Time",
+              "nl": "Verzendtijd"
+            },
+            "type": "string",
+            "example": "2025-10-23T14:30:00Z"
+          }
+        ]
+      },
+      {
+        "id": "milestone_reached",
+        "title": {
+          "en": "Milestone reached",
+          "nl": "Mijlpaal bereikt"
+        },
+        "titleFormatted": {
+          "en": "Milestone reached: €[[threshold]]",
+          "nl": "Mijlpaal bereikt: €[[threshold]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Amount (€)",
+              "nl": "Bedrag (€)"
+            },
+            "min": 1,
+            "step": 10
+          }
+        ],
+        "tokens": [
+          {
+            "name": "batteryResultTotal",
+            "title": {
+              "en": "Current Monthly Total",
+              "nl": "Huidig Maandelijks Totaal"
+            },
+            "type": "number",
+            "example": 105.5
+          },
+          {
+            "name": "overThreshold",
+            "title": {
+              "en": "Amount Over Threshold",
+              "nl": "Bedrag Boven Drempel"
+            },
+            "type": "number",
+            "example": 5.5
+          }
+        ]
+      },
+      {
+        "id": "new_battery_added",
+        "title": {
+          "en": "New battery added",
+          "nl": "Nieuwe batterij toegevoegd"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "newBatteryCount",
+            "title": {
+              "en": "Total Battery Count",
+              "nl": "Totaal Aantal Batterijen"
+            },
+            "type": "number",
+            "example": 3
+          },
+          {
+            "name": "previousBatteryCount",
+            "title": {
+              "en": "Previous Battery Count",
+              "nl": "Vorig Aantal Batterijen"
+            },
+            "type": "number",
+            "example": 2
+          }
+        ]
+      },
+      {
+        "id": "ranking_declined",
+        "title": {
+          "en": "Ranking declined",
+          "nl": "Ranglijstpositie verslechterd"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "currentRank",
+            "title": {
+              "en": "Current Rank",
+              "nl": "Huidige Ranglijst"
+            },
+            "type": "number",
+            "example": 56
+          },
+          {
+            "name": "previousRank",
+            "title": {
+              "en": "Previous Rank",
+              "nl": "Vorige Ranglijst"
+            },
+            "type": "number",
+            "example": 42
+          },
+          {
+            "name": "decline",
+            "title": {
+              "en": "Decline",
+              "nl": "Verslechtering"
+            },
+            "type": "number",
+            "example": 14
+          }
+        ]
+      },
+      {
+        "id": "ranking_improved",
+        "title": {
+          "en": "Ranking improved",
+          "nl": "Ranglijstpositie verbeterd"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "currentRank",
+            "title": {
+              "en": "Current Rank",
+              "nl": "Huidige Ranglijst"
+            },
+            "type": "number",
+            "example": 42
+          },
+          {
+            "name": "previousRank",
+            "title": {
+              "en": "Previous Rank",
+              "nl": "Vorige Ranglijst"
+            },
+            "type": "number",
+            "example": 56
+          },
+          {
+            "name": "improvement",
+            "title": {
+              "en": "Improvement",
+              "nl": "Verbetering"
+            },
+            "type": "number",
+            "example": 14
+          },
+          {
+            "name": "batteryResult",
+            "title": {
+              "en": "Daily Result",
+              "nl": "Dagelijks Resultaat"
+            },
+            "type": "number",
+            "example": 45.67
+          }
+        ]
+      },
+      {
+        "id": "result_positive_negative",
+        "title": {
+          "en": "Daily result is positive/negative",
+          "nl": "Dagelijks resultaat is positief/negatief"
+        },
+        "titleFormatted": {
+          "en": "Daily result is [[isPositive]]",
+          "nl": "Dagelijks resultaat is [[isPositive]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "isPositive",
+            "type": "dropdown",
+            "title": {
+              "en": "Result type",
+              "nl": "Resultaattype"
+            },
+            "values": [
+              {
+                "id": "positive",
+                "label": {
+                  "en": "Positive",
+                  "nl": "Positief"
+                }
+              },
+              {
+                "id": "negative",
+                "label": {
+                  "en": "Negative",
+                  "nl": "Negatief"
+                }
+              }
+            ]
+          }
+        ],
+        "tokens": [
+          {
+            "name": "batteryResult",
+            "title": {
+              "en": "Battery Result",
+              "nl": "Batterij Resultaat"
+            },
+            "type": "number",
+            "example": 45.67
+          },
+          {
+            "name": "batteryResultTotal",
+            "title": {
+              "en": "Monthly Total",
+              "nl": "Maandelijks Totaal"
+            },
+            "type": "number",
+            "example": 523.45
+          },
+          {
+            "name": "tradingMode",
+            "title": {
+              "en": "Trading Mode",
+              "nl": "Handelsmodus"
+            },
+            "type": "string",
+            "example": "imbalance_aggressive"
+          }
+        ]
+      },
+      {
+        "id": "top_performer_alert",
+        "title": {
+          "en": "Top performer alert",
+          "nl": "Top performer waarschuwing"
+        },
+        "titleFormatted": {
+          "en": "Top performer alert: [[rankType]] top [[threshold]]",
+          "nl": "Top performer waarschuwing: [[rankType]] top [[threshold]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "rankType",
+            "type": "dropdown",
+            "title": {
+              "en": "Rank Type",
+              "nl": "Ranglijst Type"
+            },
+            "values": [
+              {
+                "id": "overall",
+                "label": {
+                  "en": "Overall Ranking",
+                  "nl": "Totale Ranglijst"
+                }
+              },
+              {
+                "id": "provider",
+                "label": {
+                  "en": "Provider Ranking",
+                  "nl": "Provider Ranglijst"
+                }
+              }
+            ]
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Top Position (e.g., 100 for top 100)",
+              "nl": "Top Positie (bijv. 100 voor top 100)"
+            },
+            "min": 1,
+            "step": 10
+          }
+        ],
+        "tokens": [
+          {
+            "name": "currentRank",
+            "title": {
+              "en": "Current Rank",
+              "nl": "Huidige Ranglijst"
+            },
+            "type": "number",
+            "example": 42
+          },
+          {
+            "name": "percentile",
+            "title": {
+              "en": "Percentile",
+              "nl": "Percentiel"
+            },
+            "type": "string",
+            "example": "Top 5%"
+          }
+        ]
+      },
+      {
+        "id": "trading_mode_changed",
+        "title": {
+          "en": "Trading mode changed",
+          "nl": "Handelsmodus gewijzigd"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "newMode",
+            "title": {
+              "en": "New Mode",
+              "nl": "Nieuwe Modus"
+            },
+            "type": "string",
+            "example": "imbalance_aggressive"
+          },
+          {
+            "name": "previousMode",
+            "title": {
+              "en": "Previous Mode",
+              "nl": "Vorige Modus"
+            },
+            "type": "string",
+            "example": "imbalance"
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "frank_slim_active",
+        "title": {
+          "en": "Frank Slim bonus is earned",
+          "nl": "Frank Slim bonus is verdiend"
+        },
+        "titleFormatted": {
+          "en": "Frank Slim bonus is earned: min. €[[threshold]]",
+          "nl": "Frank Slim bonus is verdiend: min. €[[threshold]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Minimum Bonus (€)",
+              "nl": "Minimale Bonus (€)"
+            },
+            "min": 0,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "provider_rank_better",
+        "title": {
+          "en": "Provider rank better than overall",
+          "nl": "Provider ranglijst beter dan totaal"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ]
+      },
+      {
+        "id": "rank_in_top_x",
+        "title": {
+          "en": "Rank is in Top X",
+          "nl": "Ranglijst is in Top X"
+        },
+        "titleFormatted": {
+          "en": "[[rankType]] rank is in top [[threshold]]",
+          "nl": "[[rankType]] ranglijst is in top [[threshold]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "rankType",
+            "type": "dropdown",
+            "title": {
+              "en": "Rank Type",
+              "nl": "Ranglijst Type"
+            },
+            "values": [
+              {
+                "id": "overall",
+                "label": {
+                  "en": "Overall Ranking",
+                  "nl": "Totale Ranglijst"
+                }
+              },
+              {
+                "id": "provider",
+                "label": {
+                  "en": "Provider Ranking",
+                  "nl": "Provider Ranglijst"
+                }
+              }
+            ]
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Position (e.g., 100)",
+              "nl": "Positie (bijv. 100)"
+            },
+            "min": 1,
+            "step": 10
+          }
+        ]
+      },
+      {
+        "id": "result_exceeds_threshold",
+        "title": {
+          "en": "Result exceeds threshold",
+          "nl": "Resultaat overschrijdt drempel"
+        },
+        "titleFormatted": {
+          "en": "Result exceeds €[[threshold]]",
+          "nl": "Resultaat overschrijdt €[[threshold]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Threshold Amount (€)",
+              "nl": "Drempelbedrag (€)"
+            },
+            "min": 1,
+            "step": 10
+          }
+        ]
+      },
+      {
+        "id": "result_positive",
+        "title": {
+          "en": "Daily result is positive",
+          "nl": "Dagelijks resultaat is positief"
+        },
+        "titleFormatted": {
+          "en": "Daily result is positive: min. €[[threshold]]",
+          "nl": "Dagelijks resultaat is positief: min. €[[threshold]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "threshold",
+            "type": "number",
+            "title": {
+              "en": "Minimum Amount (€)",
+              "nl": "Minimumbedrag (€)"
+            },
+            "min": 0,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "trading_mode_matches",
+        "title": {
+          "en": "Trading mode matches",
+          "nl": "Handelsmodus komt overeen"
+        },
+        "titleFormatted": {
+          "en": "Trading mode is [[mode]]",
+          "nl": "Handelsmodus is [[mode]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "mode",
+            "type": "dropdown",
+            "title": {
+              "en": "Trading Mode",
+              "nl": "Handelsmodus"
+            },
+            "values": [
+              {
+                "id": "imbalance",
+                "label": {
+                  "en": "Imbalance Trading (Standard)",
+                  "nl": "Onbalanshandel (Standaard)"
+                }
+              },
+              {
+                "id": "imbalance_aggressive",
+                "label": {
+                  "en": "Imbalance Trading (Aggressive)",
+                  "nl": "Onbalanshandel (Agressief)"
+                }
+              },
+              {
+                "id": "self_consumption_plus",
+                "label": {
+                  "en": "Self Consumption Plus",
+                  "nl": "Zelf Verbruik Plus"
+                }
+              },
+              {
+                "id": "self_consumption",
+                "label": {
+                  "en": "Self Consumption",
+                  "nl": "Zelf Verbruik"
+                }
+              },
+              {
+                "id": "manual",
+                "label": {
+                  "en": "Manual Mode",
+                  "nl": "Handmatige Modus"
+                }
+              },
+              {
+                "id": "day_ahead",
+                "label": {
+                  "en": "Day-Ahead Trading",
+                  "nl": "Day-Ahead Handel"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "force_data_poll",
+        "title": {
+          "en": "Force data poll",
+          "nl": "Forceer dataopvraag"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ]
+      },
+      {
+        "id": "log_to_timeline",
+        "title": {
+          "en": "Log event to timeline",
+          "nl": "Log gebeurtenis naar tijdlijn"
+        },
+        "titleFormatted": {
+          "en": "Log to timeline: [[event]] (include result: [[includeResult]])",
+          "nl": "Log naar tijdlijn: [[event]] (resultaat opnemen: [[includeResult]])"
+        },
+        "hint": {
+          "en": "Creates a notification in Homey's timeline and stores the event locally for reference.",
+          "nl": "Maakt een notificatie in Homey's tijdlijn en slaat de gebeurtenis lokaal op ter referentie."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "event",
+            "type": "text",
+            "placeholder": {
+              "en": "e.g., Daily profit milestone reached",
+              "nl": "bijv., Dagelijkse winstmijlpaal bereikt"
+            },
+            "title": {
+              "en": "Event message",
+              "nl": "Gebeurtenisbericht"
+            }
+          },
+          {
+            "name": "includeResult",
+            "type": "checkbox",
+            "title": {
+              "en": "Include trading result amount",
+              "nl": "Handelsresultaat opnemen"
+            }
+          }
+        ]
+      },
+      {
+        "id": "receive_battery_daily_metrics",
+        "title": {
+          "en": "Receive daily battery metrics",
+          "nl": "Ontvang dagelijkse batterij metrieken"
+        },
+        "titleFormatted": {
+          "en": "Receive daily metrics for battery [[battery_id]]: charged [[daily_charged_kwh]] kWh, discharged [[daily_discharged_kwh]] kWh, at [[battery_percentage]]%",
+          "nl": "Ontvang dagelijkse metrieken voor batterij [[battery_id]]: geladen [[daily_charged_kwh]] kWh, geleverd [[daily_discharged_kwh]] kWh, op [[battery_percentage]]%"
+        },
+        "hint": {
+          "en": "Receives daily (today only) kWh values from batteries that reset daily. Use this for batteries without lifetime counters (e.g., SolarEdge, Huawei). The app aggregates values directly without delta calculation.",
+          "nl": "Ontvangt dagelijkse (alleen vandaag) kWh waarden van batterijen die dagelijks resetten. Gebruik dit voor batterijen zonder lifetime tellers (bijv. SolarEdge, Huawei). De app aggregeert waarden direct zonder delta berekening."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "battery_id",
+            "type": "text",
+            "title": {
+              "en": "Battery ID",
+              "nl": "Batterij ID"
+            },
+            "placeholder": {
+              "en": "e.g., solaredge-1",
+              "nl": "bijv., solaredge-1"
+            },
+            "required": true
+          },
+          {
+            "name": "daily_charged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily charged (kWh)",
+              "nl": "Dagelijks geladen (kWh)"
+            },
+            "placeholder": {
+              "en": "Today's charged kWh",
+              "nl": "Vandaag geladen kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "daily_discharged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Daily discharged (kWh)",
+              "nl": "Dagelijks geleverd (kWh)"
+            },
+            "placeholder": {
+              "en": "Today's discharged kWh",
+              "nl": "Vandaag geleverd kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "battery_percentage",
+            "type": "range",
+            "title": {
+              "en": "Battery percentage",
+              "nl": "Batterij percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "receive_battery_metrics",
+        "title": {
+          "en": "Receive battery metrics",
+          "nl": "Ontvang batterij metrieken"
+        },
+        "titleFormatted": {
+          "en": "Receive metrics for battery [[battery_id]]: charged [[total_charged_kwh]] kWh, discharged [[total_discharged_kwh]] kWh, at [[battery_percentage]]%",
+          "nl": "Ontvang metrieken voor batterij [[battery_id]]: geladen [[total_charged_kwh]] kWh, geleverd [[total_discharged_kwh]] kWh, op [[battery_percentage]]%"
+        },
+        "hint": {
+          "en": "Receives total (cumulative) kWh values from external battery sources like Sessy. The app automatically calculates daily deltas.",
+          "nl": "Ontvangt totale (cumulatieve) kWh waarden van externe batterijbronnen zoals Sessy. De app berekent automatisch dagelijkse delta's."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "battery_id",
+            "type": "text",
+            "title": {
+              "en": "Battery ID",
+              "nl": "Batterij ID"
+            },
+            "placeholder": {
+              "en": "e.g., sessy-1",
+              "nl": "bijv., sessy-1"
+            },
+            "required": true
+          },
+          {
+            "name": "total_charged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Total charged (kWh)",
+              "nl": "Totaal geladen (kWh)"
+            },
+            "placeholder": {
+              "en": "Cumulative charged kWh",
+              "nl": "Cumulatief geladen kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "total_discharged_kwh",
+            "type": "number",
+            "title": {
+              "en": "Total discharged (kWh)",
+              "nl": "Totaal geleverd (kWh)"
+            },
+            "placeholder": {
+              "en": "Cumulative discharged kWh",
+              "nl": "Cumulatief geleverd kWh"
+            },
+            "required": true,
+            "min": 0
+          },
+          {
+            "name": "battery_percentage",
+            "type": "range",
+            "title": {
+              "en": "Battery percentage",
+              "nl": "Batterij percentage"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "required": true
+          }
+        ]
+      },
+      {
+        "id": "reset_baseline",
+        "title": {
+          "en": "Reset baseline",
+          "nl": "Baseline resetten"
+        },
+        "description": {
+          "en": "Emergency: Resets daily baseline to current values. Next measurement will establish correct delta.",
+          "nl": "Noodsituatie: Herstelt dagelijkse baseline naar huige waarden. Volgende meting stelt correcte delta in."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ]
+      },
+      {
+        "id": "send_measurements_now",
+        "title": {
+          "en": "Send measurements to Onbalansmarkt now",
+          "nl": "Verstuur metingen nu naar Onbalansmarkt"
+        },
+        "hint": {
+          "en": "Send current measurement data immediately, regardless of polling schedule or send_measurements setting",
+          "nl": "Verstuur huidige meetgegevens direct, ongeacht het pollschema of send_measurements instelling"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          }
+        ]
+      },
+      {
+        "id": "send_notification",
+        "title": {
+          "en": "Send trading notification",
+          "nl": "Stuur handelsnotificatie"
+        },
+        "titleFormatted": {
+          "en": "Send notification: [[title]] - [[message]] (metrics: [[includeMetrics]])",
+          "nl": "Stuur notificatie: [[title]] - [[message]] (metrieken: [[includeMetrics]])"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "title",
+            "type": "text",
+            "title": {
+              "en": "Notification Title",
+              "nl": "Notificatietitel"
+            },
+            "placeholder": {
+              "en": "e.g., Trading Results Update",
+              "nl": "bijv., Handelsresultaten Update"
+            }
+          },
+          {
+            "name": "message",
+            "type": "text",
+            "title": {
+              "en": "Notification Message",
+              "nl": "Notificatiebericht"
+            },
+            "placeholder": {
+              "en": "Notification message...",
+              "nl": "Notificatiebericht..."
+            }
+          },
+          {
+            "name": "includeMetrics",
+            "type": "checkbox",
+            "title": {
+              "en": "Include trading metrics",
+              "nl": "Handelsmetrieken opnemen"
+            }
+          }
+        ]
+      },
+      {
+        "id": "send_rich_notification",
+        "title": {
+          "en": "Send rich metrics notification",
+          "nl": "Stuur uitgebreide metriekennotificatie"
+        },
+        "titleFormatted": {
+          "en": "Send [[type]] notification",
+          "nl": "Stuur [[type]] notificatie"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "type",
+            "type": "dropdown",
+            "title": {
+              "en": "Notification Type",
+              "nl": "Notificatietype"
+            },
+            "values": [
+              {
+                "id": "daily_summary",
+                "label": {
+                  "en": "Daily Summary (Result, Rank, Mode)",
+                  "nl": "Dagelijkse Samenvatting (Resultaat, Ranglijst, Modus)"
+                }
+              },
+              {
+                "id": "ranking_update",
+                "label": {
+                  "en": "Ranking Update Only",
+                  "nl": "Alleen Ranglijstupdate"
+                }
+              },
+              {
+                "id": "result_only",
+                "label": {
+                  "en": "Result Only",
+                  "nl": "Alleen Resultaat"
+                }
+              },
+              {
+                "id": "monthly_milestone",
+                "label": {
+                  "en": "Monthly Milestone",
+                  "nl": "Maandelijkse Mijlpaal"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "toggle_measurement_sending",
+        "title": {
+          "en": "Toggle measurement sending",
+          "nl": "Schakel metingverzending in/uit"
+        },
+        "titleFormatted": {
+          "en": "Toggle measurement sending: [[state]]",
+          "nl": "Schakel metingverzending: [[state]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "title": {
+              "en": "State",
+              "nl": "Status"
+            },
+            "values": [
+              {
+                "id": "on",
+                "label": {
+                  "en": "On",
+                  "nl": "Aan"
+                }
+              },
+              {
+                "id": "off",
+                "label": {
+                  "en": "Off",
+                  "nl": "Uit"
+                }
+              },
+              {
+                "id": "toggle",
+                "label": {
+                  "en": "Toggle",
+                  "nl": "Wisselaar"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "update_dashboard",
+        "title": {
+          "en": "Update dashboard display",
+          "nl": "Werk dashboard display bij"
+        },
+        "titleFormatted": {
+          "en": "Update dashboard: [[displayType]]",
+          "nl": "Werk dashboard bij: [[displayType]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=frank-energie-battery"
+          },
+          {
+            "name": "displayType",
+            "type": "dropdown",
+            "title": {
+              "en": "Display Type",
+              "nl": "Weergavetype"
+            },
+            "values": [
+              {
+                "id": "current_metrics",
+                "label": {
+                  "en": "Current Metrics (Rank, Result, Mode)",
+                  "nl": "Huidige Metrieken (Ranglijst, Resultaat, Modus)"
+                }
+              },
+              {
+                "id": "ranking_progress",
+                "label": {
+                  "en": "Ranking Progress",
+                  "nl": "Ranglijst Voortgang"
+                }
+              },
+              {
+                "id": "monthly_earnings",
+                "label": {
+                  "en": "Monthly Earnings Chart",
+                  "nl": "Maandelijks Inkomstenschema"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Frank Energie - Smart energy trading",
+        "nl": "Frank Energie - Slim stroom handelen"
+      },
+      "class": "battery",
+      "capabilities": [
+        "frank_energie_battery_mode",
+        "external_battery_selector",
+        "frank_energie_trading_result",
+        "frank_energie_lifetime_total",
+        "frank_energie_frank_slim_bonus",
+        "frank_energie_epex_result",
+        "frank_energie_imbalance_result",
+        "frank_energie_last_upload",
+        "frank_energie_recovery_state",
+        "frank_energie_next_poll_minutes",
+        "external_battery_percentage",
+        "external_battery_count",
+        "external_battery_daily_charged",
+        "external_battery_daily_discharged",
+        "onbalansmarkt_reported_charged",
+        "onbalansmarkt_reported_discharged",
+        "onbalansmarkt_provider_rank",
+        "onbalansmarkt_overall_rank"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/frank-energie-battery/assets/images/small.png",
+        "large": "/drivers/frank-energie-battery/assets/images/large.png"
+      },
+      "pair": [
+        {
+          "id": "login"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "frank-energie-battery",
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Frank Energie Credentials",
+            "nl": "Frank Energie Inloggegevens"
+          },
+          "children": [
+            {
+              "id": "frank_energie_email",
+              "type": "text",
+              "label": {
+                "en": "Email",
+                "nl": "E-mail"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account email address",
+                "nl": "Uw Frank Energie account e-mailadres"
+              }
+            },
+            {
+              "id": "frank_energie_password",
+              "type": "password",
+              "label": {
+                "en": "Password",
+                "nl": "Wachtwoord"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account password",
+                "nl": "Uw Frank Energie account wachtwoord"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Onbalansmarkt Integration",
+            "nl": "Onbalansmarkt Integratie"
+          },
+          "children": [
+            {
+              "id": "onbalansmarkt_api_key",
+              "type": "password",
+              "label": {
+                "en": "API Key",
+                "nl": "API-sleutel"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Onbalansmarkt.com API key (optional). Get one at https://onbalansmarkt.com",
+                "nl": "Uw Onbalansmarkt.com API-sleutel (optioneel). Verkrijg er een op https://onbalansmarkt.com"
+              }
+            },
+            {
+              "id": "load_balancing_active",
+              "type": "checkbox",
+              "label": {
+                "en": "Load Balancing Active",
+                "nl": "Load Balancing Actief"
+              },
+              "value": false,
+              "hint": {
+                "en": "Enable this if dynamic load balancing is active on your battery system",
+                "nl": "Schakel dit in als dynamische load balancing actief is op uw batterijsysteem"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Data Polling Settings",
+            "nl": "Gegevensopvraag Instellingen"
+          },
+          "children": [
+            {
+              "id": "poll_interval",
+              "type": "number",
+              "label": {
+                "en": "Polling Interval (minutes)",
+                "nl": "Opvraaginterval (minuten)"
+              },
+              "value": 5,
+              "min": 1,
+              "max": 1440,
+              "hint": {
+                "en": "How often to fetch data from Frank Energie (1-1440 minutes). Default: 5 minutes",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-1440 minuten). Standaard: 5 minuten"
+              }
+            },
+            {
+              "id": "poll_start_minute",
+              "type": "number",
+              "label": {
+                "en": "Start Minute",
+                "nl": "Start Minuut"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 59,
+              "hint": {
+                "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:20, XX:25, etc.",
+                "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:20, XX:25, etc."
+              }
+            },
+            {
+              "id": "send_measurements",
+              "type": "checkbox",
+              "label": {
+                "en": "Send measurements to Onbalansmarkt",
+                "nl": "Metingen versturen naar Onbalansmarkt"
+              },
+              "value": false,
+              "hint": {
+                "en": "Automatically send trading results to Onbalansmarkt.com (requires API key)",
+                "nl": "Automatisch handelsresultaten versturen naar Onbalansmarkt.com (vereist API-sleutel)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Daily Logging",
+            "nl": "Dagelijkse Logging"
+          },
+          "children": [
+            {
+              "id": "log_daily_totals_to_timeline",
+              "type": "checkbox",
+              "label": {
+                "en": "Log daily totals at midnight",
+                "nl": "Dagelijkse totalen om middernacht loggen"
+              },
+              "value": true,
+              "hint": {
+                "en": "Create a timeline notification with daily totals (charged/discharged) when midnight reset occurs",
+                "nl": "Maak een timeline notificatie met dagelijkse totalen (geladen/geleverd) wanneer middernacht reset plaatsvindt"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Manual Actions (repair)",
+            "nl": "Handmatige Acties (reparatie)"
+          },
+          "children": [
+            {
+              "id": "manual_action",
+              "type": "dropdown",
+              "label": {
+                "en": "Action",
+                "nl": "Actie"
+              },
+              "value": "none",
+              "values": [
+                {
+                  "id": "none",
+                  "label": {
+                    "en": "— Select an action —",
+                    "nl": "— Kies een actie —"
+                  }
+                },
+                {
+                  "id": "refresh_now",
+                  "label": {
+                    "en": "Refresh data now",
+                    "nl": "Gegevens nu verversen"
+                  }
+                },
+                {
+                  "id": "reset_baseline",
+                  "label": {
+                    "en": "Recover delta for Start of Day",
+                    "nl": "Herstel delta voor Start van Dag"
+                  }
+                },
+                {
+                  "id": "reset_external_batteries",
+                  "label": {
+                    "en": "Reset external batteries list",
+                    "nl": "Lijst van externe batterijen herstellen"
+                  }
+                },
+                {
+                  "id": "direct_send",
+                  "label": {
+                    "en": "Send measurements now",
+                    "nl": "Verstuur metingen nu"
+                  }
+                }
+              ],
+              "hint": {
+                "en": "Select a recovery action and save to execute it",
+                "nl": "Selecteer een recovery actie en sla op om deze uit te voeren"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Energy Dashboard",
+            "nl": "Energie Dashboard"
+          },
+          "children": [
+            {
+              "id": "exclude_from_energy",
+              "type": "checkbox",
+              "label": {
+                "en": "Exclude from Energy",
+                "nl": "Uitsluiten van Energie"
+              },
+              "value": true,
+              "hint": {
+                "en": "Exclude this device from the Homey Energy dashboard",
+                "nl": "Dit apparaat uitsluiten van het Homey Energie dashboard"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Frank Energie - Smart EV Charging",
+        "nl": "Frank Energie - Slim laden"
+      },
+      "class": "service",
+      "capabilities": [
+        "onoff",
+        "measure_battery",
+        "frank_energie_ev_charging_status",
+        "frank_energie_ev_bonus",
+        "frank_energie_next_poll_minutes"
+      ],
+      "capabilitiesOptions": {
+        "onoff": {
+          "uiQuickAction": false
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "energy": {
+        "batteries": [
+          "INTERNAL"
+        ]
+      },
+      "images": {
+        "small": "/drivers/frank-energie-ev/assets/images/small.png",
+        "large": "/drivers/frank-energie-ev/assets/images/large.png"
+      },
+      "pair": [
+        {
+          "id": "login"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "frank-energie-ev",
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Frank Energie Credentials",
+            "nl": "Frank Energie Inloggegevens"
+          },
+          "children": [
+            {
+              "id": "frank_energie_email",
+              "type": "text",
+              "label": {
+                "en": "Email",
+                "nl": "E-mail"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account email address",
+                "nl": "Uw Frank Energie account e-mailadres"
+              }
+            },
+            {
+              "id": "frank_energie_password",
+              "type": "password",
+              "label": {
+                "en": "Password",
+                "nl": "Wachtwoord"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account password",
+                "nl": "Uw Frank Energie account wachtwoord"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "EV Charger Configuration",
+            "nl": "Laadpaal Configuratie"
+          },
+          "children": [
+            {
+              "id": "enode_location_id",
+              "type": "text",
+              "label": {
+                "en": "Enode Location ID",
+                "nl": "Enode Locatie ID"
+              },
+              "value": "default-location",
+              "hint": {
+                "en": "Enode location identifier (automatically set during pairing)",
+                "nl": "Enode locatie identificatie (automatisch ingesteld tijdens koppelen)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Data Polling Settings",
+            "nl": "Gegevensopvraag Instellingen"
+          },
+          "children": [
+            {
+              "id": "poll_interval",
+              "type": "number",
+              "label": {
+                "en": "Polling Interval (minutes)",
+                "nl": "Opvraaginterval (minuten)"
+              },
+              "value": 5,
+              "min": 1,
+              "max": 1440,
+              "hint": {
+                "en": "How often to fetch data from Frank Energie (1-1440 minutes). Default: 5 minutes",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-1440 minuten). Standaard: 5 minuten"
+              }
+            },
+            {
+              "id": "poll_start_minute",
+              "type": "number",
+              "label": {
+                "en": "Start Minute",
+                "nl": "Start Minuut"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 59,
+              "hint": {
+                "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:20, XX:25, etc.",
+                "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:20, XX:25, etc."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Frank Energie - Smart meter overview",
+        "nl": "Frank Energie - Slimme meter overzicht"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "frank_energie_current_market_price",
+        "frank_energie_next_hour_market_price",
+        "frank_energie_today_consumption",
+        "frank_energie_today_costs",
+        "frank_energie_min_market_price_today",
+        "frank_energie_max_market_price_today",
+        "frank_energie_avg_market_price_today",
+        "frank_energie_site_usage",
+        "frank_energie_site_costs",
+        "frank_energie_next_poll_minutes"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/frank-energie-meter/assets/images/small.png",
+        "large": "/drivers/frank-energie-meter/assets/images/large.png"
+      },
+      "pair": [
+        {
+          "id": "login"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "frank-energie-meter",
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Frank Energie Credentials",
+            "nl": "Frank Energie Inloggegevens"
+          },
+          "children": [
+            {
+              "id": "frank_energie_email",
+              "type": "text",
+              "label": {
+                "en": "Email",
+                "nl": "E-mail"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account email address",
+                "nl": "Uw Frank Energie account e-mailadres"
+              }
+            },
+            {
+              "id": "frank_energie_password",
+              "type": "password",
+              "label": {
+                "en": "Password",
+                "nl": "Wachtwoord"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account password",
+                "nl": "Uw Frank Energie account wachtwoord"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Data Polling Settings",
+            "nl": "Gegevensopvraag Instellingen"
+          },
+          "children": [
+            {
+              "id": "poll_interval",
+              "type": "number",
+              "label": {
+                "en": "Polling Interval",
+                "nl": "Opvraaginterval"
+              },
+              "value": 60,
+              "min": 30,
+              "max": 60,
+              "hint": {
+                "en": "How often to fetch data from Frank Energie. Recommended 30-60 minutes due to API rate limits (max 100 calls/day)",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie. Aanbevolen 30-60 minuten vanwege API-limieten (max 100 aanroepen/dag)"
+              }
+            },
+            {
+              "id": "poll_start_minute",
+              "type": "number",
+              "label": {
+                "en": "Start Minute",
+                "nl": "Start Minuut"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 59,
+              "hint": {
+                "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:45 (with 30-min interval)",
+                "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:45 (met 30-min interval)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "Frank Energie - Smart PV Feed-in",
+        "nl": "Frank Energie - Slim terugleveren"
+      },
+      "class": "service",
+      "capabilities": [
+        "onoff",
+        "frank_energie_pv_current_power",
+        "frank_energie_pv_today_generation",
+        "frank_energie_pv_status",
+        "frank_energie_pv_bonus",
+        "frank_energie_next_poll_minutes"
+      ],
+      "capabilitiesOptions": {
+        "onoff": {
+          "uiQuickAction": false
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/frank-energie-pv/assets/images/small.png",
+        "large": "/drivers/frank-energie-pv/assets/images/large.png"
+      },
+      "pair": [
+        {
+          "id": "login"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "frank-energie-pv",
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Frank Energie Credentials",
+            "nl": "Frank Energie Inloggegevens"
+          },
+          "children": [
+            {
+              "id": "frank_energie_email",
+              "type": "text",
+              "label": {
+                "en": "Email",
+                "nl": "E-mail"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account email address",
+                "nl": "Uw Frank Energie account e-mailadres"
+              }
+            },
+            {
+              "id": "frank_energie_password",
+              "type": "password",
+              "label": {
+                "en": "Password",
+                "nl": "Wachtwoord"
+              },
+              "value": "",
+              "hint": {
+                "en": "Your Frank Energie account password",
+                "nl": "Uw Frank Energie account wachtwoord"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "PV System Configuration",
+            "nl": "PV Systeem Configuratie"
+          },
+          "children": [
+            {
+              "id": "pv_system_id",
+              "type": "text",
+              "label": {
+                "en": "PV System ID",
+                "nl": "PV Systeem ID"
+              },
+              "value": "",
+              "hint": {
+                "en": "Configured during pairing (read-only)",
+                "nl": "Geconfigureerd tijdens koppeling (alleen-lezen)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Data Polling Settings",
+            "nl": "Gegevensopvraag Instellingen"
+          },
+          "children": [
+            {
+              "id": "poll_interval",
+              "type": "number",
+              "label": {
+                "en": "Polling Interval (minutes)",
+                "nl": "Opvraaginterval (minuten)"
+              },
+              "value": 5,
+              "min": 1,
+              "max": 1440,
+              "hint": {
+                "en": "How often to fetch data from Frank Energie (1-1440 minutes). Default: 5 minutes",
+                "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-1440 minuten). Standaard: 5 minuten"
+              }
+            },
+            {
+              "id": "poll_start_minute",
+              "type": "number",
+              "label": {
+                "en": "Start Minute",
+                "nl": "Start Minuut"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 59,
+              "hint": {
+                "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:20, XX:25, etc.",
+                "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:20, XX:25, etc."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "battery_1_total": {
+      "id": "battery_1_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 1 Total",
+        "nl": "Batterij 1 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_1_total.svg"
+    },
+    "battery_10_total": {
+      "id": "battery_10_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 10 Total",
+        "nl": "Batterij 10 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_10_total.svg"
+    },
+    "battery_2_total": {
+      "id": "battery_2_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 2 Total",
+        "nl": "Batterij 2 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_2_total.svg"
+    },
+    "battery_3_total": {
+      "id": "battery_3_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 3 Total",
+        "nl": "Batterij 3 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_3_total.svg"
+    },
+    "battery_4_total": {
+      "id": "battery_4_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 4 Total",
+        "nl": "Batterij 4 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_4_total.svg"
+    },
+    "battery_5_total": {
+      "id": "battery_5_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 5 Total",
+        "nl": "Batterij 5 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_5_total.svg"
+    },
+    "battery_6_total": {
+      "id": "battery_6_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 6 Total",
+        "nl": "Batterij 6 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_6_total.svg"
+    },
+    "battery_7_total": {
+      "id": "battery_7_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 7 Total",
+        "nl": "Batterij 7 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_7_total.svg"
+    },
+    "battery_8_total": {
+      "id": "battery_8_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 8 Total",
+        "nl": "Batterij 8 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_8_total.svg"
+    },
+    "battery_9_total": {
+      "id": "battery_9_total",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery 9 Total",
+        "nl": "Batterij 9 Totaal"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/battery_9_total.svg"
+    },
+    "external_battery_count": {
+      "id": "external_battery_count",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Battery # flow metrics",
+        "nl": "Batterij # flow metrieken"
+      },
+      "units": {
+        "en": "",
+        "nl": ""
+      },
+      "decimals": 0,
+      "min": 0,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_count.svg",
+      "description": {
+        "en": "Number of external batteries providing metrics",
+        "nl": "Aantal externe batterijen die metrieken leveren"
+      }
+    },
+    "external_battery_current_charged": {
+      "id": "external_battery_current_charged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Current total charged",
+        "nl": "Huidig totaal geladen"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_current_charged.svg",
+      "description": {
+        "en": "Current cumulative total charged from external batteries (lifetime)",
+        "nl": "Huidige cumulatieve totaal geladen van externe batterijen (lifetime)"
+      }
+    },
+    "external_battery_current_discharged": {
+      "id": "external_battery_current_discharged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Current total discharged",
+        "nl": "Huidig totaal geleverd"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_current_discharged.svg",
+      "description": {
+        "en": "Current cumulative total discharged from external batteries (lifetime)",
+        "nl": "Huidige cumulatieve totaal geleverd van externe batterijen (lifetime)"
+      }
+    },
+    "external_battery_daily_charged": {
+      "id": "external_battery_daily_charged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Daily charged",
+        "nl": "Dagelijks geladen"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_daily_charged.svg",
+      "description": {
+        "en": "Total Watt charged today from external batteries",
+        "nl": "Totaal Watt vandaag geladen van externe batterijen"
+      }
+    },
+    "external_battery_daily_discharged": {
+      "id": "external_battery_daily_discharged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Daily discharged",
+        "nl": "Dagelijks geleverd"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_daily_discharged.svg",
+      "description": {
+        "en": "Total Watt discharged today from external batteries",
+        "nl": "Totaal Watt vandaag geleverd van externe batterijen"
+      }
+    },
+    "external_battery_percentage": {
+      "id": "external_battery_percentage",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Average battery percentage",
+        "nl": "Gemiddeld batterij percentage"
+      },
+      "units": {
+        "en": "%",
+        "nl": "%"
+      },
+      "min": 0,
+      "max": 100,
+      "decimals": 1,
+      "insights": true,
+      "chartType": "spline",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_percentage.svg",
+      "description": {
+        "en": "Average battery charge percentage across all external batteries",
+        "nl": "Gemiddeld batterij laadpercentage van alle externe batterijen"
+      }
+    },
+    "external_battery_selector": {
+      "id": "external_battery_selector",
+      "uiQuickAction": false,
+      "type": "enum",
+      "title": {
+        "en": "External Battery Selector",
+        "nl": "Externe Batterij Selector"
+      },
+      "description": {
+        "en": "Select an external battery connected via flow cards",
+        "nl": "Selecteer een externe batterij verbonden via flow cards"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "picker",
+      "values": [
+        {
+          "id": "none",
+          "title": {
+            "en": "— No batteries —",
+            "nl": "— Geen batterijen —"
+          }
+        }
+      ]
+    },
+    "external_battery_startofday_charged": {
+      "id": "external_battery_startofday_charged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Start of day charged",
+        "nl": "Begin van de dag geladen"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_startofday_charged.svg",
+      "description": {
+        "en": "Baseline charged value at 00:00 (start of day) from external batteries",
+        "nl": "Baseline geladen waarde om 00:00 (begin van de dag) van externe batterijen"
+      }
+    },
+    "external_battery_startofday_discharged": {
+      "id": "external_battery_startofday_discharged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Start of day discharged",
+        "nl": "Begin van de dag geleverd"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/external_battery_startofday_discharged.svg",
+      "description": {
+        "en": "Baseline discharged value at 00:00 (start of day) from external batteries",
+        "nl": "Baseline geleverd waarde om 00:00 (begin van de dag) van externe batterijen"
+      }
+    },
+    "frank_energie_avg_market_price_today": {
+      "id": "frank_energie_avg_market_price_today",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Average Market Price Today",
+        "nl": "Gemiddelde Marktprijs Vandaag"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_avg_market_price_today.svg"
+    },
+    "frank_energie_battery_charge": {
+      "id": "frank_energie_battery_charge",
+      "uiQuickAction": false,
+      "title": {
+        "en": "Battery Charge",
+        "nl": "Batterijlading"
+      },
+      "description": {
+        "en": "Current battery charge percentage",
+        "nl": "Huidige ladingpercentage batterij"
+      },
+      "type": "number",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "min": 0,
+      "max": 100,
+      "units": "%",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_battery_charge.svg"
+    },
+    "frank_energie_battery_mode": {
+      "id": "frank_energie_battery_mode",
+      "uiQuickAction": false,
+      "title": {
+        "en": "Battery Trading Mode",
+        "nl": "Batterij handelsmodus"
+      },
+      "description": {
+        "en": "Current battery trading mode",
+        "nl": "Huidige batterij handelsmodus"
+      },
+      "type": "enum",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "picker",
+      "values": [
+        {
+          "id": "imbalance",
+          "title": {
+            "en": "Imbalance",
+            "nl": "Onbalans"
+          }
+        },
+        {
+          "id": "imbalance_aggressive",
+          "title": {
+            "en": "Imbalance Aggressive",
+            "nl": "Onbalans Agressief"
+          }
+        },
+        {
+          "id": "self_consumption",
+          "title": {
+            "en": "Self Consumption",
+            "nl": "Zelf Verbruik"
+          }
+        },
+        {
+          "id": "self_consumption_plus",
+          "title": {
+            "en": "Self Consumption Plus",
+            "nl": "Zelf Verbruik Plus"
+          }
+        },
+        {
+          "id": "manual",
+          "title": {
+            "en": "Manual",
+            "nl": "Handmatig"
+          }
+        },
+        {
+          "id": "day_ahead",
+          "title": {
+            "en": "Day Ahead",
+            "nl": "Day-Ahead"
+          }
+        }
+      ],
+      "icon": "/assets/capabilities/frank_energie_battery_mode.svg"
+    },
+    "frank_energie_current_market_price": {
+      "id": "frank_energie_current_market_price",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Current Market Price",
+        "nl": "Huidige Marktprijs"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_current_market_price.svg"
+    },
+    "frank_energie_epex_result": {
+      "id": "frank_energie_epex_result",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "EPEX Result",
+        "nl": "EPEX Opbrengst"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_epex_result.svg"
+    },
+    "frank_energie_ev_bonus": {
+      "id": "frank_energie_ev_bonus",
+      "uiQuickAction": false,
+      "title": {
+        "en": "EV Charging Bonus",
+        "nl": "EV Laad Bonus"
+      },
+      "description": {
+        "en": "Bonus earned from smart EV charging",
+        "nl": "Bonus verdiend door slimme EV laden"
+      },
+      "type": "number",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "units": "€",
+      "decimals": 2,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_ev_bonus.svg"
+    },
+    "frank_energie_ev_charging_status": {
+      "id": "frank_energie_ev_charging_status",
+      "uiQuickAction": false,
+      "title": {
+        "en": "EV Charging Status",
+        "nl": "EV Laadstatus"
+      },
+      "description": {
+        "en": "Current EV charger status",
+        "nl": "Huidige EV lader status"
+      },
+      "type": "enum",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "values": [
+        {
+          "id": "charging",
+          "title": {
+            "en": "Charging",
+            "nl": "Laden"
+          }
+        },
+        {
+          "id": "idle",
+          "title": {
+            "en": "Idle",
+            "nl": "Inactief"
+          }
+        },
+        {
+          "id": "error",
+          "title": {
+            "en": "Error",
+            "nl": "Fout"
+          }
+        }
+      ],
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/frank_energie_ev_charging_status.svg"
+    },
+    "frank_energie_frank_slim_bonus": {
+      "id": "frank_energie_frank_slim_bonus",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Frank Slim Bonus",
+        "nl": "Frank Slim Korting"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_frank_slim_bonus.svg"
+    },
+    "frank_energie_imbalance_result": {
+      "id": "frank_energie_imbalance_result",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Imbalance Result",
+        "nl": "Onbalans Opbrengst"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_imbalance_result.svg"
+    },
+    "frank_energie_last_upload": {
+      "id": "frank_energie_last_upload",
+      "type": "string",
+      "title": {
+        "en": "Last Upload",
+        "nl": "Laatste Upload"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": false,
+      "icon": "/assets/capabilities/frank_energie_last_upload.svg",
+      "description": {
+        "en": "Last successful upload to Onbalansmarkt.com",
+        "nl": "Laatste succesvolle upload naar Onbalansmarkt.com"
+      }
+    },
+    "frank_energie_lifetime_total": {
+      "id": "frank_energie_lifetime_total",
+      "type": "number",
+      "title": {
+        "en": "Lifetime Total",
+        "nl": "Totaal Lifetime"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "spline",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "uiQuickAction": false,
+      "icon": "/assets/capabilities/frank_energie_lifetime_total.svg",
+      "description": {
+        "en": "Total lifetime trading result (all time)",
+        "nl": "Totaal lifetime handelsresultaat (all-time)"
+      }
+    },
+    "frank_energie_max_market_price_today": {
+      "id": "frank_energie_max_market_price_today",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Highest Market Price Today",
+        "nl": "Hoogste Marktprijs Vandaag"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_max_market_price_today.svg"
+    },
+    "frank_energie_min_market_price_today": {
+      "id": "frank_energie_min_market_price_today",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Lowest Market Price Today",
+        "nl": "Laagste Marktprijs Vandaag"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_min_market_price_today.svg"
+    },
+    "frank_energie_next_hour_market_price": {
+      "id": "frank_energie_next_hour_market_price",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Next Hour Market Price",
+        "nl": "Marktprijs Volgend Uur"
+      },
+      "units": {
+        "en": "€/kWh",
+        "nl": "€/kWh"
+      },
+      "decimals": 4,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_next_hour_market_price.svg"
+    },
+    "frank_energie_next_poll_minutes": {
+      "id": "frank_energie_next_poll_minutes",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Next Poll In",
+        "nl": "Volgende Poll Over"
+      },
+      "units": {
+        "en": "min",
+        "nl": "min"
+      },
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_next_poll_minutes.svg"
+    },
+    "frank_energie_pv_bonus": {
+      "id": "frank_energie_pv_bonus",
+      "uiQuickAction": false,
+      "title": {
+        "en": "PV Bonus",
+        "nl": "PV Bonus"
+      },
+      "description": {
+        "en": "Total PV system bonus earned",
+        "nl": "Totale PV systeem bonus verdiend"
+      },
+      "type": "number",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "units": "€",
+      "decimals": 2,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_pv_bonus.svg"
+    },
+    "frank_energie_pv_current_power": {
+      "id": "frank_energie_pv_current_power",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Current Power",
+        "nl": "Huidig Vermogen"
+      },
+      "units": {
+        "en": "kW",
+        "nl": "kW"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_pv_current_power.svg"
+    },
+    "frank_energie_pv_status": {
+      "id": "frank_energie_pv_status",
+      "uiQuickAction": false,
+      "title": {
+        "en": "PV System Status",
+        "nl": "PV Systeem Status"
+      },
+      "description": {
+        "en": "Current status of PV system",
+        "nl": "Huidige status van PV systeem"
+      },
+      "type": "enum",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "values": [
+        {
+          "id": "on",
+          "title": {
+            "en": "Operational",
+            "nl": "Operationeel"
+          }
+        },
+        {
+          "id": "off",
+          "title": {
+            "en": "Offline",
+            "nl": "Offline"
+          }
+        },
+        {
+          "id": "error",
+          "title": {
+            "en": "Error",
+            "nl": "Fout"
+          }
+        }
+      ],
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/frank_energie_pv_status.svg"
+    },
+    "frank_energie_pv_today_generation": {
+      "id": "frank_energie_pv_today_generation",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Generation Today",
+        "nl": "Opwek Vandaag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_pv_today_generation.svg"
+    },
+    "frank_energie_recovery_state": {
+      "id": "frank_energie_recovery_state",
+      "type": "string",
+      "title": {
+        "en": "Recovery State",
+        "nl": "Herstel Status"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "uiQuickAction": false,
+      "icon": "/assets/capabilities/frank_energie_recovery_state.svg",
+      "description": {
+        "en": "Status of manual Start of Day recovery (scheduled for 23:59 or not scheduled)",
+        "nl": "Status van handmatig Start van Dag herstel (gepland voor 23:59 of niet gepland)"
+      }
+    },
+    "frank_energie_site_costs": {
+      "id": "frank_energie_site_costs",
+      "uiQuickAction": false,
+      "title": {
+        "en": "Site Costs",
+        "nl": "Locatie Kosten"
+      },
+      "description": {
+        "en": "Total site energy costs",
+        "nl": "Totaal locatie energiekosten"
+      },
+      "type": "number",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "units": "€",
+      "decimals": 2,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_site_costs.svg"
+    },
+    "frank_energie_site_usage": {
+      "id": "frank_energie_site_usage",
+      "uiQuickAction": false,
+      "title": {
+        "en": "Site Usage",
+        "nl": "Locatie Verbruik"
+      },
+      "description": {
+        "en": "Total site energy usage",
+        "nl": "Totaal locatie energieverbruik"
+      },
+      "type": "number",
+      "insights": false,
+      "getable": true,
+      "setable": false,
+      "units": "kWh",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_site_usage.svg"
+    },
+    "frank_energie_today_consumption": {
+      "id": "frank_energie_today_consumption",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Consumption Today",
+        "nl": "Verbruik Vandaag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_today_consumption.svg"
+    },
+    "frank_energie_today_costs": {
+      "id": "frank_energie_today_costs",
+      "uiQuickAction": false,
+      "type": "number",
+      "insights": true,
+      "title": {
+        "en": "Costs Today",
+        "nl": "Kosten Vandaag"
+      },
+      "units": {
+        "en": "€",
+        "nl": "€"
+      },
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_today_costs.svg"
+    },
+    "frank_energie_trading_result": {
+      "id": "frank_energie_trading_result",
+      "uiQuickAction": false,
+      "title": {
+        "en": "Trading Result",
+        "nl": "Handelsresultaat"
+      },
+      "description": {
+        "en": "Daily battery trading result in euros",
+        "nl": "Dagelijks batterijhandelsresultaat in euro"
+      },
+      "type": "number",
+      "insights": true,
+      "getable": true,
+      "setable": false,
+      "units": "€",
+      "decimals": 2,
+      "chartType": "stepLine",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/frank_energie_trading_result.svg"
+    },
+    "onbalansmarkt_overall_rank": {
+      "id": "onbalansmarkt_overall_rank",
+      "uiQuickAction": false,
+      "title": {
+        "en": "Overall Ranking",
+        "nl": "Totale Ranglijst"
+      },
+      "description": {
+        "en": "Your position in the overall Onbalansmarkt ranking",
+        "nl": "Je positie in de totale Onbalansmarkt ranglijst"
+      },
+      "type": "number",
+      "insights": true,
+      "getable": true,
+      "setable": false,
+      "min": 1,
+      "chartType": "spline",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/onbalansmarkt_overall_rank.svg"
+    },
+    "onbalansmarkt_provider_rank": {
+      "id": "onbalansmarkt_provider_rank",
+      "uiQuickAction": false,
+      "title": {
+        "en": "Provider Ranking",
+        "nl": "Provider Ranglijst"
+      },
+      "description": {
+        "en": "Your ranking among same provider users",
+        "nl": "Je ranglijst onder dezelfde provider gebruikers"
+      },
+      "type": "number",
+      "insights": true,
+      "getable": true,
+      "setable": false,
+      "min": 1,
+      "chartType": "spline",
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/onbalansmarkt_provider_rank.svg"
+    },
+    "onbalansmarkt_reported_charged": {
+      "id": "onbalansmarkt_reported_charged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Reported Charged",
+        "nl": "Gerapporteerd Geladen"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/onbalansmarkt_reported_charged.svg",
+      "description": {
+        "en": "Battery charged today as reported by Onbalansmarkt API",
+        "nl": "Batterij geladen vandaag zoals gerapporteerd door Onbalansmarkt API"
+      }
+    },
+    "onbalansmarkt_reported_discharged": {
+      "id": "onbalansmarkt_reported_discharged",
+      "uiQuickAction": false,
+      "type": "number",
+      "title": {
+        "en": "Reported Discharged",
+        "nl": "Gerapporteerd Geleverd"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh"
+      },
+      "decimals": 2,
+      "insights": true,
+      "chartType": "stepLine",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/onbalansmarkt_reported_discharged.svg",
+      "description": {
+        "en": "Battery discharged today as reported by Onbalansmarkt API",
+        "nl": "Batterij geleverd vandaag zoals gerapporteerd door Onbalansmarkt API"
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "milestone_reached",
+  "title": {
+    "en": "Milestone reached",
+    "nl": "Mijlpaal bereikt"
+  },
+  "titleFormatted": {
+    "en": "Milestone reached: €[[threshold]]",
+    "nl": "Mijlpaal bereikt: €[[threshold]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Amount (€)",
+        "nl": "Bedrag (€)"
+      },
+      "min": 1,
+      "step": 10
+    }
+  ],
+  "tokens": [
+    {
+      "name": "batteryResultTotal",
+      "title": {
+        "en": "Current Monthly Total",
+        "nl": "Huidig Maandelijks Totaal"
+      },
+      "type": "number",
+      "example": 105.50
+    },
+    {
+      "name": "overThreshold",
+      "title": {
+        "en": "Amount Over Threshold",
+        "nl": "Bedrag Boven Drempel"
+      },
+      "type": "number",
+      "example": 5.50
+    }
+  ]
+}

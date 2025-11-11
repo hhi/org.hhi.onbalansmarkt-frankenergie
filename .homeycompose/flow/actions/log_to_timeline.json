@@ -1,0 +1,42 @@
+{
+  "id": "log_to_timeline",
+  "title": {
+    "en": "Log event to timeline",
+    "nl": "Log gebeurtenis naar tijdlijn"
+  },
+  "titleFormatted": {
+    "en": "Log to timeline: [[event]] (include result: [[includeResult]])",
+    "nl": "Log naar tijdlijn: [[event]] (resultaat opnemen: [[includeResult]])"
+  },
+  "hint": {
+    "en": "Creates a notification in Homey's timeline and stores the event locally for reference.",
+    "nl": "Maakt een notificatie in Homey's tijdlijn en slaat de gebeurtenis lokaal op ter referentie."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "event",
+      "type": "text",
+      "placeholder": {
+        "en": "e.g., Daily profit milestone reached",
+        "nl": "bijv., Dagelijkse winstmijlpaal bereikt"
+      },
+      "title": {
+        "en": "Event message",
+        "nl": "Gebeurtenisbericht"
+      }
+    },
+    {
+      "name": "includeResult",
+      "type": "checkbox",
+      "title": {
+        "en": "Include trading result amount",
+        "nl": "Handelsresultaat opnemen"
+      }
+    }
+  ]
+}

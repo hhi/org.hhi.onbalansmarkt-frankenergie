@@ -1,0 +1,43 @@
+{
+  "name": {
+    "en": "Frank Energie - Smart meter overview",
+    "nl": "Frank Energie - Slimme meter overzicht"
+  },
+  "class": "sensor",
+  "capabilities": [
+    "frank_energie_current_market_price",
+    "frank_energie_next_hour_market_price",
+    "frank_energie_today_consumption",
+    "frank_energie_today_costs",
+    "frank_energie_min_market_price_today",
+    "frank_energie_max_market_price_today",
+    "frank_energie_avg_market_price_today",
+    "frank_energie_site_usage",
+    "frank_energie_site_costs",
+    "frank_energie_next_poll_minutes"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png"
+  },
+  "pair": [
+    {
+      "id": "login"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

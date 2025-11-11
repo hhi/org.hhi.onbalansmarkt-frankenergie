@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- Battery Icon: Circular charge cycle with charge level bars -->
+  <!-- Design Philosophy: Kinetic Energy - Deep electric blue for stored potential -->
+
+  <!-- Main circle (battery container) -->
+  <circle cx="250" cy="250" r="166" fill="none" stroke="#2C3E50" stroke-width="12"/>
+
+  <!-- Charge level bars (5 bars showing fullness) -->
+  <rect x="150" y="165" width="200" height="20" fill="#0066CC" opacity="1.0" rx="4"/>
+  <rect x="150" y="205" width="200" height="20" fill="#0066CC" opacity="0.85" rx="4"/>
+  <rect x="150" y="245" width="200" height="20" fill="#0066CC" opacity="0.70" rx="4"/>
+  <rect x="150" y="285" width="200" height="20" fill="#0066CC" opacity="0.55" rx="4"/>
+  <rect x="150" y="325" width="200" height="20" fill="#0066CC" opacity="0.40" rx="4"/>
+
+  <!-- Battery terminal (top) -->
+  <rect x="233" y="60" width="34" height="16" fill="#2C3E50" rx="3"/>
+
+  <!-- Energy flow indicators (small dots) -->
+  <circle cx="110" cy="250" r="6" fill="#0066CC" opacity="0.6"/>
+  <circle cx="390" cy="250" r="6" fill="#0066CC" opacity="0.6"/>
+</svg>

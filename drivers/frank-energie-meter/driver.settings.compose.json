@@ -1,0 +1,76 @@
+[
+  {
+    "type": "group",
+    "label": {
+      "en": "Frank Energie Credentials",
+      "nl": "Frank Energie Inloggegevens"
+    },
+    "children": [
+      {
+        "id": "frank_energie_email",
+        "type": "text",
+        "label": {
+          "en": "Email",
+          "nl": "E-mail"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account email address",
+          "nl": "Uw Frank Energie account e-mailadres"
+        }
+      },
+      {
+        "id": "frank_energie_password",
+        "type": "password",
+        "label": {
+          "en": "Password",
+          "nl": "Wachtwoord"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account password",
+          "nl": "Uw Frank Energie account wachtwoord"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Data Polling Settings",
+      "nl": "Gegevensopvraag Instellingen"
+    },
+    "children": [
+      {
+        "id": "poll_interval",
+        "type": "number",
+        "label": {
+          "en": "Polling Interval",
+          "nl": "Opvraaginterval"
+        },
+        "value": 60,
+        "min": 30,
+        "max": 60,
+        "hint": {
+          "en": "How often to fetch data from Frank Energie. Recommended 30-60 minutes due to API rate limits (max 100 calls/day)",
+          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie. Aanbevolen 30-60 minuten vanwege API-limieten (max 100 aanroepen/dag)"
+        }
+      },
+      {
+        "id": "poll_start_minute",
+        "type": "number",
+        "label": {
+          "en": "Start Minute",
+          "nl": "Start Minuut"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 59,
+        "hint": {
+          "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:45 (with 30-min interval)",
+          "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:45 (met 30-min interval)"
+        }
+      }
+    ]
+  }
+]

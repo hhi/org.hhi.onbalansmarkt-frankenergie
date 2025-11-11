@@ -1,0 +1,24 @@
+{
+  "id": "external_battery_daily_discharged",
+  "uiQuickAction": false,
+  "type": "number",
+  "title": {
+    "en": "Daily discharged",
+    "nl": "Dagelijks geleverd"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh"
+  },
+  "decimals": 2,
+  "insights": true,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/external_battery_daily_discharged.svg",
+  "description": {
+    "en": "Total Watt discharged today from external batteries",
+    "nl": "Totaal Watt vandaag geleverd van externe batterijen"
+  }
+}

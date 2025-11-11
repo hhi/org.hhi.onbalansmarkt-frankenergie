@@ -1,0 +1,28 @@
+{
+  "id": "frank_slim_active",
+  "title": {
+    "en": "Frank Slim bonus is earned",
+    "nl": "Frank Slim bonus is verdiend"
+  },
+  "titleFormatted": {
+    "en": "Frank Slim bonus is earned: min. €[[threshold]]",
+    "nl": "Frank Slim bonus is verdiend: min. €[[threshold]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Minimum Bonus (€)",
+        "nl": "Minimale Bonus (€)"
+      },
+      "min": 0,
+      "step": 1
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "id": "top_performer_alert",
+  "title": {
+    "en": "Top performer alert",
+    "nl": "Top performer waarschuwing"
+  },
+  "titleFormatted": {
+    "en": "Top performer alert: [[rankType]] top [[threshold]]",
+    "nl": "Top performer waarschuwing: [[rankType]] top [[threshold]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "rankType",
+      "type": "dropdown",
+      "title": {
+        "en": "Rank Type",
+        "nl": "Ranglijst Type"
+      },
+      "values": [
+        {
+          "id": "overall",
+          "label": {
+            "en": "Overall Ranking",
+            "nl": "Totale Ranglijst"
+          }
+        },
+        {
+          "id": "provider",
+          "label": {
+            "en": "Provider Ranking",
+            "nl": "Provider Ranglijst"
+          }
+        }
+      ]
+    },
+    {
+      "name": "threshold",
+      "type": "number",
+      "title": {
+        "en": "Top Position (e.g., 100 for top 100)",
+        "nl": "Top Positie (bijv. 100 voor top 100)"
+      },
+      "min": 1,
+      "step": 10
+    }
+  ],
+  "tokens": [
+    {
+      "name": "currentRank",
+      "title": {
+        "en": "Current Rank",
+        "nl": "Huidige Ranglijst"
+      },
+      "type": "number",
+      "example": 42
+    },
+    {
+      "name": "percentile",
+      "title": {
+        "en": "Percentile",
+        "nl": "Percentiel"
+      },
+      "type": "string",
+      "example": "Top 5%"
+    }
+  ]
+}

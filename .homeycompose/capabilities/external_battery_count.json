@@ -1,0 +1,25 @@
+{
+  "id": "external_battery_count",
+  "uiQuickAction": false,
+  "type": "number",
+  "insights": true,
+  "title": {
+    "en": "Battery # flow metrics",
+    "nl": "Batterij # flow metrieken"
+  },
+  "units": {
+    "en": "",
+    "nl": ""
+  },
+  "decimals": 0,
+  "min": 0,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/external_battery_count.svg",
+  "description": {
+    "en": "Number of external batteries providing metrics",
+    "nl": "Aantal externe batterijen die metrieken leveren"
+  }
+}

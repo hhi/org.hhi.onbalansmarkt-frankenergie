@@ -1,0 +1,93 @@
+{
+  "pair": {
+    "common": {
+      "login": {
+        "title": "Frank Energie",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "battery": {
+      "login": {
+        "title": "Frank Energie Battery",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "ev": {
+      "login": {
+        "title": "Frank Energie EV Charger",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "meter": {
+      "login": {
+        "title": "Frank Energie Meter",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "pv": {
+      "login": {
+        "title": "Frank Energie PV System",
+        "subtitle": "Sign in with your Frank Energie account"
+      }
+    },
+    "login": {
+      "email": "Email Address",
+      "email.hint": "Your Frank Energie account email address",
+      "password": "Password",
+      "password.hint": "Your Frank Energie account password",
+      "apiKey": "Onbalansmarkt API Key",
+      "apiKey.hint": "Your Onbalansmarkt.com API key (required for battery device)",
+      "checking": "Checking credentials...",
+      "using_existing": "Using existing credentials...",
+      "credentials_invalid_title": "Credentials Invalid",
+      "credentials_invalid_body": "Existing credentials are invalid. Please sign in again."
+    },
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "verifying": "Verifying...",
+      "finish": "Finish",
+      "skip": "Skip"
+    },
+    "zonneplan": {
+      "configure": {
+        "title": "Zonneplan Battery",
+        "subtitle": "Configure your Zonneplan battery for Onbalansmarkt integration",
+        "device_name": "Device Name",
+        "device_name.hint": "Choose a recognizable name for your battery",
+        "trading_mode": "Trading Mode",
+        "trading_mode.manual": "Manual",
+        "trading_mode.imbalance": "Imbalance",
+        "trading_mode.imbalance_aggressive": "Imbalance Aggressive",
+        "trading_mode.self_consumption_plus": "Self Consumption Plus",
+        "trading_mode.hint": "Select the trading mode for Onbalansmarkt integration"
+      },
+      "api_key": {
+        "title": "Onbalansmarkt Integration",
+        "subtitle": "Optional: enter your Onbalansmarkt API key to automatically send data",
+        "api_key": "API Key",
+        "api_key.hint": "Get an API key at https://onbalansmarkt.com (optional)",
+        "auto_send": "Automatically send measurements",
+        "auto_send.hint": "Send battery data automatically to Onbalansmarkt when received via flow card",
+        "error": {
+          "api_key_required": "API key is required when auto-send is enabled"
+        }
+      }
+    }
+  },
+  "error": {
+    "validation": {
+      "title": "Missing Fields",
+      "fields": "Email and password are required."
+    },
+    "login": {
+      "title": "Login Failed",
+      "body": "Failed to verify Frank Energie credentials. Please check your email and password."
+    }
+  },
+  "recovery_state": {
+    "not_scheduled": "Not scheduled",
+    "scheduled_today": "Scheduled for today at 23:59",
+    "scheduled_tomorrow": "Scheduled for tomorrow at 23:59"
+  }
+}

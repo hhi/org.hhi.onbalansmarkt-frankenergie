@@ -1,0 +1,14 @@
+{
+  "id": "provider_rank_better",
+  "title": {
+    "en": "Provider rank better than overall",
+    "nl": "Provider ranglijst beter dan totaal"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ]
+}

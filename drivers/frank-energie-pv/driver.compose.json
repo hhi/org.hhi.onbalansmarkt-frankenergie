@@ -1,0 +1,44 @@
+{
+  "name": {
+    "en": "Frank Energie - Smart PV Feed-in",
+    "nl": "Frank Energie - Slim terugleveren"
+  },
+  "class": "service",
+  "capabilities": [
+    "onoff",
+    "frank_energie_pv_current_power",
+    "frank_energie_pv_today_generation",
+    "frank_energie_pv_status",
+    "frank_energie_pv_bonus",
+    "frank_energie_next_poll_minutes"
+  ],
+  "capabilitiesOptions": {
+    "onoff": {
+      "uiQuickAction": false
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png"
+  },
+  "pair": [
+    {
+      "id": "login"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

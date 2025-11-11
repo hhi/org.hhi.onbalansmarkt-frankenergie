@@ -1,0 +1,71 @@
+{
+  "id": "result_positive_negative",
+  "title": {
+    "en": "Daily result is positive/negative",
+    "nl": "Dagelijks resultaat is positief/negatief"
+  },
+  "titleFormatted": {
+    "en": "Daily result is [[isPositive]]",
+    "nl": "Dagelijks resultaat is [[isPositive]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "isPositive",
+      "type": "dropdown",
+      "title": {
+        "en": "Result type",
+        "nl": "Resultaattype"
+      },
+      "values": [
+        {
+          "id": "positive",
+          "label": {
+            "en": "Positive",
+            "nl": "Positief"
+          }
+        },
+        {
+          "id": "negative",
+          "label": {
+            "en": "Negative",
+            "nl": "Negatief"
+          }
+        }
+      ]
+    }
+  ],
+  "tokens": [
+    {
+      "name": "batteryResult",
+      "title": {
+        "en": "Battery Result",
+        "nl": "Batterij Resultaat"
+      },
+      "type": "number",
+      "example": 45.67
+    },
+    {
+      "name": "batteryResultTotal",
+      "title": {
+        "en": "Monthly Total",
+        "nl": "Maandelijks Totaal"
+      },
+      "type": "number",
+      "example": 523.45
+    },
+    {
+      "name": "tradingMode",
+      "title": {
+        "en": "Trading Mode",
+        "nl": "Handelsmodus"
+      },
+      "type": "string",
+      "example": "imbalance_aggressive"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "external_battery_selector",
+  "uiQuickAction": false,
+  "type": "enum",
+  "title": {
+    "en": "External Battery Selector",
+    "nl": "Externe Batterij Selector"
+  },
+  "description": {
+    "en": "Select an external battery connected via flow cards",
+    "nl": "Selecteer een externe batterij verbonden via flow cards"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "picker",
+  "values": [
+    {
+      "id": "none",
+      "title": {
+        "en": "— No batteries —",
+        "nl": "— Geen batterijen —"
+      }
+    }
+  ]
+}

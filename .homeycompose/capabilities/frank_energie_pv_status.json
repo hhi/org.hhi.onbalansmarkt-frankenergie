@@ -1,0 +1,41 @@
+{
+  "id": "frank_energie_pv_status",
+  "uiQuickAction": false,
+  "title": {
+    "en": "PV System Status",
+    "nl": "PV Systeem Status"
+  },
+  "description": {
+    "en": "Current status of PV system",
+    "nl": "Huidige status van PV systeem"
+  },
+  "type": "enum",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "values": [
+    {
+      "id": "on",
+      "title": {
+        "en": "Operational",
+        "nl": "Operationeel"
+      }
+    },
+    {
+      "id": "off",
+      "title": {
+        "en": "Offline",
+        "nl": "Offline"
+      }
+    },
+    {
+      "id": "error",
+      "title": {
+        "en": "Error",
+        "nl": "Fout"
+      }
+    }
+  ],
+  "uiComponent": "picker",
+  "icon": "/assets/capabilities/frank_energie_pv_status.svg"
+}

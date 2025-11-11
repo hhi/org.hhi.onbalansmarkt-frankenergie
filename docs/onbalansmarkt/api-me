@@ -1,0 +1,235 @@
+{
+  "username": "string",
+  "name": "string",
+  "resultToday": {
+    "date": "2025-11-15",
+    "type": "api",
+    "batteryResult": 3.4,
+    "batteryCharged": 10,
+    "batteryDischarged": 8,
+    "solarResult": 0.4,
+    "chargerResult": 0.2,
+    "batteryResultTotal": 1998.8,
+    "batteryResultImbalance": 4,
+    "batteryResultEpex": -1.4,
+    "batteryResultCustom": 0.6,
+    "mode": "self_consumption_plus",
+    "note": "Werkte voor 3 weken voor geen meter!",
+    "overallRank": 3,
+    "providerRank": 1
+  },
+  "resultYesterday": {
+    "date": "2025-11-15",
+    "type": "api",
+    "batteryResult": 3.4,
+    "batteryCharged": 10,
+    "batteryDischarged": 8,
+    "solarResult": 0.4,
+    "chargerResult": 0.2,
+    "batteryResultTotal": 1998.8,
+    "batteryResultImbalance": 4,
+    "batteryResultEpex": -1.4,
+    "batteryResultCustom": 0.6,
+    "mode": "self_consumption_plus",
+    "note": "Werkte voor 3 weken voor geen meter!",
+    "overallRank": 3,
+    "providerRank": 1
+  }
+}
+
+
+/api/me  (application/json)
+GET
+/api/me
+API endpoint to retrieve the battery results and ranking of today and the previous two days. Refer to the /api/results/daily endpoint for a wider range of results.
+
+
+ProfileResponseCollapse allobject
+Response with the user's profile.
+
+usernameCollapse allstring
+Username of the user
+
+nameCollapse allstring
+Name of the battery
+
+resultTodayCollapse allobject
+Today's results or null when no result was recorded.
+
+dateCollapse allstringdate
+Date of the daily result in YYYY-MM-DD format
+
+ExamplesCollapse allarray
+#0"2025-11-15"
+typeCollapse allstring
+Type of result (manual - manual entry, api - submitted via the API, auto - automatically calculated based on live results, direct - provided by a direct link with a provider)
+
+EnumCollapse allarray
+#0"manual"
+#1"api"
+#2"auto"
+#3"direct"
+ExamplesCollapse allarray
+#0"api"
+batteryResultCollapse allnumber
+Net battery result in euros, after subtracting energy costs
+
+ExamplesCollapse allarray
+#03.4
+batteryChargedCollapse allintegerint32
+Amount of energy charged to the battery in kWh
+
+ExamplesCollapse allarray
+#010
+batteryDischargedCollapse allintegerint32
+Amount of energy discharged from the battery in kWh
+
+ExamplesCollapse allarray
+#08
+solarResultCollapse allnumber
+Solar panel trading result in euros
+
+ExamplesCollapse allarray
+#00.4
+chargerResultCollapse allnumber
+Car charger trading result in euros
+
+ExamplesCollapse allarray
+#00.2
+batteryResultTotalCollapse allnumber
+Lifetime total battery result in euros
+
+ExamplesCollapse allarray
+#01998.8
+batteryResultImbalanceCollapse allnumber
+Battery result from imbalance market trading in euros, not available for all providers.
+
+ExamplesCollapse allarray
+#04
+batteryResultEpexCollapse allnumber
+Battery result to compensate for unrelated charge/discharging costs in euros while trading on another market, not available for all providers.
+
+ExamplesCollapse allarray
+#0-1.4
+batteryResultCustomCollapse allnumber
+Provider-specific bonus or discount in euros, not available for all providers.
+
+ExamplesCollapse allarray
+#00.6
+modeCollapse allstring
+Most commonly used battery operating mode
+
+EnumCollapse allarray
+#0"imbalance"
+#1"manual"
+#2"day_ahead"
+#3"self_consumption"
+#4"self_consumption_plus"
+#5"imbalance_aggressive"
+ExamplesCollapse allarray
+#0"self_consumption_plus"
+noteCollapse allstring
+Optional user-provided note for the results
+
+ExamplesCollapse allarray
+#0"Werkte voor 3 weken voor geen meter!"
+overallRankCollapse allintegerint32
+Rank of the installation in the overall ranking, only available on the profile response.
+
+ExamplesCollapse allarray
+#03
+providerRankCollapse allintegerint32
+Rank of the installation among installations with the same provider. Only available on the profile response.
+
+ExamplesCollapse allarray
+#01
+resultYesterdayCollapse allobject
+Yesterday's results or null when no result was recorded.
+
+dateCollapse allstringdate
+Date of the daily result in YYYY-MM-DD format
+
+ExamplesCollapse allarray
+#0"2025-11-15"
+typeCollapse allstring
+Type of result (manual - manual entry, api - submitted via the API, auto - automatically calculated based on live results, direct - provided by a direct link with a provider)
+
+EnumCollapse allarray
+#0"manual"
+#1"api"
+#2"auto"
+#3"direct"
+ExamplesCollapse allarray
+#0"api"
+batteryResultCollapse allnumber
+Net battery result in euros, after subtracting energy costs
+
+ExamplesCollapse allarray
+#03.4
+batteryChargedCollapse allintegerint32
+Amount of energy charged to the battery in kWh
+
+ExamplesCollapse allarray
+#010
+batteryDischargedCollapse allintegerint32
+Amount of energy discharged from the battery in kWh
+
+ExamplesCollapse allarray
+#08
+solarResultCollapse allnumber
+Solar panel trading result in euros
+
+ExamplesCollapse allarray
+#00.4
+chargerResultCollapse allnumber
+Car charger trading result in euros
+
+ExamplesCollapse allarray
+#00.2
+batteryResultTotalCollapse allnumber
+Lifetime total battery result in euros
+
+ExamplesCollapse allarray
+#01998.8
+batteryResultImbalanceCollapse allnumber
+Battery result from imbalance market trading in euros, not available for all providers.
+
+ExamplesCollapse allarray
+#04
+batteryResultEpexCollapse allnumber
+Battery result to compensate for unrelated charge/discharging costs in euros while trading on another market, not available for all providers.
+
+ExamplesCollapse allarray
+#0-1.4
+batteryResultCustomCollapse allnumber
+Provider-specific bonus or discount in euros, not available for all providers.
+
+ExamplesCollapse allarray
+#00.6
+modeCollapse allstring
+Most commonly used battery operating mode
+
+EnumCollapse allarray
+#0"imbalance"
+#1"manual"
+#2"day_ahead"
+#3"self_consumption"
+#4"self_consumption_plus"
+#5"imbalance_aggressive"
+ExamplesCollapse allarray
+#0"self_consumption_plus"
+noteCollapse allstring
+Optional user-provided note for the results
+
+ExamplesCollapse allarray
+#0"Werkte voor 3 weken voor geen meter!"
+overallRankCollapse allintegerint32
+Rank of the installation in the overall ranking, only available on the profile response.
+
+ExamplesCollapse allarray
+#03
+providerRankCollapse allintegerint32
+Rank of the installation among installations with the same provider. Only available on the profile response.
+
+ExamplesCollapse allarray
+#01

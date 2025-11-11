@@ -1,0 +1,42 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Charging plug connector head -->
+  <g>
+    <!-- Plug body - rounded rectangle -->
+    <rect x="11" y="4" width="10" height="6" rx="1" ry="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+
+    <!-- Plug prongs indicator -->
+    <circle cx="14" cy="11" r="0.8" fill="currentColor"/>
+    <circle cx="18" cy="11" r="0.8" fill="currentColor"/>
+  </g>
+
+  <!-- Connection cable/cord -->
+  <line x1="16" y1="10" x2="16" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Charging station pedestal -->
+  <g>
+    <!-- Main station body - rounded rectangle -->
+    <rect x="9" y="15" width="14" height="12" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+
+    <!-- Display/panel area - subtle indicator -->
+    <rect x="11" y="17" width="10" height="4" rx="0.5" ry="0.5" fill="none" stroke="currentColor" stroke-width="1"/>
+
+    <!-- Charging indicator dots (showing active charging) -->
+    <circle cx="13" cy="19" r="0.7" fill="currentColor" opacity="0.75"/>
+    <circle cx="16" cy="19" r="0.7" fill="currentColor" opacity="0.75"/>
+    <circle cx="19" cy="19" r="0.7" fill="currentColor" opacity="0.75"/>
+  </g>
+
+  <!-- Lightning bolt for electricity/power indication -->
+  <g fill="currentColor" opacity="0.85">
+    <!-- Lightning bolt positioned on lower right -->
+    <path d="M 22 23 L 20 26 L 22.5 26 L 21 29 L 25 23.5 L 22.5 23.5 Z" stroke="none"/>
+  </g>
+
+  <!-- Base/stand feet -->
+  <g stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round">
+    <!-- Left foot -->
+    <path d="M 12 27 L 10 29"/>
+    <!-- Right foot -->
+    <path d="M 20 27 L 22 29"/>
+  </g>
+</svg>

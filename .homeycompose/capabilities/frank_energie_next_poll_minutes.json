@@ -1,0 +1,18 @@
+{
+  "id": "frank_energie_next_poll_minutes",
+  "uiQuickAction": false,
+  "type": "number",
+  "title": {
+    "en": "Next Poll In",
+    "nl": "Volgende Poll Over"
+  },
+  "units": {
+    "en": "min",
+    "nl": "min"
+  },
+  "decimals": 0,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_next_poll_minutes.svg"
+}

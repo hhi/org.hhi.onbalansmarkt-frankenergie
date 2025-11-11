@@ -1,0 +1,26 @@
+{
+  "id": "external_battery_percentage",
+  "uiQuickAction": false,
+  "type": "number",
+  "title": {
+    "en": "Average battery percentage",
+    "nl": "Gemiddeld batterij percentage"
+  },
+  "units": {
+    "en": "%",
+    "nl": "%"
+  },
+  "min": 0,
+  "max": 100,
+  "decimals": 1,
+  "insights": true,
+  "chartType": "spline",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/external_battery_percentage.svg",
+  "description": {
+    "en": "Average battery charge percentage across all external batteries",
+    "nl": "Gemiddeld batterij laadpercentage van alle externe batterijen"
+  }
+}

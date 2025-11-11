@@ -1,0 +1,227 @@
+[
+  {
+    "type": "group",
+    "label": {
+      "en": "Frank Energie Credentials",
+      "nl": "Frank Energie Inloggegevens"
+    },
+    "children": [
+      {
+        "id": "frank_energie_email",
+        "type": "text",
+        "label": {
+          "en": "Email",
+          "nl": "E-mail"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account email address",
+          "nl": "Uw Frank Energie account e-mailadres"
+        }
+      },
+      {
+        "id": "frank_energie_password",
+        "type": "password",
+        "label": {
+          "en": "Password",
+          "nl": "Wachtwoord"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account password",
+          "nl": "Uw Frank Energie account wachtwoord"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Onbalansmarkt Integration",
+      "nl": "Onbalansmarkt Integratie"
+    },
+    "children": [
+      {
+        "id": "onbalansmarkt_api_key",
+        "type": "password",
+        "label": {
+          "en": "API Key",
+          "nl": "API-sleutel"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Onbalansmarkt.com API key (optional). Get one at https://onbalansmarkt.com",
+          "nl": "Uw Onbalansmarkt.com API-sleutel (optioneel). Verkrijg er een op https://onbalansmarkt.com"
+        }
+      },
+      {
+        "id": "load_balancing_active",
+        "type": "checkbox",
+        "label": {
+          "en": "Load Balancing Active",
+          "nl": "Load Balancing Actief"
+        },
+        "value": false,
+        "hint": {
+          "en": "Enable this if dynamic load balancing is active on your battery system",
+          "nl": "Schakel dit in als dynamische load balancing actief is op uw batterijsysteem"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Data Polling Settings",
+      "nl": "Gegevensopvraag Instellingen"
+    },
+    "children": [
+      {
+        "id": "poll_interval",
+        "type": "number",
+        "label": {
+          "en": "Polling Interval (minutes)",
+          "nl": "Opvraaginterval (minuten)"
+        },
+        "value": 5,
+        "min": 1,
+        "max": 1440,
+        "hint": {
+          "en": "How often to fetch data from Frank Energie (1-1440 minutes). Default: 5 minutes",
+          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-1440 minuten). Standaard: 5 minuten"
+        }
+      },
+      {
+        "id": "poll_start_minute",
+        "type": "number",
+        "label": {
+          "en": "Start Minute",
+          "nl": "Start Minuut"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 59,
+        "hint": {
+          "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:20, XX:25, etc.",
+          "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:20, XX:25, etc."
+        }
+      },
+      {
+        "id": "send_measurements",
+        "type": "checkbox",
+        "label": {
+          "en": "Send measurements to Onbalansmarkt",
+          "nl": "Metingen versturen naar Onbalansmarkt"
+        },
+        "value": false,
+        "hint": {
+          "en": "Automatically send trading results to Onbalansmarkt.com (requires API key)",
+          "nl": "Automatisch handelsresultaten versturen naar Onbalansmarkt.com (vereist API-sleutel)"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Daily Logging",
+      "nl": "Dagelijkse Logging"
+    },
+    "children": [
+      {
+        "id": "log_daily_totals_to_timeline",
+        "type": "checkbox",
+        "label": {
+          "en": "Log daily totals at midnight",
+          "nl": "Dagelijkse totalen om middernacht loggen"
+        },
+        "value": true,
+        "hint": {
+          "en": "Create a timeline notification with daily totals (charged/discharged) when midnight reset occurs",
+          "nl": "Maak een timeline notificatie met dagelijkse totalen (geladen/geleverd) wanneer middernacht reset plaatsvindt"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Manual Actions (repair)",
+      "nl": "Handmatige Acties (reparatie)"
+    },
+    "children": [
+      {
+        "id": "manual_action",
+        "type": "dropdown",
+        "label": {
+          "en": "Action",
+          "nl": "Actie"
+        },
+        "value": "none",
+        "values": [
+          {
+            "id": "none",
+            "label": {
+              "en": "— Select an action —",
+              "nl": "— Kies een actie —"
+            }
+          },
+          {
+            "id": "refresh_now",
+            "label": {
+              "en": "Refresh data now",
+              "nl": "Gegevens nu verversen"
+            }
+          },
+          {
+            "id": "reset_baseline",
+            "label": {
+              "en": "Recover delta for Start of Day",
+              "nl": "Herstel delta voor Start van Dag"
+            }
+          },
+          {
+            "id": "reset_external_batteries",
+            "label": {
+              "en": "Reset external batteries list",
+              "nl": "Lijst van externe batterijen herstellen"
+            }
+          },
+          {
+            "id": "direct_send",
+            "label": {
+              "en": "Send measurements now",
+              "nl": "Verstuur metingen nu"
+            }
+          }
+        ],
+        "hint": {
+          "en": "Select a recovery action and save to execute it",
+          "nl": "Selecteer een recovery actie en sla op om deze uit te voeren"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Energy Dashboard",
+      "nl": "Energie Dashboard"
+    },
+    "children": [
+      {
+        "id": "exclude_from_energy",
+        "type": "checkbox",
+        "label": {
+          "en": "Exclude from Energy",
+          "nl": "Uitsluiten van Energie"
+        },
+        "value": true,
+        "hint": {
+          "en": "Exclude this device from the Homey Energy dashboard",
+          "nl": "Dit apparaat uitsluiten van het Homey Energie dashboard"
+        }
+      }
+    ]
+  }
+]

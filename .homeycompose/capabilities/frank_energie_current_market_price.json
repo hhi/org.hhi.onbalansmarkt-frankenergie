@@ -1,0 +1,19 @@
+{
+  "id": "frank_energie_current_market_price",
+  "uiQuickAction": false,
+  "type": "number",
+  "insights": true,
+  "title": {
+    "en": "Current Market Price",
+    "nl": "Huidige Marktprijs"
+  },
+  "units": {
+    "en": "€/kWh",
+    "nl": "€/kWh"
+  },
+  "decimals": 4,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_current_market_price.svg"
+}

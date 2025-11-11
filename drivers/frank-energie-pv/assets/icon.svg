@@ -1,0 +1,45 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+  <!-- Sun rays - outer circle -->
+  <g>
+    <!-- Top ray -->
+    <rect x="15" y="1" width="2" height="4" rx="1"/>
+    <!-- Top-right ray -->
+    <rect x="23.1" y="3.4" width="2" height="4" rx="1" transform="rotate(45 24.1 5.4)"/>
+    <!-- Right ray -->
+    <rect x="27" y="15" width="4" height="2" rx="1"/>
+    <!-- Bottom-right ray -->
+    <rect x="23.1" y="24.6" width="2" height="4" rx="1" transform="rotate(45 24.1 26.6)"/>
+    <!-- Bottom ray -->
+    <rect x="15" y="27" width="2" height="4" rx="1"/>
+    <!-- Bottom-left ray -->
+    <rect x="6.9" y="24.6" width="2" height="4" rx="1" transform="rotate(45 7.9 26.6)"/>
+    <!-- Left ray -->
+    <rect x="1" y="15" width="4" height="2" rx="1"/>
+    <!-- Top-left ray -->
+    <rect x="6.9" y="3.4" width="2" height="4" rx="1" transform="rotate(45 7.9 5.4)"/>
+  </g>
+
+  <!-- Solar panel - outer frame -->
+  <g>
+    <!-- Main panel body with slight rounded corners -->
+    <rect x="8" y="11" width="16" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+
+    <!-- Solar cell grid (3x3 cells with gaps) -->
+    <!-- Row 1 -->
+    <rect x="9" y="12" width="4" height="3.2" fill="currentColor" opacity="0.3"/>
+    <rect x="14" y="12" width="4" height="3.2" fill="currentColor" opacity="0.5"/>
+    <rect x="19" y="12" width="4" height="3.2" fill="currentColor" opacity="0.3"/>
+
+    <!-- Row 2 -->
+    <rect x="9" y="15.8" width="4" height="3.2" fill="currentColor" opacity="0.5"/>
+    <rect x="14" y="15.8" width="4" height="3.2" fill="currentColor" opacity="0.3"/>
+    <rect x="19" y="15.8" width="4" height="3.2" fill="currentColor" opacity="0.5"/>
+
+    <!-- Vertical dividing lines -->
+    <line x1="13" y1="12" x2="13" y2="22" stroke="currentColor" stroke-width="0.6" opacity="0.6"/>
+    <line x1="18" y1="12" x2="18" y2="22" stroke="currentColor" stroke-width="0.6" opacity="0.6"/>
+
+    <!-- Horizontal dividing lines -->
+    <line x1="9" y1="15.8" x2="23" y2="15.8" stroke="currentColor" stroke-width="0.6" opacity="0.6"/>
+  </g>
+</svg>

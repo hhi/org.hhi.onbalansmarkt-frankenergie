@@ -1,0 +1,20 @@
+{
+  "id": "frank_energie_frank_slim_bonus",
+  "uiQuickAction": false,
+  "type": "number",
+  "title": {
+    "en": "Frank Slim Bonus",
+    "nl": "Frank Slim Korting"
+  },
+  "units": {
+    "en": "€",
+    "nl": "€"
+  },
+  "decimals": 2,
+  "insights": true,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_frank_slim_bonus.svg"
+}

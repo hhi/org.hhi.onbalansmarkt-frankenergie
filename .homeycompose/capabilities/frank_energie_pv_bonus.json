@@ -1,0 +1,20 @@
+{
+  "id": "frank_energie_pv_bonus",
+  "uiQuickAction": false,
+  "title": {
+    "en": "PV Bonus",
+    "nl": "PV Bonus"
+  },
+  "description": {
+    "en": "Total PV system bonus earned",
+    "nl": "Totale PV systeem bonus verdiend"
+  },
+  "type": "number",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "units": "€",
+  "decimals": 2,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_pv_bonus.svg"
+}

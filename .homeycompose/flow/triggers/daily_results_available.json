@@ -1,0 +1,70 @@
+{
+  "id": "daily_results_available",
+  "title": {
+    "en": "Daily results available",
+    "nl": "Dagelijkse resultaten beschikbaar"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "batteryResult",
+      "title": {
+        "en": "Battery Result",
+        "nl": "Batterij Resultaat"
+      },
+      "type": "number",
+      "example": 45.67
+    },
+    {
+      "name": "batteryResultTotal",
+      "title": {
+        "en": "Battery Result Total",
+        "nl": "Totaal Batterij Resultaat"
+      },
+      "type": "number",
+      "example": 523.45
+    },
+    {
+      "name": "overallRank",
+      "title": {
+        "en": "Overall Rank",
+        "nl": "Totaal Ranglijst"
+      },
+      "type": "number",
+      "example": 42
+    },
+    {
+      "name": "providerRank",
+      "title": {
+        "en": "Provider Rank",
+        "nl": "Provider Ranglijst"
+      },
+      "type": "number",
+      "example": 12
+    },
+    {
+      "name": "tradingMode",
+      "title": {
+        "en": "Trading Mode",
+        "nl": "Handelsmodus"
+      },
+      "type": "string",
+      "example": "imbalance_aggressive"
+    },
+    {
+      "name": "resultDate",
+      "title": {
+        "en": "Result Date",
+        "nl": "Resultaat Datum"
+      },
+      "type": "string",
+      "example": "2025-10-23"
+    }
+  ]
+}

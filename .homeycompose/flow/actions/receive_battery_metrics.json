@@ -1,0 +1,76 @@
+{
+  "id": "receive_battery_metrics",
+  "title": {
+    "en": "Receive battery metrics",
+    "nl": "Ontvang batterij metrieken"
+  },
+  "titleFormatted": {
+    "en": "Receive metrics for battery [[battery_id]]: charged [[total_charged_kwh]] kWh, discharged [[total_discharged_kwh]] kWh, at [[battery_percentage]]%",
+    "nl": "Ontvang metrieken voor batterij [[battery_id]]: geladen [[total_charged_kwh]] kWh, geleverd [[total_discharged_kwh]] kWh, op [[battery_percentage]]%"
+  },
+  "hint": {
+    "en": "Receives total (cumulative) kWh values from external battery sources like Sessy. The app automatically calculates daily deltas.",
+    "nl": "Ontvangt totale (cumulatieve) kWh waarden van externe batterijbronnen zoals Sessy. De app berekent automatisch dagelijkse delta's."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "battery_id",
+      "type": "text",
+      "title": {
+        "en": "Battery ID",
+        "nl": "Batterij ID"
+      },
+      "placeholder": {
+        "en": "e.g., sessy-1",
+        "nl": "bijv., sessy-1"
+      },
+      "required": true
+    },
+    {
+      "name": "total_charged_kwh",
+      "type": "number",
+      "title": {
+        "en": "Total charged (kWh)",
+        "nl": "Totaal geladen (kWh)"
+      },
+      "placeholder": {
+        "en": "Cumulative charged kWh",
+        "nl": "Cumulatief geladen kWh"
+      },
+      "required": true,
+      "min": 0
+    },
+    {
+      "name": "total_discharged_kwh",
+      "type": "number",
+      "title": {
+        "en": "Total discharged (kWh)",
+        "nl": "Totaal geleverd (kWh)"
+      },
+      "placeholder": {
+        "en": "Cumulative discharged kWh",
+        "nl": "Cumulatief geleverd kWh"
+      },
+      "required": true,
+      "min": 0
+    },
+    {
+      "name": "battery_percentage",
+      "type": "range",
+      "title": {
+        "en": "Battery percentage",
+        "nl": "Batterij percentage"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "label": "%",
+      "required": true
+    }
+  ]
+}

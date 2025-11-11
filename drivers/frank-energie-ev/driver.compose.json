@@ -1,0 +1,48 @@
+{
+  "name": {
+    "en": "Frank Energie - Smart EV Charging",
+    "nl": "Frank Energie - Slim laden"
+  },
+  "class": "service",
+  "capabilities": [
+    "onoff",
+    "measure_battery",
+    "frank_energie_ev_charging_status",
+    "frank_energie_ev_bonus",
+    "frank_energie_next_poll_minutes"
+  ],
+  "capabilitiesOptions": {
+    "onoff": {
+      "uiQuickAction": false
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [],
+  "energy": {
+    "batteries": [
+      "INTERNAL"
+    ]
+  },
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png"
+  },
+  "pair": [
+    {
+      "id": "login"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

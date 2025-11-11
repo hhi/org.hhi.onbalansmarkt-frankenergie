@@ -1,0 +1,49 @@
+{
+  "id": "update_dashboard",
+  "title": {
+    "en": "Update dashboard display",
+    "nl": "Werk dashboard display bij"
+  },
+  "titleFormatted": {
+    "en": "Update dashboard: [[displayType]]",
+    "nl": "Werk dashboard bij: [[displayType]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "displayType",
+      "type": "dropdown",
+      "title": {
+        "en": "Display Type",
+        "nl": "Weergavetype"
+      },
+      "values": [
+        {
+          "id": "current_metrics",
+          "label": {
+            "en": "Current Metrics (Rank, Result, Mode)",
+            "nl": "Huidige Metrieken (Ranglijst, Resultaat, Modus)"
+          }
+        },
+        {
+          "id": "ranking_progress",
+          "label": {
+            "en": "Ranking Progress",
+            "nl": "Ranglijst Voortgang"
+          }
+        },
+        {
+          "id": "monthly_earnings",
+          "label": {
+            "en": "Monthly Earnings Chart",
+            "nl": "Maandelijks Inkomstenschema"
+          }
+        }
+      ]
+    }
+  ]
+}

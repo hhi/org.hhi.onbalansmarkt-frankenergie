@@ -1,0 +1,19 @@
+{
+  "id": "frank_energie_next_hour_market_price",
+  "uiQuickAction": false,
+  "type": "number",
+  "insights": true,
+  "title": {
+    "en": "Next Hour Market Price",
+    "nl": "Marktprijs Volgend Uur"
+  },
+  "units": {
+    "en": "€/kWh",
+    "nl": "€/kWh"
+  },
+  "decimals": 4,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_next_hour_market_price.svg"
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "type": "group",
+    "label": {
+      "en": "Frank Energie Credentials",
+      "nl": "Frank Energie Inloggegevens"
+    },
+    "children": [
+      {
+        "id": "frank_energie_email",
+        "type": "text",
+        "label": {
+          "en": "Email",
+          "nl": "E-mail"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account email address",
+          "nl": "Uw Frank Energie account e-mailadres"
+        }
+      },
+      {
+        "id": "frank_energie_password",
+        "type": "password",
+        "label": {
+          "en": "Password",
+          "nl": "Wachtwoord"
+        },
+        "value": "",
+        "hint": {
+          "en": "Your Frank Energie account password",
+          "nl": "Uw Frank Energie account wachtwoord"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "PV System Configuration",
+      "nl": "PV Systeem Configuratie"
+    },
+    "children": [
+      {
+        "id": "pv_system_id",
+        "type": "text",
+        "label": {
+          "en": "PV System ID",
+          "nl": "PV Systeem ID"
+        },
+        "value": "",
+        "hint": {
+          "en": "Configured during pairing (read-only)",
+          "nl": "Geconfigureerd tijdens koppeling (alleen-lezen)"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
+      "en": "Data Polling Settings",
+      "nl": "Gegevensopvraag Instellingen"
+    },
+    "children": [
+      {
+        "id": "poll_interval",
+        "type": "number",
+        "label": {
+          "en": "Polling Interval (minutes)",
+          "nl": "Opvraaginterval (minuten)"
+        },
+        "value": 5,
+        "min": 1,
+        "max": 1440,
+        "hint": {
+          "en": "How often to fetch data from Frank Energie (1-1440 minutes). Default: 5 minutes",
+          "nl": "Hoe vaak gegevens worden opgehaald van Frank Energie (1-1440 minuten). Standaard: 5 minuten"
+        }
+      },
+      {
+        "id": "poll_start_minute",
+        "type": "number",
+        "label": {
+          "en": "Start Minute",
+          "nl": "Start Minuut"
+        },
+        "value": 0,
+        "min": 0,
+        "max": 59,
+        "hint": {
+          "en": "Minute of the hour to align polling (0-59). Example: 15 = polls at XX:15, XX:20, XX:25, etc.",
+          "nl": "Minuut van het uur om polling uit te lijnen (0-59). Voorbeeld: 15 = pollt op XX:15, XX:20, XX:25, etc."
+        }
+      }
+    ]
+  }
+]

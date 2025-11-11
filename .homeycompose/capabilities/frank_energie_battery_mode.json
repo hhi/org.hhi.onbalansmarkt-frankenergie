@@ -1,0 +1,62 @@
+{
+  "id": "frank_energie_battery_mode",
+  "uiQuickAction": false,
+  "title": {
+    "en": "Battery Trading Mode",
+    "nl": "Batterij handelsmodus"
+  },
+  "description": {
+    "en": "Current battery trading mode",
+    "nl": "Huidige batterij handelsmodus"
+  },
+  "type": "enum",
+  "insights": false,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "picker",
+  "values": [
+    {
+      "id": "imbalance",
+      "title": {
+        "en": "Imbalance",
+        "nl": "Onbalans"
+      }
+    },
+    {
+      "id": "imbalance_aggressive",
+      "title": {
+        "en": "Imbalance Aggressive",
+        "nl": "Onbalans Agressief"
+      }
+    },
+    {
+      "id": "self_consumption",
+      "title": {
+        "en": "Self Consumption",
+        "nl": "Zelf Verbruik"
+      }
+    },
+    {
+      "id": "self_consumption_plus",
+      "title": {
+        "en": "Self Consumption Plus",
+        "nl": "Zelf Verbruik Plus"
+      }
+    },
+    {
+      "id": "manual",
+      "title": {
+        "en": "Manual",
+        "nl": "Handmatig"
+      }
+    },
+    {
+      "id": "day_ahead",
+      "title": {
+        "en": "Day Ahead",
+        "nl": "Day-Ahead"
+      }
+    }
+  ],
+  "icon": "/assets/capabilities/frank_energie_battery_mode.svg"
+}

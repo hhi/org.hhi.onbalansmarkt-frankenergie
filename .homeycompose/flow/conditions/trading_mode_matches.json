@@ -1,0 +1,70 @@
+{
+  "id": "trading_mode_matches",
+  "title": {
+    "en": "Trading mode matches",
+    "nl": "Handelsmodus komt overeen"
+  },
+  "titleFormatted": {
+    "en": "Trading mode is [[mode]]",
+    "nl": "Handelsmodus is [[mode]]"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    },
+    {
+      "name": "mode",
+      "type": "dropdown",
+      "title": {
+        "en": "Trading Mode",
+        "nl": "Handelsmodus"
+      },
+      "values": [
+        {
+          "id": "imbalance",
+          "label": {
+            "en": "Imbalance Trading (Standard)",
+            "nl": "Onbalanshandel (Standaard)"
+          }
+        },
+        {
+          "id": "imbalance_aggressive",
+          "label": {
+            "en": "Imbalance Trading (Aggressive)",
+            "nl": "Onbalanshandel (Agressief)"
+          }
+        },
+        {
+          "id": "self_consumption_plus",
+          "label": {
+            "en": "Self Consumption Plus",
+            "nl": "Zelf Verbruik Plus"
+          }
+        },
+        {
+          "id": "self_consumption",
+          "label": {
+            "en": "Self Consumption",
+            "nl": "Zelf Verbruik"
+          }
+        },
+        {
+          "id": "manual",
+          "label": {
+            "en": "Manual Mode",
+            "nl": "Handmatige Modus"
+          }
+        },
+        {
+          "id": "day_ahead",
+          "label": {
+            "en": "Day-Ahead Trading",
+            "nl": "Day-Ahead Handel"
+          }
+        }
+      ]
+    }
+  ]
+}

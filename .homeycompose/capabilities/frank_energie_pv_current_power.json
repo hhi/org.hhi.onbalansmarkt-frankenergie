@@ -1,0 +1,19 @@
+{
+  "id": "frank_energie_pv_current_power",
+  "uiQuickAction": false,
+  "type": "number",
+  "insights": true,
+  "title": {
+    "en": "Current Power",
+    "nl": "Huidig Vermogen"
+  },
+  "units": {
+    "en": "kW",
+    "nl": "kW"
+  },
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/frank_energie_pv_current_power.svg"
+}

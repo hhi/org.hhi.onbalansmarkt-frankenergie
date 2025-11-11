@@ -1,0 +1,24 @@
+{
+  "id": "external_battery_current_discharged",
+  "uiQuickAction": false,
+  "type": "number",
+  "title": {
+    "en": "Current total discharged",
+    "nl": "Huidig totaal geleverd"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh"
+  },
+  "decimals": 2,
+  "insights": true,
+  "chartType": "stepLine",
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/external_battery_current_discharged.svg",
+  "description": {
+    "en": "Current cumulative total discharged from external batteries (lifetime)",
+    "nl": "Huidige cumulatieve totaal geleverd van externe batterijen (lifetime)"
+  }
+}

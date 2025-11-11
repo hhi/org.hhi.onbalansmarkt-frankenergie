@@ -1,0 +1,219 @@
+import {
+  FrankEnergieDeviceBase,
+  type SmartPvSystem,
+  type SmartPvSystemSummary,
+} from '../../lib';
+
+/**
+ * Smart PV System Device
+ *
+ * Manages Frank Energie SmartPV systems (SolarEdge).
+ * Tracks feed-in results and bonuses.
+ */
+export = class SmartPvSystemDevice extends FrankEnergieDeviceBase {
+  private pvSystems: SmartPvSystem[] = [];
+  private selectedPvSystemId: string | null = null;
+
+  // PV-specific state tracking
+  private previousOperationalStatus: string | null = null;
+  private previousBonus: number = 0;
+  private bonusMilestones: Set<number> = new Set();
+
+  /**
+   * Initialize PV-specific clients
+   */
+  async initializeDeviceSpecificClients(): Promise<void> {
+    if (!this.frankEnergieClient) {
+      throw new Error('FrankEnergieClient not initialized');
+    }
+
+    // Capability migration for existing devices
+    await this.migrateCapabilities();
+
+    // Get configured PV system ID
+    this.selectedPvSystemId = this.getSetting('pv_system_id') as string;
+    if (!this.selectedPvSystemId) {
+      throw new Error('PV system ID not configured');
+    }
+
+    // Fetch available PV systems to verify
+    this.pvSystems = await this.frankEnergieClient.getSmartPvSystems();
+    this.log(`Found ${this.pvSystems.length} PV systems`);
+
+    if (!this.pvSystems.find((pv) => pv.id === this.selectedPvSystemId)) {
+      throw new Error(`Configured PV system ${this.selectedPvSystemId} not found`);
+    }
+  }
+
+  /**
+   * Migrate capabilities for existing devices
+   * Dynamically ensures all capabilities defined in driver manifest are present
+   * This automatically picks up new capabilities without code changes
+   */
+  private async migrateCapabilities(): Promise<void> {
+    // Get capabilities from driver manifest (single source of truth)
+    const driverCapabilities = this.driver.manifest.capabilities || [];
+    const currentCapabilities = this.getCapabilities();
+
+    let capabilitiesAdded = false;
+
+    for (const capabilityId of driverCapabilities) {
+      if (!currentCapabilities.includes(capabilityId)) {
+        try {
+          await this.addCapability(capabilityId);
+          this.log(`Added missing capability: ${capabilityId}`);
+          capabilitiesAdded = true;
+        } catch (error) {
+          this.error(`Failed to add capability ${capabilityId}:`, error);
+        }
+      }
+    }
+
+    // Brief delay to allow UI to register new capabilities
+    if (capabilitiesAdded) {
+      await new Promise((resolve) => {
+        this.homey.setTimeout(resolve, 300);
+      });
+      this.log('PV capability migration completed');
+    }
+  }
+
+  /**
+   * Setup PV-specific flow cards
+   */
+  setupDeviceSpecificFlowCards(): void {
+    // Note: PV-specific flow cards would be defined similar to battery ones
+    // For now, we leverage inherited ranking cards
+    this.log('PV-specific flow cards registered');
+  }
+
+  /**
+   * Override resetMilestones to clear PV-specific milestone sets
+   */
+  protected resetMilestones(): void {
+    super.resetMilestones();
+    this.bonusMilestones.clear();
+    this.log('PV device milestones reset');
+  }
+
+  /**
+   * Poll PV system data
+   */
+  async pollData(): Promise<void> {
+    if (!this.frankEnergieClient || !this.selectedPvSystemId) {
+      throw new Error('Clients not initialized');
+    }
+
+    // Check if milestones should be reset (monthly)
+    await this.checkAndResetMilestones();
+
+    try {
+      // Get PV system summary
+      const pvSummary = await this.frankEnergieClient.getSmartPvSystemSummary(this.selectedPvSystemId);
+
+      // Update capabilities
+      await this.updateCapabilities(pvSummary);
+
+      // Emit flow triggers
+      await this.processPvFlowCardTriggers(pvSummary);
+
+      // Store last poll data
+      await this.setStoreValue('lastPollTime', Date.now());
+      await this.setStoreValue('lastPvStatus', pvSummary.operationalStatus);
+      await this.setStoreValue('lastPvBonus', pvSummary.totalBonus);
+
+      await this.setAvailable();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error('Poll PV data failed:', errorMsg);
+      await this.setUnavailable(`Data fetch failed: ${errorMsg}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Update device capabilities with PV data
+   */
+  private async updateCapabilities(pvSummary: SmartPvSystemSummary): Promise<void> {
+    const updatePromises: Promise<void>[] = [];
+
+    // TODO: Current power and today generation are not available in SmartPvSystemSummary API response
+    // These fields need to be fetched from a different GraphQL query or SolarEdge API endpoint
+    // For now, set default values to prevent capability errors
+    const currentPower = 0; // Placeholder until proper query is found
+    const todayGeneration = 0; // Placeholder until proper query is found
+
+    // Update current power (placeholder)
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_pv_current_power', currentPower)
+        .catch((error) => this.error('Failed to update current power:', error)),
+    );
+
+    // Update today's generation (placeholder)
+    updatePromises.push(
+      this.setCapabilityValue('frank_energie_pv_today_generation', todayGeneration)
+        .catch((error) => this.error('Failed to update today generation:', error)),
+    );
+
+    // Update PV status
+    if (pvSummary.operationalStatus) {
+      updatePromises.push(
+        this.setCapabilityValue('frank_energie_pv_status', pvSummary.operationalStatus.toLowerCase())
+          .catch((error) => this.error('Failed to update pv status:', error)),
+      );
+    }
+
+    // Update PV bonus
+    if (pvSummary.totalBonus !== null) {
+      updatePromises.push(
+        this.setCapabilityValue('frank_energie_pv_bonus', pvSummary.totalBonus)
+          .catch((error) => this.error('Failed to update pv bonus:', error)),
+      );
+    }
+
+    // Update steering status (if available)
+    if (pvSummary.steeringStatus) {
+      updatePromises.push(
+        this.setCapabilityValue('onoff', pvSummary.steeringStatus === 'active')
+          .catch((error) => this.error('Failed to update onoff:', error)),
+      );
+    }
+
+    // eslint-disable-next-line node/no-unsupported-features/es-builtins
+    await Promise.allSettled(updatePromises);
+
+    this.log(
+      `PV Capabilities updated - Power: ${currentPower.toFixed(2)} kW (placeholder), `
+      + `Today: ${todayGeneration.toFixed(2)} kWh (placeholder), `
+      + `Status: ${pvSummary.operationalStatus}, Bonus: €${pvSummary.totalBonus.toFixed(2)}`,
+    );
+  }
+
+  /**
+   * Process and emit PV-specific flow triggers
+   */
+  private async processPvFlowCardTriggers(pvSummary: SmartPvSystemSummary): Promise<void> {
+    try {
+      // Check operational status change
+      if (this.previousOperationalStatus !== null && this.previousOperationalStatus !== pvSummary.operationalStatus) {
+        this.log(`PV operational status changed: ${this.previousOperationalStatus} → ${pvSummary.operationalStatus}`);
+      }
+      this.previousOperationalStatus = pvSummary.operationalStatus;
+
+      // Check bonus milestones
+      const bonusMilestones = [10, 25, 50, 100, 250, 500];
+      for (const milestone of bonusMilestones) {
+        if (this.previousBonus < milestone && pvSummary.totalBonus >= milestone) {
+          if (!this.bonusMilestones.has(milestone)) {
+            this.log(`PV bonus milestone reached: €${milestone}`);
+            this.bonusMilestones.add(milestone);
+          }
+        }
+      }
+      this.previousBonus = pvSummary.totalBonus;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error('Error processing PV flow triggers:', errorMsg);
+    }
+  }
+};

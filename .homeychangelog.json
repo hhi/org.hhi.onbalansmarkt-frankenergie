@@ -1,0 +1,36 @@
+{
+  "0.1.3": {
+    "en": "New setup guides for Sessy battery integration. Improved documentation with step-by-step battery configuration instructions (English and Dutch).",
+    "nl": "Nieuwe handleidingen voor Sessy-batterijintegratie. Verbeterde documentatie met stap-voor-stap batterijconfiguratie-instructies (Engels en Nederlands)."
+  },
+
+  "0.1.2": {
+    "en": "Daily totals are now logged at midnight with optional timeline notification. External battery capabilities immediately reflect new baseline after reset.",
+    "nl": "Dagelijkse totalen worden nu om middernacht gelogd met optionele timeline notificatie. Externe batterij capabilities geven onmiddellijk de nieuwe baseline weer na reset."
+  },
+
+  "0.1.1": {
+    "en": "Documentation updated for Frank Energie devices. Enabled direct sending as well.",
+    "nl": "Documentatie bijgewerkt voor Frank Energie apparaten. Direct versturen ook mogelijk gemaakt."
+  },
+
+  "0.0.51": {
+    "en": "Drivers now use typed Frank Energie app helpers.",
+    "nl": "Drivers gebruiken nu getype-de Frank Energie app."
+  },
+
+  "0.0.50": {
+    "en": "Daily baseline reset now happens on every poll, even if automatic 00:00 timer failed. Fixes incorrect daily deltas when app restarted before midnight.",
+    "nl": "Dagelijkse baseline reset gebeurt nu bij elke poll, zelfs als automatische 00:00 timer niet werd uitgevoerd. Corrigeert onjuiste dagelijkse verschillen wanneer app voor middernacht herstarte."
+  },
+
+  "0.0.49": {
+    "en": "README files added.",
+    "nl": "README-bestanden toegevoegd."
+  },
+
+  "0.0.48": {
+    "en": "Meter driver functionality enhanced and documentation updated. Improved device base implementation for better reliability. Updated Frank Energie client with better data handling.",
+    "nl": "Meter driver functionaliteit verbeterd en documentatie bijgewerkt. Verbeterde device base implementatie voor betere betrouwbaarheid. Frank Energie client bijgewerkt met beter data handling."
+  }
+}

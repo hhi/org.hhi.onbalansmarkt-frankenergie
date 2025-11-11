@@ -1,0 +1,34 @@
+{
+  "id": "trading_mode_changed",
+  "title": {
+    "en": "Trading mode changed",
+    "nl": "Handelsmodus gewijzigd"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=frank-energie-battery"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "newMode",
+      "title": {
+        "en": "New Mode",
+        "nl": "Nieuwe Modus"
+      },
+      "type": "string",
+      "example": "imbalance_aggressive"
+    },
+    {
+      "name": "previousMode",
+      "title": {
+        "en": "Previous Mode",
+        "nl": "Vorige Modus"
+      },
+      "type": "string",
+      "example": "imbalance"
+    }
+  ]
+}

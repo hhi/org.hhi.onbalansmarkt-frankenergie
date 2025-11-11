@@ -1,0 +1,49 @@
+{
+  "id": "external_battery_metrics_updated",
+  "title": {
+    "en": "External battery metrics updated",
+    "nl": "Externe batterij metrieken bijgewerkt"
+  },
+  "hint": {
+    "en": "Triggered when external battery metrics are aggregated from multiple physical batteries.",
+    "nl": "Wordt getriggerd wanneer externe batterij metrieken worden geaggregeerd van meerdere fysieke batterijen."
+  },
+  "tokens": [
+    {
+      "name": "daily_charged_kwh",
+      "type": "number",
+      "title": {
+        "en": "Daily charged (kWh)",
+        "nl": "Dagelijks geladen (kWh)"
+      },
+      "example": 12.5
+    },
+    {
+      "name": "daily_discharged_kwh",
+      "type": "number",
+      "title": {
+        "en": "Daily discharged (kWh)",
+        "nl": "Dagelijks geleverd (kWh)"
+      },
+      "example": 8.3
+    },
+    {
+      "name": "average_percentage",
+      "type": "number",
+      "title": {
+        "en": "Average battery %",
+        "nl": "Gemiddeld batterij %"
+      },
+      "example": 75
+    },
+    {
+      "name": "battery_count",
+      "type": "number",
+      "title": {
+        "en": "Number of batteries",
+        "nl": "Aantal batterijen"
+      },
+      "example": 3
+    }
+  ]
+}
