@@ -758,6 +758,32 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Format timestamp as YYYY-MM-DD HH:MM:SS (Homey's local timezone)
+   */
+  private formatTimestampLocal(date: Date): string {
+    // Use Homey's locale setting (respects device's timezone setting)
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+
+    const parts = formatter.formatToParts(date);
+    const year = parts.find(p => p.type === 'year')?.value;
+    const month = parts.find(p => p.type === 'month')?.value;
+    const day = parts.find(p => p.type === 'day')?.value;
+    const hour = parts.find(p => p.type === 'hour')?.value;
+    const minute = parts.find(p => p.type === 'minute')?.value;
+    const second = parts.find(p => p.type === 'second')?.value;
+
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  }
+
+  /**
    * Send measurement to Onbalansmarkt API
    */
   private async sendMeasurement(results: AggregatedResults, mode: TradingMode): Promise<void> {
@@ -768,6 +794,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     try {
       const batteryCharge = await this.getStoreValue('lastBatteryCharge') as number || 0;
       const uploadTimestamp = new Date();
+      const uploadTimestampFormatted = this.formatTimestampLocal(uploadTimestamp);
 
       // Get external battery metrics (rounded to whole numbers)
       const externalBatteryPercentage = this.getCapabilityValue('external_battery_percentage') as number | null;
@@ -792,8 +819,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         loadBalancingActive: loadBalancingActive ? 'on' : 'off',
       });
 
-      // Update last upload timestamp capability
-      await this.setCapabilityValue('frank_energie_last_upload', uploadTimestamp.toISOString())
+      // Update last upload timestamp capability (UTC format: YYYY-MM-DD HH:MM:SS)
+      await this.setCapabilityValue('frank_energie_last_upload', uploadTimestampFormatted)
         .catch((error) => this.error('Failed to update last upload timestamp:', error));
 
       // Emit: Measurement Sent trigger
@@ -801,7 +828,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         results.periodTradingResult,
         batteryCharge,
         mode,
-        uploadTimestamp.toISOString(),
+        uploadTimestampFormatted,
       );
 
       this.log('Measurement sent to Onbalansmarkt');
