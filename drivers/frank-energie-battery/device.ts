@@ -856,14 +856,33 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     });
 
     const parts = formatter.formatToParts(date);
-    const year = parts.find(p => p.type === 'year')?.value;
-    const month = parts.find(p => p.type === 'month')?.value;
-    const day = parts.find(p => p.type === 'day')?.value;
-    const hour = parts.find(p => p.type === 'hour')?.value;
-    const minute = parts.find(p => p.type === 'minute')?.value;
-    const second = parts.find(p => p.type === 'second')?.value;
+    let year = parts.find(p => p.type === 'year')?.value;
+    let month = parts.find(p => p.type === 'month')?.value;
+    let day = parts.find(p => p.type === 'day')?.value;
+    let hour = parts.find(p => p.type === 'hour')?.value;
+    let minute = parts.find(p => p.type === 'minute')?.value;
+    let second = parts.find(p => p.type === 'second')?.value;
 
-    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    // Validate and fix hour value (prevent hour 24 or other invalid values)
+    if (!hour) {
+      hour = '00';
+    } else {
+      const hourNum = parseInt(hour, 10);
+      if (hourNum > 23 || hourNum < 0 || isNaN(hourNum)) {
+        this.error(`Invalid hour value from formatter: "${hour}" (parsed as ${hourNum}). Clamping to valid range.`);
+        const clampedHour = Math.max(0, Math.min(23, hourNum));
+        hour = String(clampedHour).padStart(2, '0');
+      }
+    }
+
+    // Validate other components
+    if (!month) month = '01';
+    if (!day) day = '01';
+    if (!minute) minute = '00';
+    if (!second) second = '00';
+
+    const formattedTimestamp = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    return formattedTimestamp;
   }
 
   /**
