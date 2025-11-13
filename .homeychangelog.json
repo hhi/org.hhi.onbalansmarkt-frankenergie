@@ -1,4 +1,9 @@
 {
+  "0.1.6": {
+    "en": "Last upload timestamp validation added to prevent invalid hour values (e.g., 24:16:58). Invalid timestamps are now clamped to valid range.",
+    "nl": "Validatie van het upload-timestamp toegevoegd om ongeldige uurwaarden te voorkomen (bijv. 24:16:58). Ongeldige timestamps worden nu begrensd tot geldig bereik."
+  },
+
   "0.1.5": {
     "en": "VAT display toggle added. Trading results, bonuses, and costs can now be displayed with VAT included (default on). VAT percentage is configurable (default 21%). Uploads to Onbalansmarkt remain without VAT.",
     "nl": "BTW weergave-toggle toegevoegd. Handelsresultaten, bonussen en kosten kunnen nu inclusief BTW worden weergegeven (standaard aan). BTW percentage is instelbaar (standaard 21%). Uploads naar Onbalansmarkt blijven zonder BTW."
