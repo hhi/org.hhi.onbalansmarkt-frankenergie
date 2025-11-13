@@ -410,6 +410,11 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         await new Promise((resolve) => {
           this.homey.setTimeout(resolve, 5000);
         });
+      } else {
+        // Update last_upload timestamp even if not sending (to track poll activity)
+        const pollTimestamp = this.formatTimestampLocal(new Date());
+        await this.setCapabilityValue('frank_energie_last_upload', pollTimestamp)
+          .catch((error) => this.log('Note: Could not update last_upload timestamp:', error));
       }
 
       // Update ranking information (after measurement has been processed)
@@ -433,47 +438,110 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Apply VAT to an amount for display, if enabled in settings
+   * @param amount The amount to apply VAT to (exclusive VAT)
+   * @returns The amount with VAT applied, or original if VAT display disabled
+   */
+  private applyVatForDisplay(amount: number | null): number | null {
+    if (amount === null) {
+      return null;
+    }
+
+    const showInclVat = this.getSetting('show_amounts_incl_vat') as boolean;
+    if (!showInclVat) {
+      return amount;
+    }
+
+    // Safely parse VAT percentage, handling both number and string types
+    let vatPercentage = this.getSetting('vat_percentage');
+    let parsedVat = 21; // default
+
+    if (typeof vatPercentage === 'number') {
+      parsedVat = vatPercentage;
+    } else if (typeof vatPercentage === 'string') {
+      const parsed = parseFloat(vatPercentage);
+      if (!Number.isNaN(parsed)) {
+        parsedVat = parsed;
+      }
+    }
+
+    // Clamp VAT percentage to valid range
+    parsedVat = Math.max(0, Math.min(100, parsedVat));
+
+    const vatMultiplier = 1 + (parsedVat / 100);
+    const result = amount * vatMultiplier;
+
+    // Log if VAT is not the default (for debugging)
+    if (parsedVat !== 21) {
+      this.log(`VAT applied: ${amount.toFixed(2)}€ × (1 + ${parsedVat}%) = ${result.toFixed(2)}€`);
+    }
+
+    return result;
+  }
+
+  /**
    * Update device capabilities with battery results
    */
   private async updateCapabilities(results: AggregatedResults): Promise<void> {
     const updatePromises: Promise<void>[] = [];
 
+    // Get VAT settings for logging
+    const showInclVat = this.getSetting('show_amounts_incl_vat') as boolean;
+    const vatPercentage = (this.getSetting('vat_percentage') as number) || 21;
+
     // Update battery trading result (custom capability)
     if (results.periodTradingResult !== null) {
+      const displayValue = this.applyVatForDisplay(results.periodTradingResult);
+      this.log(
+        `📊 frank_energie_trading_result:\n` +
+        `    Raw from Frank Energie: €${results.periodTradingResult} (full precision)\n` +
+        `    Display Setting: VAT ${showInclVat ? 'ON' : 'OFF'} (${vatPercentage}%)\n` +
+        `    Displayed to User: €${displayValue?.toFixed(2) ?? 'null'}€`,
+      );
       updatePromises.push(
-        this.setCapabilityValue('frank_energie_trading_result', results.periodTradingResult)
+        this.setCapabilityValue('frank_energie_trading_result', displayValue)
           .catch((error) => this.error('Failed to update frank_energie_trading_result:', error)),
       );
     }
 
     // Update lifetime total trading result
     if (results.totalTradingResult !== null) {
+      const displayValue = this.applyVatForDisplay(results.totalTradingResult);
       updatePromises.push(
-        this.setCapabilityValue('frank_energie_lifetime_total', results.totalTradingResult)
+        this.setCapabilityValue('frank_energie_lifetime_total', displayValue)
           .catch((error) => this.error('Failed to update frank_energie_lifetime_total:', error)),
       );
     }
 
     // Update Frank Slim bonus
     if (results.periodFrankSlim !== null) {
+      const displayValue = this.applyVatForDisplay(results.periodFrankSlim);
+      this.log(
+        `📊 frank_energie_frank_slim_bonus:\n` +
+        `    Raw from Frank Energie: €${results.periodFrankSlim} (full precision)\n` +
+        `    Display Setting: VAT ${showInclVat ? 'ON' : 'OFF'} (${vatPercentage}%)\n` +
+        `    Displayed to User: €${displayValue?.toFixed(2) ?? 'null'}€`,
+      );
       updatePromises.push(
-        this.setCapabilityValue('frank_energie_frank_slim_bonus', results.periodFrankSlim)
+        this.setCapabilityValue('frank_energie_frank_slim_bonus', displayValue)
           .catch((error) => this.error('Failed to update frank_energie_frank_slim_bonus:', error)),
       );
     }
 
     // Update EPEX result
     if (results.periodEpexResult !== null) {
+      const displayValue = this.applyVatForDisplay(results.periodEpexResult);
       updatePromises.push(
-        this.setCapabilityValue('frank_energie_epex_result', results.periodEpexResult)
+        this.setCapabilityValue('frank_energie_epex_result', displayValue)
           .catch((error) => this.error('Failed to update frank_energie_epex_result:', error)),
       );
     }
 
     // Update Imbalance result
     if (results.periodImbalanceResult !== null) {
+      const displayValue = this.applyVatForDisplay(results.periodImbalanceResult);
       updatePromises.push(
-        this.setCapabilityValue('frank_energie_imbalance_result', results.periodImbalanceResult)
+        this.setCapabilityValue('frank_energie_imbalance_result', displayValue)
           .catch((error) => this.error('Failed to update frank_energie_imbalance_result:', error)),
       );
     }
@@ -490,11 +558,23 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // eslint-disable-next-line node/no-unsupported-features/es-builtins
     await Promise.allSettled(updatePromises);
 
+    // Log comprehensive summary of all components
     this.log(
-      `Capabilities updated - Total: €${results.periodTradingResult.toFixed(2)} `
-      + `(EPEX: €${results.periodEpexResult.toFixed(2)}, Trading: €${results.periodTradingResult.toFixed(2)}, `
-      + `Imbalance: €${results.periodImbalanceResult.toFixed(2)}, Frank Slim: €${results.periodFrankSlim.toFixed(2)}), `
-      + `Lifetime: €${results.totalTradingResult.toFixed(2)}, Batteries: ${results.batteryCount}`,
+      `\n📈 CAPABILITIES UPDATE COMPLETE - Component Summary:\n` +
+      `  Trading Components (raw from Frank Energie):\n` +
+      `    periodTradingResult (displayed):     €${results.periodTradingResult.toFixed(2)}\n` +
+      `    periodEpexResult:                    €${results.periodEpexResult.toFixed(2)}\n` +
+      `    periodImbalanceResult:               €${results.periodImbalanceResult.toFixed(2)}\n` +
+      `    periodFrankSlim (displayed):         €${results.periodFrankSlim.toFixed(2)}\n` +
+      `\n  Aggregated Totals:\n` +
+      `    periodTotalResult (korting.factuur): €${results.periodTotalResult.toFixed(2)} [IMPORTANT: Different from periodTradingResult]\n` +
+      `    totalTradingResult (lifetime):       €${results.totalTradingResult.toFixed(2)}\n` +
+      `\n  Component Relationships:\n` +
+      `    Difference (periodTotal - periodTrading): €${(results.periodTotalResult - results.periodTradingResult).toFixed(4)}\n` +
+      `    Frank Slim as % of Trading: ${((results.periodFrankSlim / results.periodTradingResult) * 100).toFixed(2)}%\n` +
+      `\n  Device Info:\n` +
+      `    Battery Count: ${results.batteryCount}\n` +
+      `    VAT Display: ${showInclVat ? 'ON' : 'OFF'} (${vatPercentage}%)`,
     );
   }
 
@@ -534,13 +614,14 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       const capabilityId = `battery_${i + 1}_total`;
 
       if (summary.totalResult !== undefined) {
-        const updatePromise = this.setCapabilityValue(capabilityId, summary.totalResult)
+        const displayValue = this.applyVatForDisplay(summary.totalResult);
+        const updatePromise = this.setCapabilityValue(capabilityId, displayValue)
           .then(() => {
             const displayName = battery.externalReference
               ? `${battery.brand} - ${battery.externalReference}`
               : `${battery.brand} (${battery.id.slice(0, 8)})`;
             this.log(
-              `Updated ${capabilityId} (Rank ${i + 1}): ${displayName} - €${summary.totalResult.toFixed(2)}`,
+              `Updated ${capabilityId} (Rank ${i + 1}): ${displayName} - €${displayValue?.toFixed(2) ?? 'null'}`,
             );
           })
           .catch((error) => {
@@ -758,10 +839,11 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
-   * Format timestamp as YYYY-MM-DD HH:MM:SS (Homey's local timezone)
+   * Format timestamp as YYYY-MM-DD HH:MM:SS in Europe/Amsterdam timezone
+   * (Consistent with Frank Energie and Onbalansmarkt operations)
    */
   private formatTimestampLocal(date: Date): string {
-    // Use Homey's locale setting (respects device's timezone setting)
+    // Format timestamp using Europe/Amsterdam timezone (Amsterdam/Frank Energie time)
     const formatter = new Intl.DateTimeFormat('en-CA', {
       year: 'numeric',
       month: '2-digit',
@@ -770,6 +852,7 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       minute: '2-digit',
       second: '2-digit',
       hour12: false,
+      timeZone: 'Europe/Amsterdam', // Consistent with Frank Energie and Onbalansmarkt
     });
 
     const parts = formatter.formatToParts(date);
@@ -804,6 +887,34 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       // Get load balancing setting (convert boolean to 'on'/'off')
       const loadBalancingActive = this.getSetting('load_balancing_active') as boolean;
 
+      // Log detailed breakdown for debugging the data discrepancy
+      const showInclVat = this.getSetting('show_amounts_incl_vat') as boolean;
+      const vatPercentage = (this.getSetting('vat_percentage') as number) || 21;
+
+      this.log(
+        `\n📋 ONBALANSMARKT UPLOAD - Data Breakdown:\n` +
+        `  Frank Energie Components (raw from API):\n` +
+        `    periodTradingResult:     €${results.periodTradingResult} (precise)\n` +
+        `    periodEpexResult:        €${results.periodEpexResult} (precise)\n` +
+        `    periodImbalanceResult:   €${results.periodImbalanceResult} (precise)\n` +
+        `    periodFrankSlim:         €${results.periodFrankSlim} (precise)\n` +
+        `    periodTotalResult:       €${results.periodTotalResult} (precise)\n` +
+        `    totalTradingResult:      €${results.totalTradingResult} (precise)\n` +
+        `\n  Data Relationship Analysis:\n` +
+        `    periodTotalResult vs periodTradingResult: ${(results.periodTotalResult - results.periodTradingResult).toFixed(4)}€ difference\n` +
+        `    Frank Slim % of Trading: ${((results.periodFrankSlim / results.periodTradingResult) * 100).toFixed(2)}%\n` +
+        `\n  VAT Display Settings:\n` +
+        `    Show with VAT: ${showInclVat ? 'YES' : 'NO'}\n` +
+        `    VAT Percentage: ${vatPercentage}%\n` +
+        `\n  Values Sent to Onbalansmarkt (EXCLUSIVE VAT, full precision):\n` +
+        `    batteryResult:     €${results.periodTradingResult} (periodTradingResult)\n` +
+        `    batteryResultTotal: €${results.totalTradingResult} (totalTradingResult)\n` +
+        `    batteryResultEpex: €${results.periodEpexResult} (periodEpexResult)\n` +
+        `    batteryResultImbalance: €${results.periodImbalanceResult} (periodImbalanceResult)\n` +
+        `    batteryResultCustom: €${results.periodFrankSlim} (periodFrankSlim)\n` +
+        `    mode: ${mode}`,
+      );
+
       await this.onbalansmarktClient.sendMeasurement({
         timestamp: uploadTimestamp,
         batteryResult: results.periodTradingResult,
@@ -824,14 +935,15 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         .catch((error) => this.error('Failed to update last upload timestamp:', error));
 
       // Emit: Measurement Sent trigger
+      const currentBatteryCharge = externalBatteryPercentage !== null ? Math.round(externalBatteryPercentage) : 0;
       await this.emitMeasurementSent(
         results.periodTradingResult,
-        batteryCharge,
+        currentBatteryCharge,
         mode,
         uploadTimestampFormatted,
       );
 
-      this.log('Measurement sent to Onbalansmarkt');
+      this.log('Measurement sent to Onbalansmarkt successfully');
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Failed to send measurement:', errorMsg);

@@ -1,4 +1,9 @@
 {
+  "0.1.5": {
+    "en": "VAT display toggle added. Trading results, bonuses, and costs can now be displayed with VAT included (default on). VAT percentage is configurable (default 21%). Uploads to Onbalansmarkt remain without VAT.",
+    "nl": "BTW weergave-toggle toegevoegd. Handelsresultaten, bonussen en kosten kunnen nu inclusief BTW worden weergegeven (standaard aan). BTW percentage is instelbaar (standaard 21%). Uploads naar Onbalansmarkt blijven zonder BTW."
+  },
+
   "0.1.4": {
     "en": "Daily baseline reset now occurs at midnight Amsterdam time. StartOfDay values reflect the previous day's totals at 00:00.",
     "nl": "Dagelijkse baseline reset vindt nu plaats op middernacht (Amsterdam-tijd). StartOfDay-waarden geven de totalen van de vorige dag weer om 00:00."

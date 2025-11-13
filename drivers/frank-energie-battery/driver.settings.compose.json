@@ -205,6 +205,43 @@
   {
     "type": "group",
     "label": {
+      "en": "Display Settings",
+      "nl": "Weergave Instellingen"
+    },
+    "children": [
+      {
+        "id": "show_amounts_incl_vat",
+        "type": "checkbox",
+        "label": {
+          "en": "Show amounts including VAT",
+          "nl": "Bedragen inclusief BTW weergeven"
+        },
+        "value": true,
+        "hint": {
+          "en": "Display trading results and costs with VAT included. Upload to Onbalansmarkt remains without VAT.",
+          "nl": "Handelsresultaten en kosten met BTW weergeven. Upload naar Onbalansmarkt blijft zonder BTW."
+        }
+      },
+      {
+        "id": "vat_percentage",
+        "type": "number",
+        "label": {
+          "en": "VAT Percentage",
+          "nl": "BTW Percentage"
+        },
+        "value": 21,
+        "min": 0,
+        "max": 100,
+        "hint": {
+          "en": "VAT percentage to apply (0-100). Default: 21%",
+          "nl": "BTW percentage om toe te passen (0-100). Standaard: 21%"
+        }
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "label": {
       "en": "Energy Dashboard",
       "nl": "Energie Dashboard"
     },

@@ -480,10 +480,26 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
         // eslint-disable-next-line node/no-unsupported-features/es-builtins
         await Promise.allSettled(updatePromises);
 
+        // Log comprehensive data returned from Onbalansmarkt
         this.log(
-          `Rankings updated - Overall: #${profile.resultToday.overallRank}, `
-          + `Provider: #${profile.resultToday.providerRank}, `
-          + `Reported: charged ${profile.resultToday.batteryCharged} kWh, discharged ${profile.resultToday.batteryDischarged} kWh`,
+          `\n🏆 Onbalansmarkt Profile Update - Rankings & Trading Data:\n` +
+          `  Rankings:\n` +
+          `    Overall Rank: #${profile.resultToday.overallRank}\n` +
+          `    Provider Rank: #${profile.resultToday.providerRank}\n` +
+          `\n  Energy Metrics (reported by Onbalansmarkt):\n` +
+          `    Battery Charged: ${profile.resultToday.batteryCharged} kWh\n` +
+          `    Battery Discharged: ${profile.resultToday.batteryDischarged} kWh\n` +
+          `\n  Trading Results (stored in Onbalansmarkt for today ${profile.resultToday.date}):\n` +
+          `    [KEY] batteryResult: €${profile.resultToday.batteryResult} (what we see on UI)\n` +
+          `    [KEY] batteryResultTotal: €${profile.resultToday.batteryResultTotal}\n` +
+          `    batteryResultImbalance: €${profile.resultToday.batteryResultImbalance}\n` +
+          `    batteryResultEpex: €${profile.resultToday.batteryResultEpex}\n` +
+          `    batteryResultCustom: €${profile.resultToday.batteryResultCustom}\n` +
+          `    solarResult: €${profile.resultToday.solarResult}\n` +
+          `    chargerResult: €${profile.resultToday.chargerResult}\n` +
+          `    mode: ${profile.resultToday.mode}\n` +
+          `    type: ${profile.resultToday.type}\n` +
+          (profile.resultToday.note ? `    note: "${profile.resultToday.note}\n` : ''),
         );
       }
     } catch (error) {
@@ -718,48 +734,62 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       return;
     }
 
-    // Stop polling during reconfiguration to avoid race conditions
-    if (this.pollInterval) {
-      this.homey.clearInterval(this.pollInterval);
-      this.pollInterval = undefined;
-      this.log('Polling stopped for settings reconfiguration');
-    }
-
-    // If credentials changed, reinitialize clients
-    if (
-      changedKeys.includes('frank_energie_email')
+    // Check if polling restart is needed (for critical settings changes)
+    const credentialsChanged = changedKeys.includes('frank_energie_email')
       || changedKeys.includes('frank_energie_password')
-      || changedKeys.includes('onbalansmarkt_api_key')
-    ) {
-      this.log('Reinitializing clients due to credential changes');
-      try {
-        await this.initializeClients();
-        this.log('Clients reinitialized successfully');
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.error('Failed to reinitialize clients:', errorMsg);
-        await this.setUnavailable(`Client initialization failed: ${errorMsg}`);
-        throw new Error(`Failed to reinitialize clients: ${errorMsg}`);
+      || changedKeys.includes('onbalansmarkt_api_key');
+    const pollingSettingChanged = changedKeys.includes('poll_interval')
+      || changedKeys.includes('poll_start_minute');
+
+    // For VAT and display-only settings, no polling restart needed
+    const displayOnlySettings = ['show_amounts_incl_vat', 'vat_percentage'];
+    const isDisplayOnlyChange = changedKeys.every((key) => displayOnlySettings.includes(key));
+
+    if (!isDisplayOnlyChange && (credentialsChanged || pollingSettingChanged)) {
+      // Stop polling during reconfiguration to avoid race conditions
+      if (this.pollInterval) {
+        this.homey.clearInterval(this.pollInterval);
+        this.pollInterval = undefined;
+        this.log('Polling stopped for settings reconfiguration');
       }
+
+      // If credentials changed, reinitialize clients
+      if (credentialsChanged) {
+        this.log('Reinitializing clients due to credential changes');
+        try {
+          await this.initializeClients();
+          this.log('Clients reinitialized successfully');
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          this.error('Failed to reinitialize clients:', errorMsg);
+          await this.setUnavailable(`Client initialization failed: ${errorMsg}`);
+          throw new Error(`Failed to reinitialize clients: ${errorMsg}`);
+        }
+      }
+
+      // Defer polling restart to avoid blocking onSettings
+      // This ensures settings save completes quickly
+      this.log('[onSettings] Scheduling deferred polling restart');
+      this.homey.setTimeout(async () => {
+        this.log('[onSettings] Restarting polling after settings change');
+        try {
+          // Ensure poll_interval is valid before restarting polling
+          await this.normalizePollIntervalSetting();
+          await this.setupPolling();
+          this.log('[onSettings] Polling restarted successfully');
+          await this.setAvailable();
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          this.error('[onSettings] Failed to restart polling:', errorMsg);
+          await this.setUnavailable(`Polling restart failed: ${errorMsg}`);
+        }
+      }, 100);
+
+      this.log('[onSettings] Returning immediately, polling will restart in 100ms');
+    } else if (isDisplayOnlyChange) {
+      // For display-only changes (VAT settings), just log and return immediately
+      this.log('[onSettings] Display-only setting changed, no polling restart needed');
     }
-
-    // Defer polling restart to avoid blocking onSettings
-    // This ensures settings save completes quickly
-    this.log('[onSettings] Scheduling deferred polling restart');
-    this.homey.setTimeout(async () => {
-      this.log('[onSettings] Restarting polling after settings change');
-      try {
-        await this.setupPolling();
-        this.log('[onSettings] Polling restarted successfully');
-        await this.setAvailable();
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.error('[onSettings] Failed to restart polling:', errorMsg);
-        await this.setUnavailable(`Polling restart failed: ${errorMsg}`);
-      }
-    }, 100);
-
-    this.log('[onSettings] Returning immediately, polling will restart in 100ms');
   }
 
   async onRenamed(name: string) {
