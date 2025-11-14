@@ -72,5 +72,11 @@ Zie bij Beschrijf broncode, onder docs/batterij-setup.md, voor het toevoegen van
 
 GEBRUIK
 
-Open na het koppelen de batterij-instellingen om poll-interval, auto-send measurements en load-balancing in te stellen.
+Open na het koppelen de batterij-instellingen om het volgende in te stellen:
+- Poll-interval: Hoe vaak gegevens worden opgehaald van Frank Energie (1-1440 minuten, standaard: 5)
+- Auto-send measurements: Schakel in om handelsresultaten automatisch naar Onbalansmarkt te versturen
+- Load-balancing: Geef aan of dynamische load balancing actief is op uw batterijsysteem
+- Niet rapporteren op nul handeldagen: Indien ingeschakeld (standaard), worden metingen niet verzonden en flow cards triggeren niet wanneer het dagresultaat €0 is
+- BTW-weergave: Kies of handelsresultaten met of zonder BTW worden weergegeven (standaard: met 21% BTW)
+
 Let op, het automatisch versturen van de live resultaten staat standaard uit. 

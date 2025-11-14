@@ -72,5 +72,11 @@ See the source code documentation at docs/battery-setup.md for adding a Sessy ba
 
 USAGE
 
-After integration, open the battery settings to configure poll-interval, auto-send measurements, and load-balancing.
+After integration, open the battery settings to configure:
+- Poll-interval: How often to fetch data from Frank Energie (1-1440 minutes, default: 5)
+- Auto-send measurements: Enable to automatically send trading results to Onbalansmarkt
+- Load-balancing: Indicate if dynamic load balancing is active on your battery system
+- Skip zero trading days: When enabled (default), measurements are not sent and flow cards don't trigger when daily result is €0
+- VAT display: Choose to display trading results with or without VAT (default: with 21% VAT)
+
 Note: automatic sending of live results is disabled by default. 
