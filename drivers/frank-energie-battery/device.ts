@@ -402,7 +402,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
       // Send measurements to Onbalansmarkt if enabled
       const sendMeasurements = this.getSetting('send_measurements') as boolean;
-      if (sendMeasurements && results.periodTradingResult !== 0) {
+      const skipZeroResults = this.getSetting('skip_zero_trading_results') as boolean;
+      const shouldSendMeasurement = sendMeasurements && (
+        !skipZeroResults || results.periodTradingResult !== 0
+      );
+
+      if (shouldSendMeasurement) {
         await this.sendMeasurement(results, tradingModeInfo.mode);
 
         // Wait for Onbalansmarkt to process the measurement and recalculate rankings
@@ -670,8 +675,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         this.previousRank = overallRank;
       }
 
-      // Emit: Result Positive/Negative
-      if (results.periodTradingResult !== 0) {
+      // Emit: Result Positive/Negative (respecting skip_zero_trading_results setting)
+      const skipZeroForFlowCards = this.getSetting('skip_zero_trading_results') as boolean;
+      if (results.periodTradingResult !== 0 || !skipZeroForFlowCards) {
         await this.emitResultPositiveNegative(results.periodTradingResult, results.totalTradingResult, mode);
       }
 

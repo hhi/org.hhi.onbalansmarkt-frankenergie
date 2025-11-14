@@ -1,4 +1,9 @@
 {
+  "0.1.8": {
+    "en": "Added setting to skip reporting on zero trading days. When enabled (default), Onbalansmarkt won't receive measurements and flow cards won't trigger if daily trading result is €0.",
+    "nl": "Setting toegevoegd om niet te rapporteren op nul handeldagen. Indien ingeschakeld (standaard), ontvangt Onbalansmarkt geen metingen en flow cards triggeren niet als dagelijks handelsresultaat €0 is."
+  },
+
   "0.1.7": {
     "en": "Polling resilience improvements: Added health check that automatically detects and recovers from stalled polling. Exponential backoff retry (30s → 2min → 5min → 15min → hourly) replaces single retry. Device cleanup on app updates now properly clears timers.",
     "nl": "Polling robuustheid verbeterd: Health check detecteert en herstelt automatisch vast blijven steken polling. Exponentiële backoff retry (30s → 2min → 5min → 15min → elk uur) vervangt enkele retry. Device cleanup bij app-updates wist nu timers proper op."
