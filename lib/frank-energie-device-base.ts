@@ -56,7 +56,21 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
         } catch (error) {
           const errorMsg = error instanceof Error ? error.message : 'Unknown error';
           this.error('[onInit] Failed to start polling:', errorMsg);
-          await this.setUnavailable(`Polling setup failed: ${errorMsg}`);
+          // Don't mark as unavailable - keep trying to recover
+          // Schedule retry after 30 seconds
+          this.log('[onInit] Scheduling polling retry in 30 seconds');
+          this.homey.setTimeout(async () => {
+            this.log('[onInit] Retrying polling setup...');
+            try {
+              await this.setupPolling();
+              this.log('[onInit] Polling retry successful');
+              await this.setAvailable();
+            } catch (retryError) {
+              const retryErrorMsg = retryError instanceof Error ? retryError.message : 'Unknown error';
+              this.error('[onInit] Polling retry failed:', retryErrorMsg);
+              await this.setUnavailable(`Polling setup failed: ${retryErrorMsg}`);
+            }
+          }, 30000);
         }
       }, 100);
 
@@ -64,7 +78,10 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Failed to initialize device:', errorMsg);
-      await this.setUnavailable(`Initialization failed: ${errorMsg}`);
+      this.log('[onInit] Device will attempt to recover on next restart');
+      // Keep device available instead of immediately marking unavailable
+      // This allows manual recovery attempts
+      await this.setUnavailable(`Initializing... (${errorMsg})`);
     }
   }
 
