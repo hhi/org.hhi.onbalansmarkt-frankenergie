@@ -1,4 +1,9 @@
 {
+  "0.1.7": {
+    "en": "Polling resilience improvements: Added health check that automatically detects and recovers from stalled polling. Exponential backoff retry (30s → 2min → 5min → 15min → hourly) replaces single retry. Device cleanup on app updates now properly clears timers.",
+    "nl": "Polling robuustheid verbeterd: Health check detecteert en herstelt automatisch vast blijven steken polling. Exponentiële backoff retry (30s → 2min → 5min → 15min → elk uur) vervangt enkele retry. Device cleanup bij app-updates wist nu timers proper op."
+  },
+
   "0.1.6": {
     "en": "Last upload timestamp validation added to prevent invalid hour values (e.g., 24:16:58). Invalid timestamps are now clamped to valid range.",
     "nl": "Validatie van het upload-timestamp toegevoegd om ongeldige uurwaarden te voorkomen (bijv. 24:16:58). Ongeldige timestamps worden nu begrensd tot geldig bereik."

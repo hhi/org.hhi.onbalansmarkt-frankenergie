@@ -1989,5 +1989,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     if (this.externalBatteryMetrics) {
       this.externalBatteryMetrics.destroy();
     }
+
+    // Call parent cleanup to clear polling and countdown timers
+    await super.onUninit();
+    this.log('Smart Battery Device uninitialization complete');
   }
 };

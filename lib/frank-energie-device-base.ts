@@ -24,6 +24,8 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   protected pollInterval?: NodeJS.Timeout;
   protected countdownInterval?: NodeJS.Timeout;
   protected nextPollTime: number | null = null;
+  protected pollingRetryCount: number = 0; // Track retry attempts
+  protected pollingRetryTimeout?: NodeJS.Timeout; // Store retry timer for cleanup
 
   // Common flow card state tracking
   protected previousRank: number | null = null;
@@ -49,29 +51,8 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       this.log('[onInit] Scheduling deferred polling setup');
       this.homey.setTimeout(async () => {
         this.log('[onInit] Starting polling after device initialization');
-        try {
-          await this.setupPolling();
-          this.log('[onInit] Polling started successfully');
-          await this.setAvailable();
-        } catch (error) {
-          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-          this.error('[onInit] Failed to start polling:', errorMsg);
-          // Don't mark as unavailable - keep trying to recover
-          // Schedule retry after 30 seconds
-          this.log('[onInit] Scheduling polling retry in 30 seconds');
-          this.homey.setTimeout(async () => {
-            this.log('[onInit] Retrying polling setup...');
-            try {
-              await this.setupPolling();
-              this.log('[onInit] Polling retry successful');
-              await this.setAvailable();
-            } catch (retryError) {
-              const retryErrorMsg = retryError instanceof Error ? retryError.message : 'Unknown error';
-              this.error('[onInit] Polling retry failed:', retryErrorMsg);
-              await this.setUnavailable(`Polling setup failed: ${retryErrorMsg}`);
-            }
-          }, 30000);
-        }
+        this.pollingRetryCount = 0; // Reset retry counter
+        await this.setupPollingWithRetry();
       }, 100);
 
       this.log(`${this.constructor.name} initialized successfully`);
@@ -82,6 +63,49 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       // Keep device available instead of immediately marking unavailable
       // This allows manual recovery attempts
       await this.setUnavailable(`Initializing... (${errorMsg})`);
+    }
+  }
+
+  /**
+   * Setup polling with exponential backoff retry
+   * Retry delays: 30s, 2min, 5min, 15min, hourly
+   */
+  private async setupPollingWithRetry(): Promise<void> {
+    try {
+      await this.setupPolling();
+      this.log('[setupPollingWithRetry] Polling started successfully');
+      this.pollingRetryCount = 0; // Reset on success
+      await this.setAvailable();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error(`[setupPollingWithRetry] Failed attempt ${this.pollingRetryCount + 1}:`, errorMsg);
+
+      // Calculate exponential backoff delay
+      const retryDelays = [30000, 120000, 300000, 900000]; // 30s, 2min, 5min, 15min
+      let delayMs: number;
+
+      if (this.pollingRetryCount < retryDelays.length) {
+        delayMs = retryDelays[this.pollingRetryCount];
+      } else {
+        // After initial retries, retry hourly
+        delayMs = 60 * 60 * 1000; // 1 hour
+        this.log('[setupPollingWithRetry] Exceeded initial retry attempts, switching to hourly retry');
+      }
+
+      const delaySeconds = Math.round(delayMs / 1000);
+      this.log(`[setupPollingWithRetry] Retrying polling setup in ${delaySeconds}s (attempt ${this.pollingRetryCount + 1})`);
+
+      this.pollingRetryCount++;
+
+      // Schedule retry with cleanup support
+      if (this.pollingRetryTimeout) {
+        this.homey.clearTimeout(this.pollingRetryTimeout);
+      }
+
+      this.pollingRetryTimeout = this.homey.setTimeout(async () => {
+        this.log('[setupPollingWithRetry] Executing retry...');
+        await this.setupPollingWithRetry();
+      }, delayMs);
     }
   }
 
@@ -371,6 +395,7 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   /**
    * Update the countdown timer showing minutes until next poll
    * Called every minute to keep the sensor up-to-date
+   * Also performs health check to detect polling failures
    */
   protected updatePollCountdown(): void {
     if (!this.nextPollTime) {
@@ -393,9 +418,29 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       });
     }
 
-    // If countdown reached 0 and poll should have happened, something went wrong
-    if (remainingMinutes === 0 && remainingMs < -60000) {
-      this.log('Warning: Poll countdown reached 0 but poll may not have executed');
+    // Health check: detect if polling has stalled
+    const missedPollThreshold = 2 * 60 * 1000; // 2 minutes past expected poll time
+    if (remainingMs < -missedPollThreshold) {
+      const minutesMissed = Math.abs(Math.round(remainingMs / (60 * 1000)));
+      this.error(
+        `⚠️ POLLING HEALTH CHECK FAILED: Countdown reached 0 ${minutesMissed} minutes ago but poll may not have executed. Attempting recovery...`,
+      );
+
+      // Trigger recovery by restarting polling
+      this.log('[Health Check] Attempting to restart polling...');
+      if (this.pollInterval) {
+        this.homey.clearInterval(this.pollInterval);
+        this.pollInterval = undefined;
+      }
+
+      // Reset retry counter for a fresh attempt
+      this.pollingRetryCount = 0;
+
+      // Schedule immediate recovery attempt
+      this.homey.setTimeout(async () => {
+        this.log('[Health Check] Executing polling recovery...');
+        await this.setupPollingWithRetry();
+      }, 1000);
     }
   }
 
@@ -811,6 +856,35 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
   async onRenamed(name: string) {
     this.log(`Device renamed to: ${name}`);
+  }
+
+  /**
+   * Cleanup on app update/restart
+   * Called by Homey when device is uninitialized
+   */
+  async onUninit(): Promise<void> {
+    this.log(`${this.constructor.name} uninitializing - clearing timers`);
+
+    // Clear polling interval
+    if (this.pollInterval) {
+      this.homey.clearInterval(this.pollInterval);
+      this.pollInterval = undefined;
+    }
+
+    // Clear countdown timer
+    if (this.countdownInterval) {
+      this.homey.clearInterval(this.countdownInterval);
+      this.countdownInterval = undefined;
+    }
+
+    // Clear polling retry timeout
+    if (this.pollingRetryTimeout) {
+      this.homey.clearTimeout(this.pollingRetryTimeout);
+      this.pollingRetryTimeout = undefined;
+    }
+
+    // Let child classes clean up their own timers
+    // (override onUninit() and call super.onUninit())
   }
 
   async onDeleted() {
