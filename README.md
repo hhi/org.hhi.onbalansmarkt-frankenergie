@@ -75,8 +75,11 @@ For subsequent devices (Meter, EV, PV):
 - **API Key**: Onbalansmarkt.com API key (required for measurement sending)
 - **Poll Interval**: Data polling frequency (1-1440 minutes, default: 5 minutes)
 - **Auto-send Measurements**: Automatically send data to Onbalansmarkt
+- **Skip reporting on zero trading days**: Skip sending to Onbalansmarkt and triggering flow cards when daily result is €0 (default: enabled)
 - **Trading Mode**: Detected automatically from battery settings
 - **Load Balancing**: Toggle to indicate dynamic load balancing status
+- **Show amounts including VAT**: Display trading results with VAT applied (default: enabled, 21%)
+- **VAT Percentage**: Configure VAT percentage for display (0-100%, default: 21%)
 
 #### Meter Driver Settings
 
