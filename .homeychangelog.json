@@ -1,5 +1,5 @@
 {
-  "0.1.9": {
+  "0.1.10": {
     "en": "Independent Onbalansmarkt profile polling (rankings) every 5 minutes. Zero trading days logic inverted: now opt-in to report (default: skip). Throttling prevents API spam with 30-second minimum gap between calls.",
     "nl": "Onafhankelijke Onbalansmarkt profielopvraging (rankings) elke 5 minuten. Logica voor nul handeldagen omgekeerd: nu opt-in om te rapporteren (standaard: overslaan). Throttling voorkomt API spam met 30-seconden minimum tussen oproepen."
   },
