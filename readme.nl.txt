@@ -74,9 +74,10 @@ GEBRUIK
 
 Open na het koppelen de batterij-instellingen om het volgende in te stellen:
 - Poll-interval: Hoe vaak gegevens worden opgehaald van Frank Energie (1-1440 minuten, standaard: 5)
+- Onbalansmarkt Profiel Poll Interval: Hoe vaak profielgegevens (rankings) van Onbalansmarkt worden opgehaald (1-1440 minuten, standaard: 5)
 - Auto-send measurements: Schakel in om handelsresultaten automatisch naar Onbalansmarkt te versturen
 - Load-balancing: Geef aan of dynamische load balancing actief is op uw batterijsysteem
-- Niet rapporteren op nul handeldagen: Indien ingeschakeld (standaard), worden metingen niet verzonden en flow cards triggeren niet wanneer het dagresultaat €0 is
+- Rapporteren op nul handeldagen: Schakel in om metingen te versturen en flow cards te triggeren ook wanneer het dagresultaat €0 is (standaard: uit)
 - BTW-weergave: Kies of handelsresultaten met of zonder BTW worden weergegeven (standaard: met 21% BTW)
 
 Let op, het automatisch versturen van de live resultaten staat standaard uit. 

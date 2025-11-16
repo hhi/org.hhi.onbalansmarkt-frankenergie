@@ -74,9 +74,10 @@ USAGE
 
 After integration, open the battery settings to configure:
 - Poll-interval: How often to fetch data from Frank Energie (1-1440 minutes, default: 5)
+- Onbalansmarkt Profile Poll Interval: How often to fetch profile data (rankings) from Onbalansmarkt (1-1440 minutes, default: 5)
 - Auto-send measurements: Enable to automatically send trading results to Onbalansmarkt
 - Load-balancing: Indicate if dynamic load balancing is active on your battery system
-- Skip zero trading days: When enabled (default), measurements are not sent and flow cards don't trigger when daily result is €0
+- Report zero trading days: Enable to send measurements and trigger flow cards even when daily result is €0 (default: disabled)
 - VAT display: Choose to display trading results with or without VAT (default: with 21% VAT)
 
 Note: automatic sending of live results is disabled by default. 

@@ -22,10 +22,16 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   protected frankEnergieClient?: FrankEnergieClient;
   protected onbalansmarktClient?: OnbalansmarktClient;
   protected pollInterval?: NodeJS.Timeout;
+  protected onbalansmarktPollInterval?: NodeJS.Timeout;
   protected countdownInterval?: NodeJS.Timeout;
   protected nextPollTime: number | null = null;
+  protected nextOnbalansmarktPollTime: number | null = null;
   protected pollingRetryCount: number = 0; // Track retry attempts
   protected pollingRetryTimeout?: NodeJS.Timeout; // Store retry timer for cleanup
+
+  // Onbalansmarkt polling throttling
+  protected lastOnbalansmarktPollTime: number = 0;
+  protected readonly onbalansmarktMinPollGap: number = 30000; // 30 seconds minimum between calls
 
   // Common flow card state tracking
   protected previousRank: number | null = null;
@@ -306,6 +312,7 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   protected async setupPolling(): Promise<void> {
     const pollIntervalSetting = this.getSetting('poll_interval');
     const pollStartMinuteSetting = this.getSetting('poll_start_minute');
+    const onbalansmarktPollIntervalSetting = this.getSetting('poll_interval_onbalansmarkt');
 
     this.log(`Raw poll_interval setting: ${JSON.stringify(pollIntervalSetting)} (type: ${typeof pollIntervalSetting})`);
     this.log(`Raw poll_start_minute setting: ${JSON.stringify(pollStartMinuteSetting)} (type: ${typeof pollStartMinuteSetting})`);
@@ -352,6 +359,18 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     this.log(`Polling interval started: will poll every ${pollIntervalMinutes} minutes aligned to minute ${startMinute}`);
 
+    // Setup Onbalansmarkt polling (optional - only if setting exists and client is available)
+    if (onbalansmarktPollIntervalSetting && this.onbalansmarktClient) {
+      const onbalansmarktPollIntervalMinutes = this.validatePollInterval(onbalansmarktPollIntervalSetting);
+      const onbalansmarktPollIntervalMs = onbalansmarktPollIntervalMinutes * 60 * 1000;
+
+      this.scheduleOnbalansmarktPollInterval(onbalansmarktPollIntervalMs);
+      this.log(`Onbalansmarkt polling enabled: will poll every ${onbalansmarktPollIntervalMinutes} minutes`);
+    } else {
+      const reason = !onbalansmarktPollIntervalSetting ? 'setting not configured' : 'Onbalansmarkt client not available';
+      this.log(`Onbalansmarkt polling disabled (${reason})`);
+    }
+
     // Brief delay to allow UI to synchronize before marking device as available
     // This ensures all capabilities and their options are fully rendered
     await new Promise((resolve) => {
@@ -387,6 +406,57 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
           this.nextPollTime = Date.now() + pollIntervalMs;
           this.updatePollCountdown();
         }
+      },
+      pollIntervalMs,
+    );
+  }
+
+  /**
+   * Trigger Onbalansmarkt profile polling with throttling
+   * Can be called from timer or on-demand (e.g., after sending measurements)
+   * Prevents API spam by enforcing minimum gap between calls
+   */
+  protected async triggerOnbalansmarktPoll(): Promise<void> {
+    const now = Date.now();
+    const timeSinceLast = now - this.lastOnbalansmarktPollTime;
+
+    // Skip if called too soon - prevent API spam
+    if (timeSinceLast < this.onbalansmarktMinPollGap) {
+      const secondsUntilNext = Math.ceil((this.onbalansmarktMinPollGap - timeSinceLast) / 1000);
+      this.log(`Onbalansmarkt poll throttled (${secondsUntilNext}s remaining) - last poll was ${Math.round(timeSinceLast / 1000)}s ago`);
+      return;
+    }
+
+    try {
+      this.log('Fetching Onbalansmarkt profile...');
+      await this.pollOnbalansmarktProfile();
+      this.lastOnbalansmarktPollTime = now;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.log('Onbalansmarkt profile polling failed (skipping):', errorMsg);
+      // Update timestamp anyway to prevent tight retry loops
+      this.lastOnbalansmarktPollTime = now;
+    }
+  }
+
+  /**
+   * Schedule recurring Onbalansmarkt profile polling
+   * Independent interval from Frank Energie polling
+   * @param pollIntervalMs Poll interval in milliseconds
+   */
+  private scheduleOnbalansmarktPollInterval(pollIntervalMs: number): void {
+    // Clear existing Onbalansmarkt polling interval
+    if (this.onbalansmarktPollInterval) {
+      this.homey.clearInterval(this.onbalansmarktPollInterval);
+    }
+
+    // Schedule next poll
+    this.nextOnbalansmarktPollTime = Date.now() + pollIntervalMs;
+
+    this.onbalansmarktPollInterval = this.homey.setInterval(
+      async () => {
+        await this.triggerOnbalansmarktPoll();
+        this.nextOnbalansmarktPollTime = Date.now() + pollIntervalMs;
       },
       pollIntervalMs,
     );
@@ -668,6 +738,15 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   abstract pollData(): Promise<void>;
 
   /**
+   * Default implementation for Onbalansmarkt profile polling
+   * Subclasses (battery) override this to provide real implementation
+   * Other drivers don't need to override - this no-op is sufficient
+   */
+  async pollOnbalansmarktProfile(): Promise<void> {
+    // Default: do nothing - only battery driver needs real implementation
+  }
+
+  /**
    * Lifecycle methods
    */
   async onAdded() {
@@ -871,6 +950,12 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       this.pollInterval = undefined;
     }
 
+    // Clear Onbalansmarkt polling interval
+    if (this.onbalansmarktPollInterval) {
+      this.homey.clearInterval(this.onbalansmarktPollInterval);
+      this.onbalansmarktPollInterval = undefined;
+    }
+
     // Clear countdown timer
     if (this.countdownInterval) {
       this.homey.clearInterval(this.countdownInterval);
@@ -892,6 +977,10 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     if (this.pollInterval) {
       this.homey.clearInterval(this.pollInterval);
+    }
+
+    if (this.onbalansmarktPollInterval) {
+      this.homey.clearInterval(this.onbalansmarktPollInterval);
     }
 
     if (this.countdownInterval) {

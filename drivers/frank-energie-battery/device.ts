@@ -402,9 +402,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
       // Send measurements to Onbalansmarkt if enabled
       const sendMeasurements = this.getSetting('send_measurements') as boolean;
-      const skipZeroResults = this.getSetting('skip_zero_trading_results') as boolean;
+      const reportZeroResults = this.getSetting('report_zero_trading_results') as boolean;
       const shouldSendMeasurement = sendMeasurements && (
-        !skipZeroResults || results.periodTradingResult !== 0
+        reportZeroResults || results.periodTradingResult !== 0
       );
 
       if (shouldSendMeasurement) {
@@ -415,15 +415,15 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         await new Promise((resolve) => {
           this.homey.setTimeout(resolve, 5000);
         });
+
+        // Fetch updated rankings from Onbalansmarkt (on-demand, with throttling)
+        await this.triggerOnbalansmarktPoll();
       } else {
         // Update last_upload timestamp even if not sending (to track poll activity)
         const pollTimestamp = this.formatTimestampLocal(new Date());
         await this.setCapabilityValue('frank_energie_last_upload', pollTimestamp)
           .catch((error) => this.log('Note: Could not update last_upload timestamp:', error));
       }
-
-      // Update ranking information (after measurement has been processed)
-      await this.updateRankings();
 
       // Store last poll data
       await this.setStoreValue('lastPollTime', Date.now());
@@ -440,6 +440,19 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       await this.setUnavailable(`Data fetch failed: ${errorMsg}`);
       throw error;
     }
+  }
+
+  /**
+   * Poll Onbalansmarkt profile data (rankings and account metrics)
+   * Runs independently on a separate interval
+   */
+  async pollOnbalansmarktProfile(): Promise<void> {
+    if (!this.onbalansmarktClient) {
+      throw new Error('Onbalansmarkt client not initialized');
+    }
+
+    this.log('Polling Onbalansmarkt profile for rankings and account data...');
+    await this.updateRankings();
   }
 
   /**
@@ -675,9 +688,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         this.previousRank = overallRank;
       }
 
-      // Emit: Result Positive/Negative (respecting skip_zero_trading_results setting)
-      const skipZeroForFlowCards = this.getSetting('skip_zero_trading_results') as boolean;
-      if (results.periodTradingResult !== 0 || !skipZeroForFlowCards) {
+      // Emit: Result Positive/Negative (respecting report_zero_trading_results setting)
+      const reportZeroForFlowCards = this.getSetting('report_zero_trading_results') as boolean;
+      if (results.periodTradingResult !== 0 || reportZeroForFlowCards) {
         await this.emitResultPositiveNegative(results.periodTradingResult, results.totalTradingResult, mode);
       }
 

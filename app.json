@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [
@@ -1458,16 +1458,31 @@
               }
             },
             {
-              "id": "skip_zero_trading_results",
+              "id": "report_zero_trading_results",
               "type": "checkbox",
               "label": {
-                "en": "Skip reporting on zero trading days",
-                "nl": "Niet rapporteren op nul handeldagen"
+                "en": "Report measurements on zero trading days",
+                "nl": "Rapporteren op nul handeldagen"
               },
               "value": true,
               "hint": {
-                "en": "Don't send measurements to Onbalansmarkt or trigger flow cards when daily trading result is €0",
-                "nl": "Verstuur geen metingen naar Onbalansmarkt of trigger flow cards als dagelijks handelsresultaat €0 is"
+                "en": "Send measurements to Onbalansmarkt and trigger flow cards even when daily trading result is €0",
+                "nl": "Verstuur metingen naar Onbalansmarkt en trigger flow cards zelfs als dagelijks handelsresultaat €0 is"
+              }
+            },
+            {
+              "id": "poll_interval_onbalansmarkt",
+              "type": "number",
+              "label": {
+                "en": "Onbalansmarkt Profile Poll Interval (minutes)",
+                "nl": "Onbalansmarkt Profiel Opvraaginterval (minuten)"
+              },
+              "value": 5,
+              "min": 1,
+              "max": 1440,
+              "hint": {
+                "en": "How often to fetch profile data from Onbalansmarkt (1-1440 minutes). Default: 5 minutes",
+                "nl": "Hoe vaak profielgegevens van Onbalansmarkt worden opgehaald (1-1440 minuten). Standaard: 5 minuten"
               }
             }
           ]
