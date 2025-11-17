@@ -1,4 +1,9 @@
 {
+  "0.1.11": {
+    "en": "Fixed inconsistent last_upload timestamp updates. Timestamp is now always updated at end of each poll cycle, preventing stale values when report_zero_trading_results is enabled.",
+    "nl": "Inconsistente last_upload timestamp updates opgelost. Timestamp wordt nu altijd bijgewerkt aan het einde van elke poll-cyclus, waardoor verouderde waarden worden voorkomen wanneer report_zero_trading_results is ingeschakeld."
+  },
+
   "0.1.10": {
     "en": "Independent Onbalansmarkt profile polling (rankings) every 5 minutes. Zero trading days logic inverted: now opt-in to report (default: skip). Throttling prevents API spam with 30-second minimum gap between calls.",
     "nl": "Onafhankelijke Onbalansmarkt profielopvraging (rankings) elke 5 minuten. Logica voor nul handeldagen omgekeerd: nu opt-in om te rapporteren (standaard: overslaan). Throttling voorkomt API spam met 30-seconden minimum tussen oproepen."

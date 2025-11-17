@@ -418,12 +418,13 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
 
         // Fetch updated rankings from Onbalansmarkt (on-demand, with throttling)
         await this.triggerOnbalansmarktPoll();
-      } else {
-        // Update last_upload timestamp even if not sending (to track poll activity)
-        const pollTimestamp = this.formatTimestampLocal(new Date());
-        await this.setCapabilityValue('frank_energie_last_upload', pollTimestamp)
-          .catch((error) => this.log('Note: Could not update last_upload timestamp:', error));
       }
+
+      // ALWAYS update last_upload timestamp (whether we sent or not, even if sendMeasurement failed)
+      // This ensures the timestamp is always current and reflects the last polling attempt
+      const uploadTimestamp = this.formatTimestampLocal(new Date());
+      await this.setCapabilityValue('frank_energie_last_upload', uploadTimestamp)
+        .catch((error) => this.error('Failed to update last_upload timestamp:', error));
 
       // Store last poll data
       await this.setStoreValue('lastPollTime', Date.now());
@@ -968,9 +969,8 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         loadBalancingActive: loadBalancingActive ? 'on' : 'off',
       });
 
-      // Update last upload timestamp capability (UTC format: YYYY-MM-DD HH:MM:SS)
-      await this.setCapabilityValue('frank_energie_last_upload', uploadTimestampFormatted)
-        .catch((error) => this.error('Failed to update last upload timestamp:', error));
+      // Note: frank_energie_last_upload is updated in pollBatteryData() AFTER this function returns
+      // This ensures the timestamp reflects the actual poll time, not the send time
 
       // Emit: Measurement Sent trigger
       const currentBatteryCharge = externalBatteryPercentage !== null ? Math.round(externalBatteryPercentage) : 0;
