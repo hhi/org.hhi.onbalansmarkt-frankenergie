@@ -102,6 +102,12 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
     // Load external batteries from store
     await this.loadExternalBatteries();
 
+    // Restore flow trigger state from previous session (prevents false triggers on restart)
+    await this.restoreFlowTriggerState();
+
+    // Restore scheduled manual reset if one was in progress
+    await this.restoreScheduledReset();
+
     // Initialize recovery state to not scheduled (only if capability exists)
     if (this.hasCapability('frank_energie_recovery_state')) {
       try {
@@ -689,6 +695,20 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         this.previousRank = overallRank;
       }
 
+      // Emit: Provider Rank Tracking
+      if (this.previousProviderRank !== null && providerRank !== null) {
+        if (providerRank < this.previousProviderRank) {
+          // Provider rank improved (lower number = better)
+          this.log(`Provider rank improved: ${this.previousProviderRank} → ${providerRank}`);
+        } else if (providerRank > this.previousProviderRank) {
+          // Provider rank declined (higher number = worse)
+          this.log(`Provider rank declined: ${this.previousProviderRank} → ${providerRank}`);
+        }
+      }
+      if (providerRank !== null) {
+        this.previousProviderRank = providerRank;
+      }
+
       // Emit: Result Positive/Negative (respecting report_zero_trading_results setting)
       const reportZeroForFlowCards = this.getSetting('report_zero_trading_results') as boolean;
       if (results.periodTradingResult !== 0 || reportZeroForFlowCards) {
@@ -728,6 +748,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
         await this.emitNewBatteryAdded(results.batteryCount, this.previousBatteryCount);
       }
       this.previousBatteryCount = results.batteryCount;
+
+      // Persist flow trigger state for recovery after restart
+      await this.persistFlowTriggerState();
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       this.error('Error processing battery flow triggers:', errorMsg);
@@ -1548,6 +1571,9 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
       this.manualResetTimeout = null;
     }, msUntilReset);
 
+    // Persist the scheduled reset time for recovery after restart
+    await this.persistScheduledReset(next2359.getTime());
+
     this.log(`[BASELINE] Timeout scheduled, method completing now (${minutesUntilReset} minutes until reset)`);
 
     // Defer capability update to avoid timer interference
@@ -1970,11 +1996,145 @@ export = class SmartBatteryDevice extends FrankEnergieDeviceBase {
   }
 
   /**
+   * Persist flow trigger state to survive app restarts
+   * Saves: previousRank, previousProviderRank, previousMode, previousBatteryCount, milestones, lastOnbalansmarktPollTime
+   */
+  private async persistFlowTriggerState(): Promise<void> {
+    try {
+      await this.setStoreValue('flowTriggerState', {
+        previousRank: this.previousRank,
+        previousProviderRank: this.previousProviderRank,
+        previousMode: this.previousMode,
+        previousBatteryCount: this.previousBatteryCount,
+        milestones: Array.from(this.milestones),
+        lastOnbalansmarktPollTime: this.lastOnbalansmarktPollTime,
+      });
+    } catch (error) {
+      this.error('Failed to persist flow trigger state:', error);
+    }
+  }
+
+  /**
+   * Persist scheduled manual reset time to survive app restarts
+   */
+  private async persistScheduledReset(scheduledTimeMs: number): Promise<void> {
+    try {
+      await this.setStoreValue('scheduledManualReset', {
+        scheduledTime: scheduledTimeMs,
+        resetType: 'manual',
+      });
+    } catch (error) {
+      this.error('Failed to persist scheduled reset:', error);
+    }
+  }
+
+  /**
+   * Restore flow trigger state after app restart
+   * Recovers: previousRank, previousProviderRank, previousMode, previousBatteryCount, milestones, lastOnbalansmarktPollTime
+   * Prevents false triggers and missed triggers on restart
+   */
+  private async restoreFlowTriggerState(): Promise<void> {
+    try {
+      const saved = await this.getStoreValue('flowTriggerState') as {
+        previousRank: number | null;
+        previousProviderRank: number | null;
+        previousMode: string | null;
+        previousBatteryCount: number;
+        milestones: number[];
+        lastOnbalansmarktPollTime?: number;
+      } | undefined;
+
+      if (saved) {
+        this.previousRank = saved.previousRank;
+        this.previousProviderRank = saved.previousProviderRank;
+        this.previousMode = saved.previousMode;
+        this.previousBatteryCount = saved.previousBatteryCount;
+        this.milestones = new Set(saved.milestones);
+        if (saved.lastOnbalansmarktPollTime) {
+          this.lastOnbalansmarktPollTime = saved.lastOnbalansmarktPollTime;
+        }
+        this.log(`Restored flow trigger state: rank=${saved.previousRank}, provider_rank=${saved.previousProviderRank}, mode=${saved.previousMode}, battery_count=${saved.previousBatteryCount}, milestones=${saved.milestones.length}, last_api_poll=${Math.round((Date.now() - this.lastOnbalansmarktPollTime) / 1000)}s ago`);
+      }
+    } catch (error) {
+      this.error('Failed to restore flow trigger state:', error);
+    }
+  }
+
+  /**
+   * Restore scheduled manual reset after app restart
+   * If a reset was scheduled and the time is still in the future, reschedule it
+   */
+  private async restoreScheduledReset(): Promise<void> {
+    try {
+      const scheduled = await this.getStoreValue('scheduledManualReset') as {
+        scheduledTime: number;
+        resetType: string;
+      } | undefined;
+
+      if (scheduled && scheduled.scheduledTime > Date.now()) {
+        const msUntilReset = scheduled.scheduledTime - Date.now();
+        const minutesUntilReset = Math.floor(msUntilReset / 1000 / 60);
+
+        this.log(`[BASELINE] Restoring scheduled manual reset (${minutesUntilReset} minutes remaining)`);
+
+        // Reschedule the reset
+        this.manualResetTimeout = this.homey.setTimeout(async () => {
+          this.log('Executing restored manual baseline reset');
+          try {
+            await this.externalBatteryMetrics!.emergencyResetBaseline();
+            // Update capabilities
+            const aggregated = await this.externalBatteryMetrics!.getAggregatedMetrics();
+            await this.setCapabilityValue('external_battery_daily_charged', aggregated.dailyChargedKwh);
+            await this.setCapabilityValue('external_battery_daily_discharged', aggregated.dailyDischargedKwh);
+            await this.setCapabilityValue('external_battery_current_charged', aggregated.currentChargedKwh);
+            await this.setCapabilityValue('external_battery_current_discharged', aggregated.currentDischargedKwh);
+            await this.setCapabilityValue('external_battery_startofday_charged', aggregated.startOfDayChargedKwh);
+            await this.setCapabilityValue('external_battery_startofday_discharged', aggregated.startOfDayDischargedKwh);
+            await this.setCapabilityValue('external_battery_percentage', aggregated.averageBatteryPercentage);
+            await this.setCapabilityValue('external_battery_count', aggregated.batteryCount);
+
+            // Update recovery state
+            if (this.hasCapability('frank_energie_recovery_state')) {
+              await this.setCapabilityValue('frank_energie_recovery_state', 'Not scheduled');
+            }
+
+            this.log('Restored manual baseline reset completed successfully');
+            await this.unsetStoreValue('scheduledManualReset');
+          } catch (error) {
+            this.error('Error during restored manual baseline reset:', error);
+          }
+          this.manualResetTimeout = null;
+        }, msUntilReset);
+
+        // Update UI capability
+        const resetDate = new Date(scheduled.scheduledTime);
+        const today = new Date();
+        const isToday = resetDate.toDateString() === today.toDateString();
+        const stateValue = isToday
+          ? 'Scheduled for today at 23:59 (restored)'
+          : 'Scheduled for tomorrow at 23:59 (restored)';
+
+        if (this.hasCapability('frank_energie_recovery_state')) {
+          await this.setCapabilityValue('frank_energie_recovery_state', stateValue);
+        }
+      } else {
+        // Scheduled time is in the past or no schedule exists - clear it
+        await this.unsetStoreValue('scheduledManualReset');
+      }
+    } catch (error) {
+      this.error('Failed to restore scheduled reset:', error);
+    }
+  }
+
+  /**
    * Device cleanup on removal
    * Stops timers and cleanup resources
    */
   async onUninit() {
     this.log('Smart Battery Device uninitializing...');
+
+    // Final state save before shutdown
+    await this.persistFlowTriggerState();
 
     // Cancel manual baseline reset timer if scheduled
     if (this.manualResetTimeout) {

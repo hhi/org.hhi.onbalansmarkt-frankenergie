@@ -1,4 +1,9 @@
 {
+  "0.1.12": {
+    "en": "Improved app resilience against restarts and updates. Flow trigger states, milestone tracking, manual reset schedules, and API throttling now persist across app restarts.",
+    "nl": "Verbeterde app-robuustheid tegen herstarts en updates. Flow trigger states, milestone tracking, geplande handmatige resets en API throttling blijven nu behouden bij app-herstarts."
+  },
+
   "0.1.11": {
     "en": "Fixed inconsistent last_upload timestamp updates. Timestamp is now always updated at end of each poll cycle, preventing stale values when report_zero_trading_results is enabled.",
     "nl": "Inconsistente last_upload timestamp updates opgelost. Timestamp wordt nu altijd bijgewerkt aan het einde van elke poll-cyclus, waardoor verouderde waarden worden voorkomen wanneer report_zero_trading_results is ingeschakeld."
