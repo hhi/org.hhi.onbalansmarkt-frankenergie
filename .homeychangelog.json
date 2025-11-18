@@ -1,4 +1,9 @@
 {
+  "0.1.14": {
+    "en": "Fixed Onbalansmarkt API integration after API structure change. Rankings and trading results now display correctly.",
+    "nl": "Onbalansmarkt API integratie gerepareerd na API structuurwijziging. Rankings en handelsresultaten worden nu correct weergegeven."
+  },
+
   "0.1.13": {
     "en": "Security update: Fixed prototype pollution vulnerability in YAML parsing (CVE-2025-64718). Updated js-yaml and related dependencies to latest secure versions.",
     "nl": "Beveiligingsupdate: Prototype pollution kwetsbaarheid in YAML-parsing opgelost (CVE-2025-64718). js-yaml en gerelateerde afhankelijkheden bijgewerkt naar nieuwste veilige versies."
