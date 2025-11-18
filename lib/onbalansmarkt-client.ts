@@ -225,11 +225,14 @@ export class OnbalansmarktClient {
         throw new Error(`Expected JSON response but got ${contentType}. API may have changed or invalid API key.`);
       }
 
-      // API returns { username, name, results: [...] }
-      // Need to transform to { username, name, resultToday, resultYesterday }
+      // API structure (updated Nov 2025): { username, name, resultToday, resultYesterday }
+      // Direct result objects instead of array
       interface ApiResponse {
         username: string;
         name: string;
+        resultToday?: DailyResult | null;
+        resultYesterday?: DailyResult | null;
+        // Legacy support for older API structure
         results?: DailyResult[];
         profile?: {
           results?: DailyResult[];
@@ -240,38 +243,35 @@ export class OnbalansmarktClient {
 
       const apiResponse = (await response.json()) as ApiResponse;
 
-      // Log full API response structure for debugging (first 500 chars)
-      const responsePreview = JSON.stringify(apiResponse).substring(0, 500);
-      this.logger(`OnbalansmarktClient: API response structure: ${responsePreview}`);
+      // Try new API structure first (direct resultToday/resultYesterday)
+      let resultToday: DailyResult | null = apiResponse.resultToday || null;
+      let resultYesterday: DailyResult | null = apiResponse.resultYesterday || null;
 
-      // Handle different possible API response structures
-      let resultsArray: DailyResult[] | undefined = apiResponse.results;
+      // Fallback to legacy array-based structure if needed
+      if (!resultToday && !resultYesterday) {
+        let resultsArray: DailyResult[] | undefined = apiResponse.results;
 
-      if (!resultsArray && apiResponse.profile?.results) {
-        resultsArray = apiResponse.profile.results;
+        if (!resultsArray && apiResponse.profile?.results) {
+          resultsArray = apiResponse.profile.results;
+        }
+        if (!resultsArray && apiResponse.dailyResults) {
+          resultsArray = apiResponse.dailyResults;
+        }
+
+        if (resultsArray && Array.isArray(resultsArray)) {
+          // Get today's and yesterday's dates in YYYY-MM-DD format
+          const today = new Date();
+          const todayStr = today.toISOString().split('T')[0];
+
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+          // Find today's and yesterday's results from the array
+          resultToday = resultsArray.find((r) => r.date === todayStr) || null;
+          resultYesterday = resultsArray.find((r) => r.date === yesterdayStr) || null;
+        }
       }
-      if (!resultsArray && apiResponse.dailyResults) {
-        resultsArray = apiResponse.dailyResults;
-      }
-
-      // If still no results found, log error with full response
-      if (!resultsArray || !Array.isArray(resultsArray)) {
-        this.logger(`OnbalansmarktClient: Warning - No results array found in API response`);
-        this.logger(`OnbalansmarktClient: Full API response: ${JSON.stringify(apiResponse)}`);
-        resultsArray = [];
-      }
-
-      // Get today's and yesterday's dates in YYYY-MM-DD format
-      const today = new Date();
-      const todayStr = today.toISOString().split('T')[0];
-
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split('T')[0];
-
-      // Find today's and yesterday's results from the array
-      const resultToday = resultsArray.find((r) => r.date === todayStr) || null;
-      const resultYesterday = resultsArray.find((r) => r.date === yesterdayStr) || null;
 
       const profile: ProfileResponse = {
         username: apiResponse.username,
