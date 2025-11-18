@@ -230,10 +230,36 @@ export class OnbalansmarktClient {
       interface ApiResponse {
         username: string;
         name: string;
-        results: DailyResult[];
+        results?: DailyResult[];
+        profile?: {
+          results?: DailyResult[];
+        };
+        dailyResults?: DailyResult[];
+        [key: string]: unknown;
       }
 
       const apiResponse = (await response.json()) as ApiResponse;
+
+      // Log full API response structure for debugging (first 500 chars)
+      const responsePreview = JSON.stringify(apiResponse).substring(0, 500);
+      this.logger(`OnbalansmarktClient: API response structure: ${responsePreview}`);
+
+      // Handle different possible API response structures
+      let resultsArray: DailyResult[] | undefined = apiResponse.results;
+
+      if (!resultsArray && apiResponse.profile?.results) {
+        resultsArray = apiResponse.profile.results;
+      }
+      if (!resultsArray && apiResponse.dailyResults) {
+        resultsArray = apiResponse.dailyResults;
+      }
+
+      // If still no results found, log error with full response
+      if (!resultsArray || !Array.isArray(resultsArray)) {
+        this.logger(`OnbalansmarktClient: Warning - No results array found in API response`);
+        this.logger(`OnbalansmarktClient: Full API response: ${JSON.stringify(apiResponse)}`);
+        resultsArray = [];
+      }
 
       // Get today's and yesterday's dates in YYYY-MM-DD format
       const today = new Date();
@@ -244,8 +270,8 @@ export class OnbalansmarktClient {
       const yesterdayStr = yesterday.toISOString().split('T')[0];
 
       // Find today's and yesterday's results from the array
-      const resultToday = apiResponse.results.find((r) => r.date === todayStr) || null;
-      const resultYesterday = apiResponse.results.find((r) => r.date === yesterdayStr) || null;
+      const resultToday = resultsArray.find((r) => r.date === todayStr) || null;
+      const resultYesterday = resultsArray.find((r) => r.date === yesterdayStr) || null;
 
       const profile: ProfileResponse = {
         username: apiResponse.username,
