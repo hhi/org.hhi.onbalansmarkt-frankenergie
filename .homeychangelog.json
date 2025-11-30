@@ -1,5 +1,5 @@
 {
-  "0.1.14": {
+  "0.1.15": {
     "en": "Fixed Onbalansmarkt API integration after API structure change. Rankings and trading results now display correctly.",
     "nl": "Onbalansmarkt API integratie gerepareerd na API structuurwijziging. Rankings en handelsresultaten worden nu correct weergegeven."
   },

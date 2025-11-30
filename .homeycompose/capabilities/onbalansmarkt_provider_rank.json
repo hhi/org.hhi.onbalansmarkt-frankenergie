@@ -13,7 +13,7 @@
   "insights": true,
   "getable": true,
   "setable": false,
-  "min": 1,
+  "min": 0,
   "chartType": "spline",
   "uiComponent": "sensor",
   "icon": "/assets/capabilities/onbalansmarkt_provider_rank.svg"
