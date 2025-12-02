@@ -29,6 +29,10 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
   protected pollingRetryCount: number = 0; // Track retry attempts
   protected pollingRetryTimeout?: NodeJS.Timeout; // Store retry timer for cleanup
 
+  // Authentication refresh management
+  protected authRefreshTimer?: NodeJS.Timeout;
+  protected lastAuthTime: number = 0;
+
   // Onbalansmarkt polling throttling
   protected lastOnbalansmarktPollTime: number = 0;
   protected readonly onbalansmarktMinPollGap: number = 30000; // 30 seconds minimum between calls
@@ -48,9 +52,13 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     try {
       await this.initializeClients();
+      this.lastAuthTime = Date.now(); // Track initial auth time
       await this.normalizePollIntervalSetting();
       await this.setupCommonFlowCards();
       await this.setupDeviceSpecificFlowCards();
+
+      // Schedule daily authentication refresh
+      this.scheduleAuthRefresh();
 
       // Defer polling setup to avoid blocking onInit with alignment delays
       // This ensures device initialization completes quickly
@@ -184,6 +192,59 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     // Device-specific initialization
     await this.initializeDeviceSpecificClients();
+  }
+
+  /**
+   * Schedule daily authentication refresh to prevent token expiration
+   * Refreshes authentication at 2:00 AM every day
+   */
+  protected scheduleAuthRefresh(): void {
+    // Clear existing timer
+    if (this.authRefreshTimer) {
+      this.homey.clearTimeout(this.authRefreshTimer);
+    }
+
+    // Calculate time until 2:00 AM next morning
+    const now = new Date();
+    const tomorrow2AM = new Date(now);
+    tomorrow2AM.setDate(tomorrow2AM.getDate() + (now.getHours() >= 2 ? 1 : 0));
+    tomorrow2AM.setHours(2, 0, 0, 0);
+    const msUntil2AM = tomorrow2AM.getTime() - now.getTime();
+
+    const hoursUntilRefresh = Math.round(msUntil2AM / (1000 * 60 * 60));
+    this.log(`Authentication refresh scheduled in ${hoursUntilRefresh} hours (at 02:00)`);
+
+    this.authRefreshTimer = this.homey.setTimeout(async () => {
+      await this.refreshAuthentication();
+    }, msUntil2AM);
+  }
+
+  /**
+   * Refresh Frank Energie authentication
+   * Re-initializes clients with fresh tokens
+   */
+  protected async refreshAuthentication(): Promise<void> {
+    try {
+      this.log('Refreshing Frank Energie authentication...');
+
+      // Re-initialize clients (performs new login)
+      await this.initializeClients();
+
+      this.lastAuthTime = Date.now();
+      this.log('Authentication refreshed successfully');
+
+      // Schedule next refresh
+      this.scheduleAuthRefresh();
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      this.error('Authentication refresh failed:', errorMsg);
+
+      // Retry in 1 hour if refresh failed
+      this.log('Will retry authentication refresh in 1 hour');
+      this.authRefreshTimer = this.homey.setTimeout(async () => {
+        await this.refreshAuthentication();
+      }, 60 * 60 * 1000);
+    }
   }
 
   /**
@@ -968,6 +1029,12 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
       this.pollingRetryTimeout = undefined;
     }
 
+    // Clear authentication refresh timer
+    if (this.authRefreshTimer) {
+      this.homey.clearTimeout(this.authRefreshTimer);
+      this.authRefreshTimer = undefined;
+    }
+
     // Let child classes clean up their own timers
     // (override onUninit() and call super.onUninit())
   }
@@ -985,6 +1052,10 @@ export default abstract class FrankEnergieDeviceBase extends Homey.Device {
 
     if (this.countdownInterval) {
       this.homey.clearInterval(this.countdownInterval);
+    }
+
+    if (this.authRefreshTimer) {
+      this.homey.clearTimeout(this.authRefreshTimer);
     }
   }
 }
