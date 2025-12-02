@@ -1,4 +1,9 @@
 {
+  "0.1.16": {
+    "en": "Automatic daily authentication refresh at 02:00 prevents token expiration after extended runtime.",
+    "nl": "Automatische dagelijkse authenticatie-vernieuwing om 02:00 voorkomt token expiratie na langdurig draaien."
+  },
+
   "0.1.15": {
     "en": "Fixed Onbalansmarkt API integration after API structure change. Rankings and trading results now display correctly.",
     "nl": "Onbalansmarkt API integratie gerepareerd na API structuurwijziging. Rankings en handelsresultaten worden nu correct weergegeven."
