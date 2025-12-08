@@ -1,6 +1,6 @@
 {
   "id": "org.hhi.onbalansmarkt-frankenergie",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "platforms": [

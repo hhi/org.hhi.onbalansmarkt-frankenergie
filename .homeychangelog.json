@@ -1,4 +1,9 @@
 {
+  "0.1.17": {
+    "en": "Fixed issue where midnight reset triggered multiple times. Daily totals are now logged exactly once at 00:00.",
+    "nl": "Probleem opgelost waarbij middernacht reset meerdere keren werd getriggerd. Dagelijkse totalen worden nu precies één keer gelogd om 00:00."
+  },
+
   "0.1.16": {
     "en": "Automatic daily authentication refresh at 02:00 prevents token expiration after extended runtime.",
     "nl": "Automatische dagelijkse authenticatie-vernieuwing om 02:00 voorkomt token expiratie na langdurig draaien."

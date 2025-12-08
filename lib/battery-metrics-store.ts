@@ -406,6 +406,16 @@ export class BatteryMetricsStore {
    * Called on device init to ensure proper daily baseline management
    */
   scheduleAutomaticReset(): void {
+    // Clear any existing timers first to prevent duplicates
+    if (this.resetTimeout) {
+      this.device.homey.clearTimeout(this.resetTimeout);
+      this.resetTimeout = null;
+    }
+    if (this.resetInterval) {
+      this.device.homey.clearInterval(this.resetInterval);
+      this.resetInterval = null;
+    }
+
     // Calculate milliseconds until next 00:00 (Amsterdam timezone)
     const now = new Date();
 
