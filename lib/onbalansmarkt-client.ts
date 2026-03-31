@@ -64,8 +64,8 @@ export interface OnbalansmarktClientConfig {
 }
 
 export class OnbalansmarktClient {
-  private readonly apiUrlLive = 'https://onbalansmarkt.com/api/live';
-  private readonly apiUrlMe = 'https://onbalansmarkt.com/api/me';
+  private readonly apiUrlLive = 'https://api.mijnbatterij.nl/api/live';
+  private readonly apiUrlMe = 'https://api.mijnbatterij.nl/api/me';
   private readonly apiKey: string;
   private logger: (message: string, ...args: unknown[]) => void;
 
